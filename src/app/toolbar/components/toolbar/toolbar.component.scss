@@ -1,0 +1,36 @@
+@use "@angular/material" as mat;
+
+.toolbar-container {
+  @include mat.elevation(1);
+  display: flex;
+  padding: 0 4px;
+  background: rgb(252, 250, 248);
+}
+
+button.toolbar-button {
+  border: 0;
+  margin: 0.25rem;
+  background: transparent;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    font-size: 24px;
+  }
+ 
+  &:hover,
+  &:focus {
+    background: #00000011;
+  }
+
+  &:focus {
+    outline: thin solid #00000011;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}

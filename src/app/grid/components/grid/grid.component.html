@@ -1,4 +1,4 @@
-<table #table role="grid" cdk-table [dataSource]="dataSource">
+<table #table role="grid" cdk-table [dataSource]="dataSource" fixedLayout>
     <ng-container cdkColumnDef="position">
         <th role="columnheader" cdk-header-cell *cdkHeaderCellDef></th>
         <th role="rowheader" cdk-cell *cdkCellDef="let element; let idx = index">{{idx + 1}}</th>
