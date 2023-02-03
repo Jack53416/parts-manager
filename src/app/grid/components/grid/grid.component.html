@@ -27,6 +27,6 @@
 
 
     <tr role="row" cdk-header-row *cdkHeaderRowDef="displayedColumns"></tr>
-    <tr [class.selected]="cursorIndex?.x === idx" cdk-row
+    <tr [class.selected]="keyManager?.cursor.y === idx" cdk-row
         *cdkRowDef="let row; let idx = index; columns: displayedColumns"></tr>
 </table>

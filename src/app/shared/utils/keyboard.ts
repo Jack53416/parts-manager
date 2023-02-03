@@ -10,6 +10,19 @@ function isModifierKey(key: string): key is ModifierKey {
   return key in ['altKey', 'shiftKey', 'ctrlKey', 'metaKey'];
 }
 
+export function describePressedKey(event: KeyboardEvent): string {
+  const modifierKeys = [
+    [event.ctrlKey, 'ctrl'],
+    [event.altKey, 'alt'],
+    [event.shiftKey, 'shift'],
+    [event.metaKey, 'meta'],
+  ]
+    .filter(([keyPressed, _]) => keyPressed)
+    .map(([_, keyName]) => keyName);
+
+  return [...modifierKeys, event.key].join('+');
+}
+
 export function keysPressed(
   event: KeyboardEvent,
   ...keys: KeyCombination[]

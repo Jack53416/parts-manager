@@ -1,37 +1,22 @@
 import { DataSource } from '@angular/cdk/collections';
 import {
-  ConnectedPosition,
-  ConnectionPositionPair,
-  Overlay,
-  OverlayRef,
-  OverlaySizeConfig,
-  PositionStrategy,
-} from '@angular/cdk/overlay';
-import { ComponentPortal, TemplatePortal } from '@angular/cdk/portal';
-import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
+  OnDestroy,
   OnInit,
   QueryList,
   Renderer2,
-  TemplateRef,
   ViewChild,
   ViewChildren,
-  ViewContainerRef,
 } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { normalizeIndex } from '../../../shared/utils/array-utils';
-import { handleKeysPressed } from '../../../shared/utils/keyboard';
 import { GridCellDirective } from '../../directives/grid-cell.directive';
-import { OverlayInputComponent } from '../overlay-input/overlay-input.component';
-
-interface Point {
-  x: number;
-  y: number;
-}
+import { AriaGrid, ARIA_GRID } from '../../models/aria-grid';
+import { GridKeyManager } from '../../utils/grid-key-manager';
+import { Point } from '../../utils/point';
 
 export interface PeriodicElement {
   name: string;
@@ -57,115 +42,61 @@ const ELEMENT_DATA: PeriodicElement[] = [
   selector: 'app-grid',
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.scss'],
+  providers: [{ provide: ARIA_GRID, useExisting: GridComponent }],
 })
-export class GridComponent implements OnInit, AfterViewInit {
+export class GridComponent
+  implements AriaGrid, OnInit, OnDestroy, AfterViewInit
+{
   @ViewChildren(GridCellDirective) gridCells!: QueryList<GridCellDirective>;
   @ViewChild('table', { static: true, read: ElementRef }) table: ElementRef;
-  @ViewChild('editFormTemplate') editFormTemplate: TemplateRef<unknown>;
 
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = new ExampleDataSource();
   cursorIndex!: Point;
+  keyManager!: GridKeyManager<GridCellDirective>;
 
   private cellMatrix: GridCellDirective[][];
-  private overlayRef: OverlayRef;
-  private editPortal: ComponentPortal<OverlayInputComponent>;
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
-    private renderer2: Renderer2,
-    private overlay: Overlay,
-    private viewContainerRef: ViewContainerRef
+    private renderer2: Renderer2
   ) {}
-
-  get overlayPositions(): ConnectedPosition[] {
-    return [
-      new ConnectionPositionPair(
-        { originX: 'start', originY: 'top' },
-        { overlayX: 'start', overlayY: 'top' }
-      ),
-    ];
-  }
-
-  get overlayPositionStrategy(): PositionStrategy {
-    return this.overlay
-      .position()
-      .flexibleConnectedTo(this.cursorCell.nativeElement)
-      .withPositions(this.overlayPositions)
-      .withPush(false)
-      .withFlexibleDimensions(true)
-      .withGrowAfterOpen(true)
-      .withLockedPosition(true);
-  }
-
-  get cursorCell(): GridCellDirective | null {
-    if (!this.cursorIndex) {
-      return null;
-    }
-
-    return this.cellMatrix.at(this.cursorIndex.x)?.at(this.cursorIndex.y);
-  }
-
-  get overlaySizeConfig(): OverlaySizeConfig {
-    const tableRect =
-      this.table.nativeElement.getBoundingClientRect() as DOMRect;
-    const cellRect =
-      this.cursorCell?.nativeElement.getBoundingClientRect() ?? tableRect;
-
-    const maxWidth = tableRect.right - cellRect.left;
-    const maxHeight = tableRect.bottom - cellRect.top;
-
-    return {
-      height: this.cursorCell?.nativeElement.clientHeight,
-      width: this.cursorCell?.nativeElement.clientWidth,
-      maxHeight,
-      maxWidth,
-    };
-  }
-
-  set cursorPosition(value: Point) {
-    value.x = normalizeIndex(value.x, this.cellMatrix.length);
-    value.y = normalizeIndex(value.y, this.cellMatrix[value.x].length);
-    this.cursorCell?.deselect();
-    this.toggleColumnHeaderHighlight();
-    this.cursorIndex = value;
-    this.toggleColumnHeaderHighlight();
-    this.cursorCell?.select();
-  }
 
   @HostListener('keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent): void {
-    handleKeysPressed(event, { key: 'ArrowUp' }, () => {
-      this.cursorPosition = { ...this.cursorIndex, x: this.cursorIndex.x - 1 };
-    });
+    this.keyManager.handleKeyDown(event);
+  }
 
-    handleKeysPressed(event, { key: 'ArrowDown' }, () => {
-      this.cursorPosition = { ...this.cursorIndex, x: this.cursorIndex.x + 1 };
-    });
+  selectCell(cell: GridCellDirective) {
+    for (const [rowIdx, row] of this.cellMatrix.entries()) {
+      const columnIdx = row.indexOf(cell);
 
-    handleKeysPressed(event, { key: 'ArrowLeft' }, () => {
-      this.cursorPosition = { ...this.cursorIndex, y: this.cursorIndex.y - 1 };
-    });
-
-    handleKeysPressed(event, { key: 'ArrowRight' }, () => {
-      this.cursorPosition = { ...this.cursorIndex, y: this.cursorIndex.y + 1 };
-    });
-
-    handleKeysPressed(event, { key: 'Enter' }, () => {
-      this.cursorCell?.edit();
-    });
+      if (columnIdx >= 0) {
+        return this.keyManager.cursor.setPosition({
+          x: columnIdx,
+          y: rowIdx
+        });
+      }
+    }
   }
 
   ngOnInit(): void {}
 
+  ngOnDestroy(): void {
+    this.keyManager.destroy();
+  }
   ngAfterViewInit(): void {
     this.initGrid(this.gridCells.toArray());
-    this.cursorPosition = { x: 0, y: 0 };
+    this.keyManager = new GridKeyManager(this.cellMatrix);
+    this.keyManager.activeItemChanges.subscribe(() => {
+      if (this.keyManager.previousItem) {
+        this.toggleColumnHeaderHighlight(this.keyManager.previousItem);
+      }
+      this.toggleColumnHeaderHighlight(this.keyManager.selectedItem);
+    });
+
+    this.selectCell(this.cellMatrix[0][0]);
     this.changeDetectorRef.detectChanges();
-    this.editPortal = new ComponentPortal(
-      OverlayInputComponent,
-      this.viewContainerRef
-    );
   }
 
   private initGrid(cells: GridCellDirective[]) {
@@ -182,10 +113,10 @@ export class GridComponent implements OnInit, AfterViewInit {
     this.cellMatrix = Array.from(cellMap.values());
   }
 
-  private toggleColumnHeaderHighlight() {
-    const activeColumnName = this.cursorCell?.columnName;
+  private toggleColumnHeaderHighlight(item: GridCellDirective) {
+    const columnName = item.columnName;
     const columnHeaderElement = this.table.nativeElement.querySelector(
-      `th.cdk-column-${activeColumnName}[role="columnheader"]`
+      `th.cdk-column-${columnName}[role="columnheader"]`
     );
 
     if (!columnHeaderElement) {
@@ -197,25 +128,6 @@ export class GridComponent implements OnInit, AfterViewInit {
     } else {
       this.renderer2.addClass(columnHeaderElement, 'selected');
     }
-  }
-
-  private createOverlay() {
-    this.overlayRef = this.overlay.create({
-      positionStrategy: this.overlayPositionStrategy,
-      scrollStrategy: this.overlay.scrollStrategies.reposition(),
-      ...this.overlaySizeConfig,
-    });
-  }
-
-  private attachOverlay() {
-    if (!this.overlayRef) {
-      this.createOverlay();
-    } else {
-      this.overlayRef.detach();
-      this.overlayRef.updatePositionStrategy(this.overlayPositionStrategy);
-      this.overlayRef.updateSize(this.overlaySizeConfig);
-    }
-    this.overlayRef.attach(this.editPortal);
   }
 }
 

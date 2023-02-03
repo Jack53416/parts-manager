@@ -6,6 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { handleKeysPressed, keysPressed } from '../../../shared/utils/keyboard';
 
 @Component({
@@ -19,7 +20,9 @@ export class GridCellValueComponent implements OnInit {
 
   editMode = false;
 
-  constructor() {}
+  fieldInput: FormControl<string> = this.formBuilder.control('');
+
+  constructor(private formBuilder: FormBuilder) {}
 
   @ViewChild('textInput', { static: false, read: ElementRef })
    set textInputRef(value: ElementRef) {
@@ -36,4 +39,9 @@ export class GridCellValueComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  edit(key: string) {
+    this.fieldInput.reset(key);
+    this.editMode = true;
+  }
 }
