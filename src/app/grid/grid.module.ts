@@ -7,6 +7,7 @@ import { OverlayInputComponent } from './components/overlay-input/overlay-input.
 import { GridCellDirective } from './directives/grid-cell.directive';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import { GridCellValueComponent } from './components/grid-cell-value/grid-cell-value.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -19,10 +20,14 @@ import { GridCellValueComponent } from './components/grid-cell-value/grid-cell-v
     CommonModule,
     CdkTableModule,
     OverlayModule,
-    TextFieldModule
+    TextFieldModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
-    GridComponent
+    GridComponent,
+    GridCellValueComponent,
+    GridCellDirective
   ]
 })
 export class GridModule { }

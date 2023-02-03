@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
+import { PartsEditorComponent } from './parts-editor/components/parts-editor/parts-editor.component';
 import { PageNotFoundComponent } from './shared/components';
-import { HomeComponent } from './home/home.component';
 
 const routes: Routes = [
   {
@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    component: HomeComponent,
+    component: PartsEditorComponent,
   },
   {
     path: '**',

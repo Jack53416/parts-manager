@@ -1,3 +1,4 @@
+@use './app/grid/grid_theme' as grid;
 @import "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css";
 @import 'material-icons/iconfont/material-icons.scss';
 
@@ -17,3 +18,5 @@ html, body {
 textarea.transparent, input.transparent {
   all: unset;
 }
+
+@include grid.theme();

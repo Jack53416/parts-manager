@@ -1,0 +1,65 @@
+@mixin color() {
+  table {
+    background: white;
+  }
+
+  th {
+    background: #f6f6f6;
+    border: thin solid #00000044;
+  }
+
+  tr.selected th,
+  th.selected {
+    background: #d6d6d6;
+  }
+
+  td {
+    border: thin solid #00000022;
+    &[role="gridcell"].selected::before {
+      border: 2px solid rgb(80, 155, 241);
+    }
+  }
+
+  tr:nth-child(2n) td[role="gridcell"] {
+    background: #6393bb10;
+  }
+}
+
+@mixin typography() {
+}
+
+@mixin theme() {
+  app-grid {
+    @include color();
+    @include typography();
+    
+    table {
+      width: 100%;
+      height: fit-content;
+      border-collapse: collapse;
+    }
+
+    th[role="columnheader"] {
+      padding: 8px 4px;
+    }
+
+    td {
+      position: relative;
+
+      &[role="gridcell"].selected::before {
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: 100;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
+
+      &[role="gridcell"].selected:focus-visible {
+        outline: none;
+      }
+    }
+  }
+}

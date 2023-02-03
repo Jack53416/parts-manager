@@ -5,6 +5,6 @@
 <div *ngIf="comment" class="comment-marker">
     
 </div>
-<input *ngIf="editMode" (blur)="editMode = false" #textInput class="transparent" type="text"/>
+<input [formControl]="editInput" *ngIf="editMode" (blur)="editMode = false" #textInput class="transparent" type="text"/>
 
 
