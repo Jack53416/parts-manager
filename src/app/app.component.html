@@ -1,5 +1,8 @@
 <div class="app-container">
     <app-toolbar></app-toolbar>
+    <app-custom-toolbar [showBox]="_showRedBox"></app-custom-toolbar>
+    <button (click)="handleDupa3Click()">dupa3</button>
+    <button (click)="showRedBox()">show red box</button>
     <router-outlet></router-outlet>
 </div>
 
