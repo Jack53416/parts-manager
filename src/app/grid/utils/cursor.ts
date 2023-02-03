@@ -5,9 +5,9 @@ export class Cursor implements Point {
   private position!: Point;
 
   constructor(
-    startingPoint: Point,
     private getBounds: (pos: Point) => Point,
     private positionChanged: (pos: Point) => void,
+    private startingPoint: Point = {x: -1, y: -1},
     public wrap = true
   ) {
     this.position = { ...startingPoint };
@@ -70,6 +70,10 @@ export class Cursor implements Point {
 
   moveToFirstRow() {
     this.y = 0;
+  }
+
+  reset() {
+    this.position = {...this.startingPoint};
   }
 
   private notifyPositionChanged() {

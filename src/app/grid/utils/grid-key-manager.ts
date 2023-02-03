@@ -1,22 +1,24 @@
 import { Observable, Subject } from 'rxjs';
 import { describePressedKey } from '../../shared/utils/keyboard';
-import { Editable } from '../models/editable';
+import { Foscusable } from '../models/editable';
 import { Cursor } from './cursor';
 import { Point } from './point';
 
-export class GridKeyManager<T extends Editable> {
+export class GridKeyManager<T extends Foscusable> {
   pageUpAndDownDelta = 3;
   cursor!: Cursor;
 
   private activeItem: T | null;
   private previousActiveItem: T | null;
+  private cellMatrix: T[][];
+
   private readonly activeItemChanges$ = new Subject<Point>();
-  private keyMap = new Map<string, () => void>([
+  private readonly keyMap = new Map<string, () => void>([
     ['ArrowUp', () => this.cursor.moveUp()],
     ['ArrowDown', () => this.cursor.moveDown()],
     ['ArrowLeft', () => this.cursor.moveLeft()],
     ['ArrowRight', () => this.cursor.moveRight()],
-    ['Enter', () => this.getItem(this.cursor)?.edit()],
+    ['Enter', () => this.getItem(this.cursor)?.value.edit()],
     ['PageDown', () => (this.cursor.y += this.pageUpAndDownDelta)],
     ['PageUp', () => (this.cursor.y -= this.pageUpAndDownDelta)],
     ['Home', () => this.cursor.moveToFirstColumn()],
@@ -25,10 +27,14 @@ export class GridKeyManager<T extends Editable> {
     ['ctrl+End', () => this.cursor.moveToLastRow()],
   ]);
 
-  constructor(private cellMatrix: T[][]) {
+  constructor(cellMatrix?: T[][]) {
+    this.cellMatrix = cellMatrix;
+
     this.cursor = new Cursor(
-      { x: 0, y: 0 },
-      (cursor) => ({ x: cellMatrix[cursor.y].length, y: cellMatrix.length }),
+      (cursor) => ({
+        x: this.cellMatrix?.at(cursor.y).length ?? 0,
+        y: this.cellMatrix?.length ?? 0,
+      }),
       (cursor) => this.selectCell(cursor)
     );
   }
@@ -45,6 +51,31 @@ export class GridKeyManager<T extends Editable> {
     return this.activeItemChanges$.asObservable();
   }
 
+  set cells(cellMatrix: T[][]) {
+    this.cellMatrix = cellMatrix;
+    const activePosiion = this.findCellPosition(this.activeItem);
+    if (activePosiion) {
+      this.selectCell(activePosiion);
+    } else {
+      this.cursor.reset();
+    }
+  }
+
+  findCellPosition(cell: T): Point | null {
+    for (const [rowIdx, row] of this.cellMatrix.entries()) {
+      const columnIdx = row.indexOf(cell);
+
+      if (columnIdx >= 0) {
+        return {
+          x: columnIdx,
+          y: rowIdx,
+        };
+      }
+    }
+
+    return null;
+  }
+
   getItem(cursor: Point): T | null {
     return this.cellMatrix.at(cursor.y).at(cursor.x);
   }
@@ -54,8 +85,8 @@ export class GridKeyManager<T extends Editable> {
     if (handler) {
       handler();
       event.preventDefault();
-    } else if (!this.activeItem.inEditMode && event.key.length === 1) {
-      this.activeItem?.edit(event.key);
+    } else if (!this.activeItem.value.editMode && event.key.length === 1) {
+      this.activeItem?.value.edit(event.key);
       event.preventDefault();
     }
   }

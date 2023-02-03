@@ -5,7 +5,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
-import { HomeModule } from './home/home.module';
+import { PartsEditorModule } from './parts-editor/home.module';
 import { SharedModule } from './shared/shared.module';
 import { ToolbarModule } from './toolbar/toolbar.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -19,7 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     CoreModule,
     SharedModule,
-    HomeModule,
+    PartsEditorModule,
     AppRoutingModule,
     ToolbarModule,
   ],

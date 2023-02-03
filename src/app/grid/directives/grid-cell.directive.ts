@@ -1,23 +1,28 @@
 import { CdkColumnDef } from '@angular/cdk/table';
 import {
-  AfterContentInit,
+  AfterViewInit,
   ContentChild,
   Directive,
   ElementRef,
   HostListener,
   Inject,
+  OnDestroy,
   OnInit,
   Renderer2,
 } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { GridCellValueComponent } from '../components/grid-cell-value/grid-cell-value.component';
 import { AriaGrid, ARIA_GRID } from '../models/aria-grid';
-import { Editable } from '../models/editable';
+import { Foscusable } from '../models/editable';
 
 @Directive({
   selector: 'td[appGridCell]',
 })
-export class GridCellDirective implements Editable, OnInit {
-  @ContentChild(GridCellValueComponent) cellValue: GridCellValueComponent;
+export class GridCellDirective
+  implements Foscusable, OnInit, OnDestroy, AfterViewInit
+{
+  @ContentChild(GridCellValueComponent) value: GridCellValueComponent;
+  private destroy$ = new Subject<void>();
 
   constructor(
     @Inject(ARIA_GRID) private grid: AriaGrid,
@@ -25,10 +30,6 @@ export class GridCellDirective implements Editable, OnInit {
     private render2: Renderer2,
     private cdkColumnDef: CdkColumnDef
   ) {}
-
-  get inEditMode(): boolean {
-    return this.cellValue?.editMode ?? false;
-  }
 
   get columnName() {
     return this.cdkColumnDef.cssClassFriendlyName;
@@ -55,6 +56,16 @@ export class GridCellDirective implements Editable, OnInit {
     this.render2.setAttribute(this.nativeElement, 'tabindex', '-1');
   }
 
+  ngAfterViewInit(): void {
+    this.value.editConfirmed
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.nativeElement.focus());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
+
   focus() {
     this.nativeElement.focus();
     this.render2.setAttribute(this.nativeElement, 'tabindex', '0');
@@ -64,9 +75,5 @@ export class GridCellDirective implements Editable, OnInit {
   focusOut() {
     this.render2.setAttribute(this.nativeElement, 'tabindex', '-1');
     this.render2.removeClass(this.nativeElement, 'selected');
-  }
-
-  edit(key?: string) {
-    this.cellValue.edit(key ?? '');
   }
 }

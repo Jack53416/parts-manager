@@ -1,42 +1,24 @@
-import { DataSource } from '@angular/cdk/collections';
+import { CdkTable } from '@angular/cdk/table';
 import {
+  AfterContentInit,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  ContentChild,
+  ContentChildren,
   ElementRef,
   HostListener,
   OnDestroy,
   OnInit,
+  Output,
   QueryList,
   Renderer2,
-  ViewChild,
-  ViewChildren,
 } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { GridCellDirective } from '../../directives/grid-cell.directive';
 import { AriaGrid, ARIA_GRID } from '../../models/aria-grid';
 import { GridKeyManager } from '../../utils/grid-key-manager';
 import { Point } from '../../utils/point';
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-  { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-  { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-  { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-  { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-  { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-  { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-  { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-  { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-  { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' },
-];
 
 @Component({
   selector: 'app-grid',
@@ -45,20 +27,18 @@ const ELEMENT_DATA: PeriodicElement[] = [
   providers: [{ provide: ARIA_GRID, useExisting: GridComponent }],
 })
 export class GridComponent
-  implements AriaGrid, OnInit, OnDestroy, AfterViewInit
+  implements AriaGrid, OnInit, OnDestroy, AfterContentInit
 {
-  @ViewChildren(GridCellDirective) gridCells!: QueryList<GridCellDirective>;
-  @ViewChild('table', { static: true, read: ElementRef }) table: ElementRef;
+  @ContentChildren(GridCellDirective, { descendants: true }) gridCells!: QueryList<GridCellDirective>;
+  @ContentChild(CdkTable, { static: true, read: ElementRef }) table: ElementRef;
 
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = new ExampleDataSource();
-  cursorIndex!: Point;
-  keyManager!: GridKeyManager<GridCellDirective>;
+
+  keyManager: GridKeyManager<GridCellDirective> = new GridKeyManager();
 
   private cellMatrix: GridCellDirective[][];
+  private destroy$ = new Subject<void>();
 
   constructor(
-    private changeDetectorRef: ChangeDetectorRef,
     private renderer2: Renderer2
   ) {}
 
@@ -68,35 +48,33 @@ export class GridComponent
   }
 
   selectCell(cell: GridCellDirective) {
-    for (const [rowIdx, row] of this.cellMatrix.entries()) {
-      const columnIdx = row.indexOf(cell);
-
-      if (columnIdx >= 0) {
-        return this.keyManager.cursor.setPosition({
-          x: columnIdx,
-          y: rowIdx
-        });
-      }
+    const position = this.keyManager.findCellPosition(cell);
+    if (position) {
+      this.keyManager.cursor.setPosition(position);
     }
   }
 
-  ngOnInit(): void {}
-
-  ngOnDestroy(): void {
-    this.keyManager.destroy();
-  }
-  ngAfterViewInit(): void {
-    this.initGrid(this.gridCells.toArray());
-    this.keyManager = new GridKeyManager(this.cellMatrix);
-    this.keyManager.activeItemChanges.subscribe(() => {
+  ngOnInit(): void {
+    this.keyManager.activeItemChanges
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(() => {
       if (this.keyManager.previousItem) {
         this.toggleColumnHeaderHighlight(this.keyManager.previousItem);
       }
       this.toggleColumnHeaderHighlight(this.keyManager.selectedItem);
     });
+  }
 
-    this.selectCell(this.cellMatrix[0][0]);
-    this.changeDetectorRef.detectChanges();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.keyManager.destroy();
+  }
+
+  ngAfterContentInit(): void {
+    this.gridCells.changes.subscribe((value) => {
+      this.initGrid(value.toArray());
+      this.keyManager.cells = this.cellMatrix;
+    });
   }
 
   private initGrid(cells: GridCellDirective[]) {
@@ -129,16 +107,4 @@ export class GridComponent
       this.renderer2.addClass(columnHeaderElement, 'selected');
     }
   }
-}
-
-export class ExampleDataSource extends DataSource<PeriodicElement> {
-  /** Stream of data that is provided to the table. */
-  data = new BehaviorSubject<PeriodicElement[]>(ELEMENT_DATA);
-
-  /** Connect function called by the table to retrieve one stream containing the data to render. */
-  connect(): Observable<PeriodicElement[]> {
-    return this.data;
-  }
-
-  disconnect() {}
 }

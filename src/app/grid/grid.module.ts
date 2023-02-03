@@ -25,7 +25,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule
   ],
   exports: [
-    GridComponent
+    GridComponent,
+    GridCellValueComponent,
+    GridCellDirective
   ]
 })
 export class GridModule { }

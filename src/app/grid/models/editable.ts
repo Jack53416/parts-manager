@@ -1,6 +1,10 @@
 export interface Editable {
-  inEditMode: boolean;
+  editMode: boolean;
   edit(key?: string): void;
+}
+
+export interface Foscusable {
+  value: Editable;
   focus(): void;
   focusOut(): void;
 }
