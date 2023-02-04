@@ -8,16 +8,19 @@
     border: thin solid #00000044;
   }
 
-  tr.selected th,
-  th.selected {
-    background: #d6d6d6;
+  &:focus-within {
+    tr.selected th,
+    th.selected {
+      background: #d6d6d6;
+    }
+
+    td[role="gridcell"].selected::before {
+      border: 2px solid rgb(80, 155, 241);
+    }
   }
 
   td {
     border: thin solid #00000022;
-    &[role="gridcell"].selected::before {
-      border: 2px solid rgb(80, 155, 241);
-    }
   }
 
   tr:nth-child(2n) td[role="gridcell"] {
@@ -29,16 +32,13 @@
 }
 
 @mixin theme() {
-  app-grid {
+  table[appGrid] {
     @include color();
     @include typography();
-    
-    table {
-      width: 100%;
-      height: fit-content;
-      border-collapse: collapse;
-    }
 
+    width: 100%;
+    height: fit-content;
+    border-collapse: collapse;
     th[role="columnheader"] {
       padding: 8px 4px;
     }
