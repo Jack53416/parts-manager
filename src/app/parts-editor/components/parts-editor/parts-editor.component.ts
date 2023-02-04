@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridComponent } from '../../../grid/components/grid/grid.component';
+import { GridDirective } from '../../../grid/directives/grid.directive';
 import { GridDataSource } from '../../../grid/models/grid-data-source';
 import { PeriodicElement } from '../../models/periodic-element';
 import { PartsDataService } from '../../services/parts-data.service';
@@ -10,7 +10,7 @@ import { PartsDataService } from '../../services/parts-data.service';
   styleUrls: ['./parts-editor.component.scss'],
 })
 export class PartsEditorComponent implements OnInit {
-  @ViewChild(GridComponent, { static: true }) grid: GridComponent;
+  @ViewChild(GridDirective, { static: true }) grid: GridDirective;
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = new GridDataSource<PeriodicElement>([]);
 

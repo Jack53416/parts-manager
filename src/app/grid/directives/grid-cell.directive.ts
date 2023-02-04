@@ -8,6 +8,7 @@ import {
   Inject,
   OnDestroy,
   OnInit,
+  Optional,
   Renderer2,
 } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -28,11 +29,11 @@ export class GridCellDirective
     @Inject(ARIA_GRID) private grid: AriaGrid,
     private elementRef: ElementRef,
     private render2: Renderer2,
-    private cdkColumnDef: CdkColumnDef
+    @Optional() private cdkColumnDef: CdkColumnDef
   ) {}
 
-  get columnName() {
-    return this.cdkColumnDef.cssClassFriendlyName;
+  get columnName(): string | null {
+    return this.cdkColumnDef?.cssClassFriendlyName;
   }
 
   get parentRowElement(): HTMLTableRowElement | null {

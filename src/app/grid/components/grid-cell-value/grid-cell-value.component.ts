@@ -40,7 +40,6 @@ export class GridCellValueComponent implements OnInit, Editable {
   @HostListener('keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
     if (keysPressed(event, { key: 'Enter' })) {
-      this.editMode = false;
       this.confirmChanges();
     }
 
@@ -57,6 +56,7 @@ export class GridCellValueComponent implements OnInit, Editable {
   confirmChanges() {
     // ToDo: Outsource changes to parts editor
     this.element[this.key] = this.editInput.value;
+    this.editMode = false;
     this.editConfirmed.next();
   }
 }
