@@ -76,6 +76,10 @@ export class GridDirective
     }
   }
 
+  toggleSelectionMode() {
+    this.keyManager.selectedItem.selectionSource = true;
+  }
+
   private initCellMatrix(cells: GridCellDirective[]) {
     const cellMap = new Map<HTMLTableRowElement, GridCellDirective[]>();
 

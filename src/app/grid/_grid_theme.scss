@@ -15,16 +15,23 @@
     }
 
     td[role="gridcell"].selected::before {
-      border: 2px solid rgb(80, 155, 241);
+      border: 2px solid rgba(43, 128, 224, 1.0);
     }
   }
 
   td {
     border: thin solid #00000022;
+
+    &.selection-source {
+      background-image: linear-gradient(90deg, black 50%, transparent 50%),
+      linear-gradient(90deg, black 50%, transparent 50%),
+      linear-gradient(0deg, black 50%, transparent 50%),
+      linear-gradient(0deg, black 50%, transparent 50%);
+    }
   }
 
   tr:nth-child(2n) td[role="gridcell"] {
-    background: #6393bb10;
+    background-color: #6393bb10;
   }
 }
 
@@ -50,7 +57,7 @@
         content: "";
         display: block;
         position: absolute;
-        z-index: 100;
+        z-index: -1;
         left: 0;
         right: 0;
         top: 0;
@@ -59,6 +66,26 @@
 
       &[role="gridcell"].selected:focus-visible {
         outline: none;
+      }
+
+      &.selection-source.selected::before {
+        opacity: 0.5;
+      }
+
+      &.selection-source {
+        background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+        background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+        background-position: left top, right bottom, left bottom, right top;
+        animation: border-dance 1.5s infinite linear;
+      }
+      @keyframes border-dance {
+        0% {
+          background-position: left top, right bottom, left bottom, right top;
+        }
+        100% {
+          background-position: left 15px top, right 15px bottom,
+            left bottom 15px, right top 15px;
+        }
       }
     }
   }

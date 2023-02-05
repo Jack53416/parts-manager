@@ -1,16 +1,16 @@
 import {
   Component,
-  ElementRef,
-  HostListener,
+  ElementRef, EventEmitter, HostListener,
   Input,
   OnInit,
   Output,
-  ViewChild,
+  ViewChild
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { keysPressed } from '../../../shared/utils/keyboard';
+import {
+  describePressedKey
+} from '../../../shared/utils/keyboard';
 import { Editable } from '../../models/editable';
-import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-grid-cell-value',
@@ -24,10 +24,20 @@ export class GridCellValueComponent implements OnInit, Editable {
   @Input() value: string;
   @Input() comment: string;
 
-  @Output() editConfirmed = new EventEmitter<void>();
+  @Output() editDone = new EventEmitter<void>();
 
   editMode = false;
   editInput: FormControl<string> = new FormControl('');
+  private readonly keyMap = new Map<string, () => void>([
+    ['Enter', () => this.confirmChanges()],
+    [
+      'Escape',
+      () => {
+        this.editMode = false;
+        this.editDone.next();
+      },
+    ],
+  ]);
   constructor() {}
 
   @ViewChild('textInput', { static: false, read: ElementRef })
@@ -39,17 +49,19 @@ export class GridCellValueComponent implements OnInit, Editable {
 
   @HostListener('keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
-    if (keysPressed(event, { key: 'Enter' })) {
-      this.confirmChanges();
+    const handler = this.keyMap.get(describePressedKey(event));
+    if (handler) {
+      handler();
     }
-
-    event.stopPropagation();
+    if (this.editMode) {
+      event.stopPropagation();
+    }
   }
 
   ngOnInit(): void {}
 
-  edit(key: string) {
-    this.editInput.reset(key);
+  edit(key?: string) {
+    this.editInput.reset(key ?? this.value);
     this.editMode = true;
   }
 
@@ -57,6 +69,5 @@ export class GridCellValueComponent implements OnInit, Editable {
     // ToDo: Outsource changes to parts editor
     this.element[this.key] = this.editInput.value;
     this.editMode = false;
-    this.editConfirmed.next();
   }
 }

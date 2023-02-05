@@ -20,7 +20,7 @@ export class GridKeyManager<T extends Foscusable> {
     ['ArrowDown', () => this.cursor.moveDown()],
     ['ArrowLeft', () => this.cursor.moveLeft()],
     ['ArrowRight', () => this.cursor.moveRight()],
-    ['Enter', () => this.getItem(this.cursor)?.value.edit()],
+    ['Enter', () => this.cursor.moveDown()],
     ['PageDown', () => (this.cursor.y += this.pageUpAndDownDelta)],
     ['PageUp', () => (this.cursor.y -= this.pageUpAndDownDelta)],
     ['Home', () => this.cursor.moveToFirstColumn()],

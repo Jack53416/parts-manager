@@ -47,9 +47,22 @@ export class GridCellDirective
     return this.elementRef.nativeElement as HTMLTableCellElement;
   }
 
+  set selectionSource(value: boolean) {
+    if (value) {
+      this.render2.addClass(this.nativeElement, 'selection-source');
+    } else {
+      this.render2.removeClass(this.nativeElement, 'selection-source');
+    }
+  }
+
   @HostListener('mousedown')
   handleMouseKeyDown() {
     this.grid.selectCell(this);
+  }
+
+  @HostListener('dblclick')
+  handleDoubleClick() {
+    this.value.edit();
   }
 
   ngOnInit(): void {
@@ -58,7 +71,7 @@ export class GridCellDirective
   }
 
   ngAfterViewInit(): void {
-    this.value.editConfirmed
+    this.value.editDone
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.nativeElement.focus());
   }
