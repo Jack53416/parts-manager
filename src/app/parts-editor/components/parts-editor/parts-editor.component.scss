@@ -1,3 +1,16 @@
-.cdk-column-position {
+th.cdk-column-position, th[role="rowheader"] {
   width: 6ch;
+  min-width: 6ch;
+}
+
+td,
+th {
+  width: 12ch;
+  min-width: 12ch;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+th {
+  word-break: break-all;
 }

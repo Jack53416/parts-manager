@@ -11,14 +11,14 @@ import { PartsDataService } from '../../services/parts-data.service';
 })
 export class PartsEditorComponent implements OnInit {
   @ViewChild(GridDirective, { static: true }) grid: GridDirective;
+  stickyHeaders: Set<string> = new Set(['machine', 'name', 'articleNo', 'tool']);
   partsHeaders: string[] = [...PART_FAILURES];
-  displayedColumns: string[] = ['position',...PART_FAILURES];
+  displayedColumns: string[] = ['position', ...PART_FAILURES];
   dataSource = new GridDataSource<Partial<PartFailure>>([]);
 
   constructor(private partsDataService: PartsDataService) {}
 
   ngOnInit(): void {
     this.dataSource.data.next(this.partsDataService.getFailureReport());
-    console.log(this.displayedColumns);
   }
 }

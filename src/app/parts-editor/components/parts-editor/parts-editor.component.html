@@ -1,17 +1,17 @@
 <table appGrid #table cdk-table [dataSource]="dataSource" fixedLayout>
 
-    <ng-container cdkColumnDef="position">
+    <ng-container cdkColumnDef="position" sticky>
         <th role="columnheader" cdk-header-cell *cdkHeaderCellDef></th>
         <th role="rowheader" cdk-cell *cdkCellDef="let element; let idx = index">{{idx + 1}}</th>
     </ng-container>
 
-    <ng-container *ngFor="let column of partsHeaders" cdkColumnDef="{{column}}">
+    <ng-container *ngFor="let column of partsHeaders" cdkColumnDef="{{column}}" [sticky]="stickyHeaders.has(column)">
         <th role="columnheader" cdk-header-cell *cdkHeaderCellDef>{{column | titlecase}}</th>
         <td appGridCell cdk-cell *cdkCellDef="let element">
             <app-grid-cell-value [element]="element" key="{{column}}" [value]="element[column]"></app-grid-cell-value>
         </td>
     </ng-container>
 
-    <tr role="row" cdk-header-row *cdkHeaderRowDef="displayedColumns"></tr>
+    <tr role="row" cdk-header-row *cdkHeaderRowDef="displayedColumns; sticky:true"></tr>
     <tr cdk-row *cdkRowDef="let row; let idx = index; columns: displayedColumns"></tr>
 </table>
