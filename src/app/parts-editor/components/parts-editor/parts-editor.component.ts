@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { GridDirective } from '../../../grid/directives/grid.directive';
 import { GridDataSource } from '../../../grid/models/grid-data-source';
-import { PeriodicElement } from '../../models/periodic-element';
+import { PartFailure, PART_FAILURES } from '../../models/part-failure';
 import { PartsDataService } from '../../services/parts-data.service';
 
 @Component({
@@ -11,12 +11,14 @@ import { PartsDataService } from '../../services/parts-data.service';
 })
 export class PartsEditorComponent implements OnInit {
   @ViewChild(GridDirective, { static: true }) grid: GridDirective;
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = new GridDataSource<PeriodicElement>([]);
+  partsHeaders: string[] = [...PART_FAILURES];
+  displayedColumns: string[] = ['position',...PART_FAILURES];
+  dataSource = new GridDataSource<Partial<PartFailure>>([]);
 
   constructor(private partsDataService: PartsDataService) {}
 
   ngOnInit(): void {
-    this.dataSource.data.next(this.partsDataService.getParts());
+    this.dataSource.data.next(this.partsDataService.getFailureReport());
+    console.log(this.displayedColumns);
   }
 }

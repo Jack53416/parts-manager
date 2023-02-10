@@ -43,9 +43,9 @@
     @include color();
     @include typography();
 
-    width: 100%;
     height: fit-content;
     border-collapse: collapse;
+    
     th[role="columnheader"] {
       padding: 8px 4px;
     }
