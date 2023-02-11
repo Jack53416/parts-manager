@@ -1,14 +1,16 @@
-<table appGrid #table cdk-table [dataSource]="dataSource" fixedLayout>
+<table appGrid #table cdk-table [dataSource]="dataSource">
 
     <ng-container cdkColumnDef="position" sticky>
         <th role="columnheader" cdk-header-cell *cdkHeaderCellDef></th>
         <th role="rowheader" cdk-cell *cdkCellDef="let element; let idx = index">{{idx + 1}}</th>
     </ng-container>
 
-    <ng-container *ngFor="let column of partsHeaders" cdkColumnDef="{{column}}" [sticky]="stickyHeaders.has(column)">
+    <ng-container *ngFor="let column of partHeaders" cdkColumnDef="{{column}}" [sticky]="stickyHeaders.has(column)">
         <th role="columnheader" cdk-header-cell *cdkHeaderCellDef>{{column | titlecase}}</th>
         <td appGridCell cdk-cell *cdkCellDef="let element">
-            <app-grid-cell-value [element]="element" key="{{column}}" [value]="element[column]"></app-grid-cell-value>
+            <app-grid-cell-value [value]="element[column].value" [comment]="element[column].comment"
+                (editConfirmed)="insertValue(element[column], $event)">
+            </app-grid-cell-value>
         </td>
     </ng-container>
 

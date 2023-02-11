@@ -71,7 +71,7 @@ export class GridCellDirective
   }
 
   ngAfterViewInit(): void {
-    this.value.editDone
+    this.value.editDiscarded
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.nativeElement.focus());
   }

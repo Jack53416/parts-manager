@@ -12,7 +12,7 @@ export class GridKeyManager<T extends Foscusable> {
 
   private activeItem: T | null;
   private previousActiveItem: T | null;
-  private cellMatrix: T[][];
+  private cellMatrix: T[][] = [];
 
   private readonly activeItemChanges$ = new Subject<GridCursorEvent<T>>();
   private readonly keyMap = new Map<string, () => void>([

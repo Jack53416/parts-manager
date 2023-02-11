@@ -1,15 +1,15 @@
 import {
   Component,
-  ElementRef, EventEmitter, HostListener,
+  ElementRef,
+  EventEmitter,
+  HostListener,
   Input,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import {
-  describePressedKey
-} from '../../../shared/utils/keyboard';
+import { describePressedKey } from '../../../shared/utils/keyboard';
 import { Editable } from '../../models/editable';
 
 @Component({
@@ -18,13 +18,11 @@ import { Editable } from '../../models/editable';
   styleUrls: ['./grid-cell-value.component.scss'],
 })
 export class GridCellValueComponent implements OnInit, Editable {
-  @Input() element: unknown;
-  @Input() key: string;
-
   @Input() value: string;
   @Input() comment: string;
 
-  @Output() editDone = new EventEmitter<void>();
+  @Output() editDiscarded = new EventEmitter<void>();
+  @Output() editConfirmed = new EventEmitter<string>();
 
   editMode = false;
   editInput: FormControl<string> = new FormControl('');
@@ -34,7 +32,7 @@ export class GridCellValueComponent implements OnInit, Editable {
       'Escape',
       () => {
         this.editMode = false;
-        this.editDone.next();
+        this.editDiscarded.next();
       },
     ],
   ]);
@@ -60,14 +58,19 @@ export class GridCellValueComponent implements OnInit, Editable {
 
   ngOnInit(): void {}
 
+  handleBlur() {
+    if (this.editMode) {
+      this.confirmChanges();
+    }
+  }
+
   edit(key?: string) {
     this.editInput.reset(key ?? this.value);
     this.editMode = true;
   }
 
   confirmChanges() {
-    // ToDo: Outsource changes to parts editor
-    this.element[this.key] = this.editInput.value;
     this.editMode = false;
+    this.editConfirmed.next(this.editInput.value);
   }
 }

@@ -1,5 +1,5 @@
 <div class="value-container" [style.opacity]="editMode ? 0 : 1">
-    <ng-container *ngIf="value else emptyValue"> 
+    <ng-container *ngIf="value else emptyValue">
         {{value}}
     </ng-container>
     <ng-template #emptyValue>
@@ -8,8 +8,6 @@
 </div>
 
 <div *ngIf="comment" class="comment-marker">
-    
+
 </div>
-<input [formControl]="editInput" *ngIf="editMode" (blur)="confirmChanges()" #textInput class="transparent" type="text"/>
-
-
+<input [formControl]="editInput" *ngIf="editMode" (blur)="handleBlur()" #textInput class="transparent" type="text" />

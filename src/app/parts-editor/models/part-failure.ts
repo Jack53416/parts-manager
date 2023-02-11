@@ -18,7 +18,9 @@ export interface PartFailure extends Part {
     others: number;
 }
 
-export const PART_FAILURES = [
+export type PartColumns = keyof PartFailure;
+
+export const PART_FAILURES: PartColumns[] = [
     'machine',
     'name',
     'articleNo',
@@ -40,6 +42,6 @@ export const PART_FAILURES = [
     'silvering',
     'removedByRobot',
     'airBubbles',
-    'others'
+    'others',
 ];
 
