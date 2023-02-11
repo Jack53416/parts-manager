@@ -8,6 +8,7 @@ import {
   Inject,
   OnDestroy,
   OnInit,
+  Optional,
   Renderer2,
 } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -28,11 +29,11 @@ export class GridCellDirective
     @Inject(ARIA_GRID) private grid: AriaGrid,
     private elementRef: ElementRef,
     private render2: Renderer2,
-    private cdkColumnDef: CdkColumnDef
+    @Optional() private cdkColumnDef: CdkColumnDef
   ) {}
 
-  get columnName() {
-    return this.cdkColumnDef.cssClassFriendlyName;
+  get columnName(): string | null {
+    return this.cdkColumnDef?.cssClassFriendlyName;
   }
 
   get parentRowElement(): HTMLTableRowElement | null {
@@ -46,9 +47,22 @@ export class GridCellDirective
     return this.elementRef.nativeElement as HTMLTableCellElement;
   }
 
+  set selectionSource(value: boolean) {
+    if (value) {
+      this.render2.addClass(this.nativeElement, 'selection-source');
+    } else {
+      this.render2.removeClass(this.nativeElement, 'selection-source');
+    }
+  }
+
   @HostListener('mousedown')
   handleMouseKeyDown() {
     this.grid.selectCell(this);
+  }
+
+  @HostListener('dblclick')
+  handleDoubleClick() {
+    this.value.edit();
   }
 
   ngOnInit(): void {
@@ -57,7 +71,7 @@ export class GridCellDirective
   }
 
   ngAfterViewInit(): void {
-    this.value.editConfirmed
+    this.value.editDiscarded
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.nativeElement.focus());
   }

@@ -1,8 +1,10 @@
 import { Observable, Subject } from 'rxjs';
 import { describePressedKey } from '../../shared/utils/keyboard';
+import { GridCursorEvent } from '../models/grid-cursor-event';
 import { Foscusable } from '../models/editable';
 import { Cursor } from './cursor';
 import { Point } from './point';
+import { hasModifierKey } from '@angular/cdk/keycodes';
 
 export class GridKeyManager<T extends Foscusable> {
   pageUpAndDownDelta = 3;
@@ -10,15 +12,15 @@ export class GridKeyManager<T extends Foscusable> {
 
   private activeItem: T | null;
   private previousActiveItem: T | null;
-  private cellMatrix: T[][];
+  private cellMatrix: T[][] = [];
 
-  private readonly activeItemChanges$ = new Subject<Point>();
+  private readonly activeItemChanges$ = new Subject<GridCursorEvent<T>>();
   private readonly keyMap = new Map<string, () => void>([
     ['ArrowUp', () => this.cursor.moveUp()],
     ['ArrowDown', () => this.cursor.moveDown()],
     ['ArrowLeft', () => this.cursor.moveLeft()],
     ['ArrowRight', () => this.cursor.moveRight()],
-    ['Enter', () => this.getItem(this.cursor)?.value.edit()],
+    ['Enter', () => this.cursor.moveDown()],
     ['PageDown', () => (this.cursor.y += this.pageUpAndDownDelta)],
     ['PageUp', () => (this.cursor.y -= this.pageUpAndDownDelta)],
     ['Home', () => this.cursor.moveToFirstColumn()],
@@ -47,7 +49,7 @@ export class GridKeyManager<T extends Foscusable> {
     return this.previousActiveItem;
   }
 
-  get activeItemChanges(): Observable<Point> {
+  get activeItemChanges(): Observable<GridCursorEvent<T>> {
     return this.activeItemChanges$.asObservable();
   }
 
@@ -85,7 +87,11 @@ export class GridKeyManager<T extends Foscusable> {
     if (handler) {
       handler();
       event.preventDefault();
-    } else if (!this.activeItem.value.editMode && event.key.length === 1) {
+    } else if (
+      !this.activeItem.value.editMode &&
+      !hasModifierKey(event) &&
+      event.key.length === 1
+    ) {
       this.activeItem?.value.edit(event.key);
       event.preventDefault();
     }
@@ -104,7 +110,7 @@ export class GridKeyManager<T extends Foscusable> {
       item.focus();
       this.activeItem = item;
       this.previousActiveItem = previousActiveItem;
-      this.activeItemChanges$.next(cursor);
+      this.activeItemChanges$.next({ position: cursor, item });
     }
   }
 }

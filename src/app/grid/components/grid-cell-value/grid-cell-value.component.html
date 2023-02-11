@@ -1,10 +1,13 @@
-<div [style.opacity]="editMode ? 0 : 1">
-    {{value}}
+<div class="value-container" [style.opacity]="editMode ? 0 : 1">
+    <ng-container *ngIf="value else emptyValue">
+        {{value}}
+    </ng-container>
+    <ng-template #emptyValue>
+        &nbsp;
+    </ng-template>
 </div>
 
 <div *ngIf="comment" class="comment-marker">
-    
+
 </div>
-<input [formControl]="editInput" *ngIf="editMode" (blur)="editMode = false" #textInput class="transparent" type="text"/>
-
-
+<input [formControl]="editInput" *ngIf="editMode" (blur)="handleBlur()" #textInput class="transparent" type="text" />

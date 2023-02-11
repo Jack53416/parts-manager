@@ -1,46 +1,72 @@
 @mixin color() {
-  table {
-    background: white;
+  --table-background: white;
+  --header-background: #f6f6f6;
+  --active-header-background: #d6d6d6;
+  --alternative-row-background: #6393bb10;
+
+  --border-color: #00000022;
+  --cursor-border-color: rgba(43, 128, 224, 1);
+  --selection-source-border-color: black;
+
+  td[role="gridcell"] {
+    background: var(--table-background);
   }
 
-  th {
-    background: #f6f6f6;
-    border: thin solid #00000044;
-  }
-
-  tr.selected th,
-  th.selected {
-    background: #d6d6d6;
-  }
-
-  td {
-    border: thin solid #00000022;
-    &[role="gridcell"].selected::before {
-      border: 2px solid rgb(80, 155, 241);
+  &:focus-within {
+    tr.selected th,
+    th.selected {
+      background: #d6d6d6;
     }
-  }
 
-  tr:nth-child(2n) td[role="gridcell"] {
-    background: #6393bb10;
+    td[role="gridcell"].selected::before {
+      border: 2px solid var(--cursor-border-color);
+    }
   }
 }
 
 @mixin typography() {
+  th {
+    font-weight: 500;
+    color: rgb(82, 80, 80);
+    font-size: 0.9rem;
+  }
+
+  td {
+    font-size: 0.9rem;
+  }
 }
 
 @mixin theme() {
-  app-grid {
+  table[appGrid] {
     @include color();
     @include typography();
-    
-    table {
-      width: 100%;
-      height: fit-content;
-      border-collapse: collapse;
+
+    background: var(--table-background);
+    border-collapse: separate;
+    border-spacing: 0;
+
+    th {
+      background: var(--header-background);
+    }
+
+    th:first-child,
+    td:first-child {
+      border-left: thin solid var(--border-color);
     }
 
     th[role="columnheader"] {
       padding: 8px 4px;
+      border-top: thin solid;
+      border-bottom: thin solid;
+      border-right: thin solid;
+      border-color: var(--border-color);
+    }
+
+    td,
+    th[role="rowheader"] {
+      border-bottom: thin solid;
+      border-right: thin solid;
+      border-color: var(--border-color);
     }
 
     td {
@@ -50,7 +76,6 @@
         content: "";
         display: block;
         position: absolute;
-        z-index: 100;
         left: 0;
         right: 0;
         top: 0;
@@ -59,6 +84,48 @@
 
       &[role="gridcell"].selected:focus-visible {
         outline: none;
+      }
+
+      &.selection-source.selected::before {
+        opacity: 0.5;
+      }
+
+      &.selection-source {
+        background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+        background-size: 15px 1px, 15px 1px, 1px 15px, 1px 15px;
+        background-position: left top, right bottom, left bottom, right top;
+        animation: border-dance 1.5s infinite linear;
+
+        background-image: linear-gradient(
+            90deg,
+            var(--selection-source-border-color) 50%,
+            transparent 50%
+          ),
+          linear-gradient(
+            90deg,
+            var(--selection-source-border-color) 50%,
+            transparent 50%
+          ),
+          linear-gradient(
+            0deg,
+            var(--selection-source-border-color) 50%,
+            transparent 50%
+          ),
+          linear-gradient(
+            0deg,
+            var(--selection-source-border-color) 50%,
+            transparent 50%
+          );
+      }
+
+      @keyframes border-dance {
+        0% {
+          background-position: left top, right bottom, left bottom, right top;
+        }
+        100% {
+          background-position: left 15px top, right 15px bottom,
+            left bottom 15px, right top 15px;
+        }
       }
     }
   }

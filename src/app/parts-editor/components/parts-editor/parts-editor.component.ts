@@ -1,7 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { GridComponent } from '../../../grid/components/grid/grid.component';
+import { GridDirective } from '../../../grid/directives/grid.directive';
 import { GridDataSource } from '../../../grid/models/grid-data-source';
-import { PeriodicElement } from '../../models/periodic-element';
+import { Cell } from '../../models/cell';
+import { Command, InsertCommand } from '../../models/command';
+import {
+  PartColumns,
+  PartFailure,
+  PART_FAILURES
+} from '../../models/part-failure';
 import { PartsDataService } from '../../services/parts-data.service';
 
 @Component({
@@ -10,13 +16,55 @@ import { PartsDataService } from '../../services/parts-data.service';
   styleUrls: ['./parts-editor.component.scss'],
 })
 export class PartsEditorComponent implements OnInit {
-  @ViewChild(GridComponent, { static: true }) grid: GridComponent;
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = new GridDataSource<PeriodicElement>([]);
+  static commandHistorySize = 50;
+
+  @ViewChild(GridDirective, { static: true }) grid: GridDirective;
+  stickyHeaders: Set<string> = new Set([
+    'machine',
+    'name',
+    'articleNo',
+    'tool',
+  ]);
+  partHeaders: PartColumns[] = [...PART_FAILURES];
+  displayedColumns: string[] = ['position', ...PART_FAILURES];
+  dataSource = new GridDataSource<{ [key in keyof PartFailure]: Cell }>([]);
+  commandHistory: Command<Cell>[] = [];
 
   constructor(private partsDataService: PartsDataService) {}
 
   ngOnInit(): void {
-    this.dataSource.data.next(this.partsDataService.getParts());
+    const parts = this.partsDataService.getFailureReport();
+    const cellData = parts.map((part) =>
+      PART_FAILURES.reduce((acc, key) => {
+        acc[key] = new Cell({ value: String(part[key] ?? '') });
+        return acc;
+      }, {})
+    ) as { [key in keyof PartFailure]: Cell }[];
+
+    this.dataSource.data.next(cellData);
+  }
+
+  undoCommand() {
+    if (this.commandHistory.length <= 0) {
+      return;
+    }
+
+    this.commandHistory.pop().undo();
+  }
+
+  insertValue(cell: Cell, value: string) {
+    this.executeCommand(new InsertCommand(cell, value));
+  }
+
+  private executeCommand(command: Command<Cell>) {
+    if (command.execute()) {
+      this.commandHistory.push(command);
+    }
+
+    if (
+      this.commandHistory.length > PartsEditorComponent.commandHistorySize
+    ) {
+      this.commandHistory.shift();
+    }
   }
 }

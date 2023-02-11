@@ -1,6 +1,7 @@
 import {
   Component,
   ElementRef,
+  EventEmitter,
   HostListener,
   Input,
   OnInit,
@@ -8,9 +9,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { keysPressed } from '../../../shared/utils/keyboard';
+import { describePressedKey } from '../../../shared/utils/keyboard';
 import { Editable } from '../../models/editable';
-import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-grid-cell-value',
@@ -18,16 +18,24 @@ import { EventEmitter } from '@angular/core';
   styleUrls: ['./grid-cell-value.component.scss'],
 })
 export class GridCellValueComponent implements OnInit, Editable {
-  @Input() element: unknown;
-  @Input() key: string;
-
   @Input() value: string;
   @Input() comment: string;
 
-  @Output() editConfirmed = new EventEmitter<void>();
+  @Output() editDiscarded = new EventEmitter<void>();
+  @Output() editConfirmed = new EventEmitter<string>();
 
   editMode = false;
   editInput: FormControl<string> = new FormControl('');
+  private readonly keyMap = new Map<string, () => void>([
+    ['Enter', () => this.confirmChanges()],
+    [
+      'Escape',
+      () => {
+        this.editMode = false;
+        this.editDiscarded.next();
+      },
+    ],
+  ]);
   constructor() {}
 
   @ViewChild('textInput', { static: false, read: ElementRef })
@@ -39,24 +47,30 @@ export class GridCellValueComponent implements OnInit, Editable {
 
   @HostListener('keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
-    if (keysPressed(event, { key: 'Enter' })) {
-      this.editMode = false;
-      this.confirmChanges();
+    const handler = this.keyMap.get(describePressedKey(event));
+    if (handler) {
+      handler();
     }
-
-    event.stopPropagation();
+    if (this.editMode) {
+      event.stopPropagation();
+    }
   }
 
   ngOnInit(): void {}
 
-  edit(key: string) {
-    this.editInput.reset(key);
+  handleBlur() {
+    if (this.editMode) {
+      this.confirmChanges();
+    }
+  }
+
+  edit(key?: string) {
+    this.editInput.reset(key ?? this.value);
     this.editMode = true;
   }
 
   confirmChanges() {
-    // ToDo: Outsource changes to parts editor
-    this.element[this.key] = this.editInput.value;
-    this.editConfirmed.next();
+    this.editMode = false;
+    this.editConfirmed.next(this.editInput.value);
   }
 }

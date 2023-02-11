@@ -1,20 +1,20 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CdkTableModule } from '@angular/cdk/table';
+import { TextFieldModule } from '@angular/cdk/text-field';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { GridComponent } from './components/grid/grid.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { GridCellValueComponent } from './components/grid-cell-value/grid-cell-value.component';
 import { OverlayInputComponent } from './components/overlay-input/overlay-input.component';
 import { GridCellDirective } from './directives/grid-cell.directive';
-import {TextFieldModule} from '@angular/cdk/text-field';
-import { GridCellValueComponent } from './components/grid-cell-value/grid-cell-value.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { GridDirective } from './directives/grid.directive';
 
 @NgModule({
   declarations: [
-    GridComponent,
     GridCellDirective,
     OverlayInputComponent,
     GridCellValueComponent,
+    GridDirective,
   ],
   imports: [
     CommonModule,
@@ -22,12 +22,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     OverlayModule,
     TextFieldModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
-  exports: [
-    GridComponent,
-    GridCellValueComponent,
-    GridCellDirective
-  ]
+  exports: [GridCellValueComponent, GridCellDirective, GridDirective],
 })
-export class GridModule { }
+export class GridModule {}

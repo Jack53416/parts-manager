@@ -5,12 +5,10 @@ import { ElectronService } from './core/services';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  constructor(
-    private electronService: ElectronService,
-  ) {
+  constructor(private electronService: ElectronService) {
     console.log('APP_CONFIG', APP_CONFIG);
 
     if (electronService.isElectron) {
