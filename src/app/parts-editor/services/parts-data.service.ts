@@ -9,7 +9,7 @@ export class PartsDataService {
   constructor() {}
 
   getFailureReport(): Partial<PartFailure>[] {
-    return Array(50).fill(0).map((_, index) => ({
+    return Array(100).fill(0).map((_, index) => ({
       ...MOCK_PRODUCTION_REPORT[index % MOCK_PRODUCTION_REPORT.length],
     }));
   }

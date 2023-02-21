@@ -83,11 +83,9 @@ export class GridCellDirective
   focus() {
     this.nativeElement.focus();
     this.render2.setAttribute(this.nativeElement, 'tabindex', '0');
-    this.render2.addClass(this.nativeElement, 'selected');
   }
 
   focusOut() {
     this.render2.setAttribute(this.nativeElement, 'tabindex', '-1');
-    this.render2.removeClass(this.nativeElement, 'selected');
   }
 }
