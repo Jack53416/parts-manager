@@ -1,5 +1,6 @@
 {
   "name": "angular-electron",
+  "type": "module",
   "description": "Angular Electron sample",
   "author": {
     "name": "Maxime GRIS",

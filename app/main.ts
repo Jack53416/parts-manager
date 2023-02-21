@@ -2,6 +2,7 @@ import { app, BrowserWindow, dialog, ipcMain, screen } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as XLSX from 'xlsx';
+import { readExcel, Part } from './excel-parser/read-report';
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1),
@@ -106,8 +107,16 @@ function handleIPCEvents() {
       throw new Error('No file was selected!');
     }
 
-    const workbook = XLSX.readFile(result.filePaths[0]);
-    const first_ws = workbook.Sheets[workbook.SheetNames[0]];
-    return XLSX.utils.sheet_to_json(first_ws);
+    //const workbook = XLSX.readFile(result.filePaths[0]);
+    //const first_ws = workbook.Sheets[workbook.SheetNames[0]];
+    //return XLSX.utils.sheet_to_json(first_ws);
+    const partDict: {[key: string]: Part} =  readExcel(result.filePaths[0]);
+    let partList: Array<Part>;
+
+    for (const [id, part] of Object.entries(partDict)) {
+        partList.push(part);
+    };
+
+    return partList
   });
 }
