@@ -1,6 +1,8 @@
+import Mexp from 'math-expression-evaluator';
 import { Prototype } from '../../shared/utils/prototype';
 
 export class Cell implements Prototype<Cell> {
+  static mathParser = new Mexp();
   comment: string;
   private content: string;
   private formula: string;
@@ -26,10 +28,15 @@ export class Cell implements Prototype<Cell> {
   set value(cellValue: string) {
     if (cellValue.startsWith('=')) {
       this.formula = cellValue;
-      // ToDo - Parse expression here
-      this.content = cellValue;
+      const equation = cellValue.slice(1, cellValue.length);
+      try {
+        this.content = Cell.mathParser.eval(equation, [], undefined).toString();
+      } catch (err) {
+        this.content = 'NaN';
+      }
     } else {
       this.content = cellValue;
+      this.formula = null;
     }
   }
 
