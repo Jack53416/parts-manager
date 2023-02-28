@@ -3,9 +3,11 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { map, Subject, takeUntil } from 'rxjs';
 import { GridDirective } from '../../../grid/directives/grid.directive';
 import { GridDataSource } from '../../../grid/models/grid-data-source';
 import { Cell } from '../../models/cell';
@@ -23,7 +25,7 @@ import { PartsDataService } from '../../services/parts-data.service';
   styleUrls: ['./parts-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PartsEditorComponent implements OnInit, AfterViewInit {
+export class PartsEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   static commandHistorySize = 50;
 
   @ViewChild(GridDirective, { static: true }) grid: GridDirective;
@@ -37,6 +39,7 @@ export class PartsEditorComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['position', ...PART_FAILURES];
   dataSource = new GridDataSource<{ [key in keyof PartFailure]: Cell }>([]);
   commandHistory: Command<Cell>[] = [];
+  destroy$ = new Subject<void>();
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
@@ -44,20 +47,34 @@ export class PartsEditorComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    const parts = this.partsDataService.getFailureReport();
-    const cellData = parts.map((part) =>
-      PART_FAILURES.reduce((acc, key) => {
-        acc[key] = new Cell({ value: String(part[key] ?? '') });
-        return acc;
-      }, {})
-    ) as { [key in keyof PartFailure]: Cell }[];
+    this.partsDataService.currentReport$
+      .pipe(
+        takeUntil(this.destroy$),
+        map((partReport) => this.convertPartReport(partReport))
+      )
+      .subscribe((cellData) => this.dataSource.data.next(cellData));
+  }
 
-    this.dataSource.data.next(cellData);
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   ngAfterViewInit(): void {
     this.changeDetectorRef.detectChanges();
   }
+
+  convertPartReport(
+    parts: Partial<PartFailure>[]
+  ): { [key in keyof PartFailure]: Cell }[] {
+    return parts.map((part) =>
+      PART_FAILURES.reduce((acc, key) => {
+        acc[key] = new Cell({ value: String(part[key] ?? '') });
+        return acc;
+      }, {})
+    ) as { [key in keyof PartFailure]: Cell }[];
+  }
+
   undoCommand() {
     if (this.commandHistory.length <= 0) {
       return;
