@@ -8,8 +8,8 @@
     <ng-container *ngFor="let column of partHeaders" cdkColumnDef="{{column}}" [sticky]="stickyHeaders.has(column)">
         <th role="columnheader" cdk-header-cell *cdkHeaderCellDef>{{column | titlecase}}</th>
         <td appGridCell cdk-cell *cdkCellDef="let element">
-            <app-grid-cell-value [value]="element[column].value" [comment]="element[column].comment"
-                (editConfirmed)="insertValue(element[column], $event)">
+            <app-grid-cell-value [formula]="element[column].formula" [value]="element[column].value"
+                [comment]="element[column].comment" (editConfirmed)="insertValue(element[column], $event)">
             </app-grid-cell-value>
         </td>
     </ng-container>

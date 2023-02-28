@@ -1,4 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { GridDirective } from '../../../grid/directives/grid.directive';
 import { GridDataSource } from '../../../grid/models/grid-data-source';
 import { Cell } from '../../models/cell';
@@ -6,7 +13,7 @@ import { Command, InsertCommand } from '../../models/command';
 import {
   PartColumns,
   PartFailure,
-  PART_FAILURES
+  PART_FAILURES,
 } from '../../models/part-failure';
 import { PartsDataService } from '../../services/parts-data.service';
 
@@ -14,8 +21,9 @@ import { PartsDataService } from '../../services/parts-data.service';
   selector: 'app-parts-editor',
   templateUrl: './parts-editor.component.html',
   styleUrls: ['./parts-editor.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PartsEditorComponent implements OnInit {
+export class PartsEditorComponent implements OnInit, AfterViewInit {
   static commandHistorySize = 50;
 
   @ViewChild(GridDirective, { static: true }) grid: GridDirective;
@@ -30,7 +38,10 @@ export class PartsEditorComponent implements OnInit {
   dataSource = new GridDataSource<{ [key in keyof PartFailure]: Cell }>([]);
   commandHistory: Command<Cell>[] = [];
 
-  constructor(private partsDataService: PartsDataService) {}
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private partsDataService: PartsDataService
+  ) {}
 
   ngOnInit(): void {
     const parts = this.partsDataService.getFailureReport();
@@ -44,6 +55,9 @@ export class PartsEditorComponent implements OnInit {
     this.dataSource.data.next(cellData);
   }
 
+  ngAfterViewInit(): void {
+    this.changeDetectorRef.detectChanges();
+  }
   undoCommand() {
     if (this.commandHistory.length <= 0) {
       return;
@@ -61,9 +75,7 @@ export class PartsEditorComponent implements OnInit {
       this.commandHistory.push(command);
     }
 
-    if (
-      this.commandHistory.length > PartsEditorComponent.commandHistorySize
-    ) {
+    if (this.commandHistory.length > PartsEditorComponent.commandHistorySize) {
       this.commandHistory.shift();
     }
   }
