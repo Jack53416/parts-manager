@@ -19,6 +19,7 @@ interface ScrollOptions {
 export class ScrollManagerService {
   static OVERLAP_MARGIN = 2;
   private elementRect: DOMRect;
+  private containerRect: DOMRect;
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
@@ -38,6 +39,10 @@ export class ScrollManagerService {
   }
 
   scrollPastCover(cursorDirection?: PlaneDirection, maxScrollIterations = 10) {
+    this.containerRect = this.scrollableContainer
+      .getElementRef()
+      .nativeElement.getBoundingClientRect();
+
     let iteration = 0;
 
     do {
@@ -59,13 +64,17 @@ export class ScrollManagerService {
   }
 
   private getElementCover(point?: Point): Element | null {
-    const containerRect = this.scrollableContainer
-      .getElementRef()
-      .nativeElement.getBoundingClientRect();
-
     const topElement = this.document.elementFromPoint(
-      MathUtils.clamp(point.x, containerRect.left + 1, containerRect.right - 1),
-      MathUtils.clamp(point.y, containerRect.top + 1, containerRect.bottom - 1)
+      MathUtils.clamp(
+        point.x,
+        this.containerRect.left + 1,
+        this.containerRect.right - 1
+      ),
+      MathUtils.clamp(
+        point.y,
+        this.containerRect.top + 1,
+        this.containerRect.bottom - 1
+      )
     );
 
     if (
