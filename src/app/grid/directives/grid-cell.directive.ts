@@ -1,6 +1,4 @@
-import { CdkScrollable } from '@angular/cdk/scrolling';
 import { CdkColumnDef } from '@angular/cdk/table';
-import { DOCUMENT } from '@angular/common';
 import {
   AfterViewInit,
   ContentChild,
@@ -17,10 +15,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { GridCellValueComponent } from '../components/grid-cell-value/grid-cell-value.component';
 import { AriaGrid, ARIA_GRID } from '../models/aria-grid';
 import { Foscusable } from '../models/editable';
-import { Direction, PlaneDirection, Point } from '../utils/point';
+import { PlaneDirection } from '../utils/point';
+import { ScrollManagerService } from '../services/scroll-manager.service';
 
 @Directive({
   selector: 'td[appGridCell]',
+  providers: [{ provide: ScrollManagerService }],
 })
 export class GridCellDirective
   implements Foscusable, OnInit, OnDestroy, AfterViewInit
@@ -32,8 +32,7 @@ export class GridCellDirective
     @Inject(ARIA_GRID) private grid: AriaGrid,
     private elementRef: ElementRef,
     private render2: Renderer2,
-    @Inject(DOCUMENT) private document: Document,
-    @Optional() private scrollableContainer: CdkScrollable,
+    private scrollManager: ScrollManagerService,
     @Optional() private cdkColumnDef: CdkColumnDef
   ) {}
 
@@ -91,136 +90,11 @@ export class GridCellDirective
 
   focus(cursorDirection?: PlaneDirection) {
     this.nativeElement.focus({ preventScroll: true });
-    this.scrollIntoView(cursorDirection);
+    this.scrollManager.scrollIntoView(cursorDirection);
     this.render2.setAttribute(this.nativeElement, 'tabindex', '0');
   }
 
   focusOut() {
     this.render2.setAttribute(this.nativeElement, 'tabindex', '-1');
-  }
-
-  scrollIntoView(cursorDirection?: PlaneDirection) {
-    this.nativeElement.scrollIntoView({ inline: 'nearest', block: 'nearest' });
-    this.scrollPastCover(cursorDirection);
-  }
-
-  private scrollPastCover(
-    cursorDirection?: PlaneDirection,
-    maxScrollIterations = 1
-  ) {
-    const scrollDirection = {
-      x: cursorDirection?.x !== 0 ? this.getHorizontalScrollDirection() : 0,
-      y: cursorDirection?.y !== 0 ? this.getVerticalScrollDirection() : 0,
-    };
-
-    let cover = this.getElementCover(scrollDirection);
-    let iteration = 0;
-
-    while (cover !== null && iteration < maxScrollIterations) {
-      const offset = this.getScrollOffset(cover, scrollDirection);
-      this.scrollableContainer
-        .getElementRef()
-        .nativeElement.scrollBy({ left: offset.x, top: offset.y });
-      //cover = this.getElementCover(scrollDirection);
-      iteration++;
-    }
-  }
-
-  private getElementCover(scrollDirections: PlaneDirection): Element | null {
-    const conteinerEl = this.scrollableContainer.getElementRef().nativeElement;
-
-    const rect = this.nativeElement.getBoundingClientRect();
-
-    // Cells in  table are overlapped, meaning a cell will share its top, left corner iwth right bottom corner of the other one
-    const point = {
-      x: scrollDirections.x <= 0 ? rect.left : rect.right - 1,
-      y: scrollDirections.y <= 0 ? rect.top : rect.bottom - 1,
-    } as Point;
-
-    console.log(`scrollDirections: ${JSON.stringify(scrollDirections)}`);
-    // const topElement = this.document.elementFromPoint(
-    //   Math.min(
-    //     Math.max(point.x, conteinerEl.getBoundingClientRect().left),
-    //     conteinerEl.getBoundingClientRect().right
-    //   ),
-    //   Math.min(
-    //     Math.max(point.y, conteinerEl.getBoundingClientRect().top),
-    //     conteinerEl.getBoundingClientRect().bottom
-    //   )
-    // );
-
-    const topElement = this.document.elementFromPoint(point.x, point.y);
-
-    if (
-      this.nativeElement.isSameNode(topElement) ||
-      this.nativeElement.contains(topElement) ||
-      topElement?.contains(this.nativeElement)
-    ) {
-      return null;
-    }
-
-    console.log(topElement);
-    return topElement;
-  }
-
-  private getScrollOffset(
-    coverElement: Element,
-    scrollDirections: PlaneDirection
-  ): Point {
-    const coverRect = coverElement.getBoundingClientRect();
-
-    const scrollOffset = {
-      x:
-        scrollDirections.x <= 0
-          ? (coverRect.right - this.boundingRect.left)
-          : (this.boundingRect.right - coverRect.left),
-      y:
-        scrollDirections.y <= 0
-          ? coverRect.bottom - this.boundingRect.top
-          : this.boundingRect.bottom - coverRect.top,
-    };
-
-    scrollOffset.x *= scrollDirections.x;
-    scrollOffset.y *= scrollDirections.y;
-    console.log(`scroll offset: ${JSON.stringify(scrollOffset)}`);
-
-    return scrollOffset;
-  }
-
-  private getHorizontalScrollDirection(): Direction {
-    const rect = this.nativeElement.getBoundingClientRect();
-
-    const screenCenter = {
-      x: this.document.documentElement.clientHeight / 2,
-      y: this.document.documentElement.clientWidth / 2,
-    } as Point;
-
-    if (rect.left < screenCenter.x) {
-      return -1;
-    }
-
-    if (rect.right > screenCenter.x) {
-      return 1;
-    }
-
-    return 0;
-  }
-
-  private getVerticalScrollDirection(): Direction {
-    const rect = this.nativeElement.getBoundingClientRect();
-    const screenCenter = {
-      x: this.document.documentElement.clientHeight / 2,
-      y: this.document.documentElement.clientWidth / 2,
-    } as Point;
-
-    if (rect.top < screenCenter.y) {
-      return -1;
-    }
-
-    if (rect.bottom > screenCenter.y) {
-      return 1;
-    }
-
-    return 0;
   }
 }
