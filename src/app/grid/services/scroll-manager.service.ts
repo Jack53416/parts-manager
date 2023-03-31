@@ -17,6 +17,7 @@ interface ScrollOptions {
 
 @Injectable()
 export class ScrollManagerService {
+  static OVERLAP_MARGIN = 2;
   private elementRect: DOMRect;
 
   constructor(
@@ -151,15 +152,23 @@ export class ScrollManagerService {
       }),
       leftBottom: this.getElementCover({
         x: this.elementRect.left,
-        y: Math.floor(this.elementRect.bottom - 1),
+        y: Math.floor(
+          this.elementRect.bottom - ScrollManagerService.OVERLAP_MARGIN
+        ),
       }),
       rightTop: this.getElementCover({
-        x: Math.floor(this.elementRect.right - 1),
+        x: Math.floor(
+          this.elementRect.right - ScrollManagerService.OVERLAP_MARGIN
+        ),
         y: this.elementRect.top,
       }),
       rightBottom: this.getElementCover({
-        x: Math.floor(this.elementRect.right - 1),
-        y: Math.floor(this.elementRect.bottom - 1),
+        x: Math.floor(
+          this.elementRect.right - ScrollManagerService.OVERLAP_MARGIN
+        ),
+        y: Math.floor(
+          this.elementRect.bottom - ScrollManagerService.OVERLAP_MARGIN
+        ),
       }),
     });
   }
