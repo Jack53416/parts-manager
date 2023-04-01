@@ -1,20 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { ElectronService } from '../../../core/services';
+import { PartsDataService } from '../../../parts-editor/services/parts-data.service';
 
 @Component({
   selector: 'app-toolbar',
   templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.scss']
+  styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent implements OnInit {
+  constructor(private partsDataService: PartsDataService) {}
 
-  constructor(private electronService: ElectronService) { }
-
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   async readExcel() {
-    await this.electronService.readExcelFile();
+    await this.partsDataService.getFailureReport();
   }
-
 }
