@@ -26,10 +26,6 @@ export class PartsDataService {
     return report;
   };
 
-  eventOgarnianie(msg: string) {
-    this.testEvent.emit(msg);
-  }
-
   eventSendReportDataToTable(report) {
     this.sendReporttoTable.emit(report);
   }

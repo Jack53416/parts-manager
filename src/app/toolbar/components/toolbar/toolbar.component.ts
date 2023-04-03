@@ -21,9 +21,4 @@ export class ToolbarComponent implements OnInit {
     console.log(report);
     this.partsDataService.eventSendReportDataToTable(report);
   }
-
-  testEvent() {
-    this.partsDataService.eventOgarnianie('testtesttestdupa');
-  };
-
 }
