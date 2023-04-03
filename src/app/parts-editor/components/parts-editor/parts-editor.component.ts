@@ -32,17 +32,34 @@ export class PartsEditorComponent implements OnInit {
 
   constructor(private partsDataService: PartsDataService) {}
 
-  ngOnInit(): void {
-    const parts = this.partsDataService.getFailureReport();
-    const cellData = parts.map((part) =>
-      PART_FAILURES.reduce((acc, key) => {
-        acc[key] = new Cell({ value: String(part[key] ?? '') });
-        return acc;
-      }, {})
-    ) as { [key in keyof PartFailure]: Cell }[];
+  //ngOnInit(): void {
+  //  const parts = this.partsDataService.getFailureReport();
+  //  const cellData = parts.map((part) =>
+  //    PART_FAILURES.reduce((acc, key) => {
+  //      acc[key] = new Cell({ value: String(part[key] ?? '') });
+  //      return acc;
+  //    }, {})
+  //  ) as { [key in keyof PartFailure]: Cell }[];
+//
+  //  this.dataSource.data.next(cellData);
+  //}
 
-    this.dataSource.data.next(cellData);
-  }
+  ngOnInit(): void {
+    this.partsDataService.testEvent.subscribe((data: string) => {
+      console.log('dupka' + data);
+    });
+
+    this.partsDataService.sendReporttoTable.subscribe((parts) => {
+      console.log(parts);
+      const cellData = Object.values(parts).map((part) =>
+          PART_FAILURES.reduce((acc, key) => {
+            acc[key] = new Cell({ value: String(part[key] ?? '') });
+            return acc;
+          }, {})
+        ) as { [key in keyof PartFailure]: Cell }[];
+        this.dataSource.data.next(cellData);
+    });
+  };
 
   undoCommand() {
     if (this.commandHistory.length <= 0) {

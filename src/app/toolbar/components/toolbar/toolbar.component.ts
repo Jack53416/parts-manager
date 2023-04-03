@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ElectronService } from '../../../core/services';
+import { PartsDataService } from '../../../parts-editor/services/parts-data.service';
 
 @Component({
   selector: 'app-toolbar',
@@ -8,13 +9,21 @@ import { ElectronService } from '../../../core/services';
 })
 export class ToolbarComponent implements OnInit {
 
-  constructor(private electronService: ElectronService) { }
+  //constructor(private electronService: ElectronService) { }
+  constructor(private partsDataService: PartsDataService) { }
 
   ngOnInit(): void {
   }
 
   async readExcel() {
-    await this.electronService.readExcelFile();
+    const report = await this.partsDataService.getFailureReport();
+    //const report = await this.electronService.readExcelFile();
+    console.log(report);
+    this.partsDataService.eventSendReportDataToTable(report);
   }
+
+  testEvent() {
+    this.partsDataService.eventOgarnianie('testtesttestdupa');
+  };
 
 }

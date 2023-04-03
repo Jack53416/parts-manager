@@ -6,6 +6,7 @@ export interface Part {
   comment?: string;
   totalPartsProduced: number;
   scrapNo: number;
+  id: string;
 }
 
 export const MOCK_PRODUCTION_REPORT: Part[] = [
@@ -16,6 +17,7 @@ export const MOCK_PRODUCTION_REPORT: Part[] = [
     tool: '219',
     totalPartsProduced: 120,
     scrapNo: 90,
+    id: '1;2'
   },
 
   {
@@ -25,6 +27,7 @@ export const MOCK_PRODUCTION_REPORT: Part[] = [
     tool: 'tools123',
     totalPartsProduced: 150,
     scrapNo: 0,
+    id: '1;2'
   },
 
   {
@@ -34,6 +37,7 @@ export const MOCK_PRODUCTION_REPORT: Part[] = [
     tool: '213434',
     totalPartsProduced: 100,
     scrapNo: 50,
+    id: '1;2'
   },
 
   {
@@ -43,5 +47,6 @@ export const MOCK_PRODUCTION_REPORT: Part[] = [
     tool: 'exampleTool',
     totalPartsProduced: 50,
     scrapNo: 50,
+    id: '1;2'
   },
 ];

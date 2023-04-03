@@ -45,24 +45,24 @@ export class Part {
 
 export async function readExcel(reportPath: string) {
   const woorkbookReport: XLSX.WorkBook = XLSX.readFile(reportPath);
-  const partDict: { [key: string]: Part } = {};
+  const parts: { [key: string]: Part } = {};
 
-  const promises = shiftNames.map(async (shiftNumber) => {
-    const sheetShift: XLSX.Sheet = woorkbookReport.Sheets[shiftNumber];
-    const partList: Part[] = await parseShift(sheetShift);
+  const promises = shiftNames.map(async (shiftName) => {
+    const sheetShift: XLSX.Sheet = woorkbookReport.Sheets[shiftName];
+    const partsInSheet: Part[] = await parseShift(sheetShift);
 
-    for (const part of partList) {
-      if (!(part.id in partDict)) {
-        partDict[part.id] = part;
+    for (const part of partsInSheet) {
+      if (!(part.id in parts)) {
+        parts[part.id] = part;
       } else {
-        partDict[part.id].totalPartsProduced += part.totalPartsProduced;
-        partDict[part.id].scrapNo += part.scrapNo;
+        parts[part.id].totalPartsProduced += part.totalPartsProduced;
+        parts[part.id].scrapNo += part.scrapNo;
       }
     }
   });
 
   await Promise.all(promises);
-  return partDict;
+  return parts;
 }
 
 function findFirstInjCell(
@@ -173,6 +173,7 @@ async function createPart(row: {[key: string]: string | number}, lastMachine: st
         commentFromReport
       );
       await part.getPartProperties(partNrFromReport);
+
       return part;
 }
 

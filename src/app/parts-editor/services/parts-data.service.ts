@@ -1,16 +1,37 @@
-import { Injectable } from '@angular/core';
-import { MOCK_PRODUCTION_REPORT } from '../models/part';
+import { EventEmitter, Injectable, Output } from '@angular/core';
+import { MOCK_PRODUCTION_REPORT, Part } from '../models/part';
 import { PartFailure } from '../models/part-failure';
+import { ElectronService } from '../../core/services/electron/electron.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PartsDataService {
-  constructor() {}
 
-  getFailureReport(): Partial<PartFailure>[] {
-    return Array(50).fill(0).map((_, index) => ({
-      ...MOCK_PRODUCTION_REPORT[index % MOCK_PRODUCTION_REPORT.length],
-    }));
+  @Output() testEvent = new EventEmitter<string>();
+  @Output() sendReporttoTable = new EventEmitter<Part>();
+
+  constructor(private electronService: ElectronService) {}
+
+  //getFailureReport(): Partial<PartFailure>[] {
+  //  return Array(50).fill(0).map((_, index) => ({
+  //    ...MOCK_PRODUCTION_REPORT[index % MOCK_PRODUCTION_REPORT.length],
+  //  }));
+  //}
+
+  getFailureReport() {
+    const report = this.electronService.readExcelFile();
+    //console.log('getFailiureReport - part service');
+    //console.log(report);
+    return report;
+  };
+
+  eventOgarnianie(msg: string) {
+    this.testEvent.emit(msg);
   }
+
+  eventSendReportDataToTable(report) {
+    this.sendReporttoTable.emit(report);
+  }
+
 }
