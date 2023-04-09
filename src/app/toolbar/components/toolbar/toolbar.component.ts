@@ -12,6 +12,6 @@ export class ToolbarComponent implements OnInit {
   ngOnInit(): void {}
 
   async readExcel() {
-    await this.partsDataService.getFailureReport();
+    await this.partsDataService.openEditor();
   }
 }

@@ -1,0 +1,34 @@
+<ng-container *ngIf="editorsUiState$ | async as uiState">
+    <mat-tab-group *ngIf="uiState.openedEditors.length else noEditorsCover" 
+        (selectedIndexChange)="tabChange($event)"
+        [selectedIndex]="uiState.activeIndex" 
+        [animationDuration]="0" 
+        fitInkBarToContent 
+        disableRipple
+        color="primary"
+        headerPosition="above">
+        <mat-tab #tab *ngFor="let editor of uiState.openedEditors">
+            <ng-template mat-tab-label>
+                <span>{{editor.name}}</span>
+                <button (click)="closeEditor(editor)" matRipple [class.hidden]="!tab.isActive" class="close-button"
+                    (click)="$event.stopPropagation();">
+                    <mat-icon inline>close</mat-icon>
+                </button>
+
+            </ng-template>
+
+            <app-parts-editor [editor]="editor"></app-parts-editor>
+
+
+        </mat-tab>
+    </mat-tab-group>
+</ng-container>
+
+
+<ng-template #noEditorsCover>
+    <div class="cover">
+
+        <mat-icon class="cover-icon" inline>book</mat-icon>
+        <div class="cover-caption">To start open an excel</div>
+    </div>
+</ng-template>

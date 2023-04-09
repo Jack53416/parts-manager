@@ -1,0 +1,57 @@
+button.close-button {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    outline: none;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 1em;
+    position: absolute;
+    right: 4px;
+    display: inline-flex;
+    justify-content: center;
+    background: unset;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background: #00000011;
+    }
+  
+    &:focus {
+      outline: thin solid #00000011;
+    }
+  
+    &:active {
+      transform: scale(0.95);
+    }
+}
+
+button.close-button.hidden {
+    display: none;
+}
+
+mat-tab-group {
+    height: 100%;
+}
+
+
+.cover {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  opacity: 30%;
+  flex-direction: column;
+
+  .cover-icon {
+    font-size: 3rem;
+    height: fit-content;
+  }
+  .cover-caption {
+    font-size: 1.5rem;
+  }
+}

@@ -3,21 +3,19 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  Input,
   OnDestroy,
-  OnInit,
-  ViewChild,
 } from '@angular/core';
-import { map, Subject, takeUntil } from 'rxjs';
-import { GridDirective } from '../../../grid/directives/grid.directive';
+import { Subject } from 'rxjs';
 import { GridDataSource } from '../../../grid/models/grid-data-source';
 import { Cell } from '../../models/cell';
-import { Command, InsertCommand } from '../../models/command';
+import { Command } from '../../models/command';
 import {
   PartColumns,
   PartFailure,
   PART_FAILURES,
 } from '../../models/part-failure';
-import { PartsDataService } from '../../services/parts-data.service';
+import { PartEditor } from '../../models/editor';
 
 @Component({
   selector: 'app-parts-editor',
@@ -25,34 +23,27 @@ import { PartsDataService } from '../../services/parts-data.service';
   styleUrls: ['./parts-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PartsEditorComponent implements OnInit, AfterViewInit, OnDestroy {
-  static commandHistorySize = 50;
-
-  @ViewChild(GridDirective, { static: true }) grid: GridDirective;
+export class PartsEditorComponent implements AfterViewInit, OnDestroy {
   stickyHeaders: Set<string> = new Set([
     'machine',
     'name',
     'articleNo',
     'tool',
   ]);
+
   partHeaders: PartColumns[] = [...PART_FAILURES];
   displayedColumns: string[] = ['position', ...PART_FAILURES];
   dataSource = new GridDataSource<{ [key in keyof PartFailure]: Cell }>([]);
   commandHistory: Command<Cell>[] = [];
   destroy$ = new Subject<void>();
 
-  constructor(
-    private changeDetectorRef: ChangeDetectorRef,
-    private partsDataService: PartsDataService
-  ) {}
+  private partEditor: PartEditor;
+  constructor(private changeDetectorRef: ChangeDetectorRef) {}
 
-  ngOnInit(): void {
-    this.partsDataService.currentReport$
-      .pipe(
-        takeUntil(this.destroy$),
-        map((partReport) => this.convertPartReport(partReport))
-      )
-      .subscribe((cellData) => this.dataSource.data.next(cellData));
+  @Input()
+  set editor(editor: PartEditor) {
+    this.partEditor = editor;
+    this.dataSource.data.next(editor.workbook);
   }
 
   ngOnDestroy(): void {
@@ -64,36 +55,7 @@ export class PartsEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.changeDetectorRef.detectChanges();
   }
 
-  convertPartReport(
-    parts: Partial<PartFailure>[]
-  ): { [key in keyof PartFailure]: Cell }[] {
-    return parts.map((part) =>
-      PART_FAILURES.reduce((acc, key) => {
-        acc[key] = new Cell({ value: String(part[key] ?? '') });
-        return acc;
-      }, {})
-    ) as { [key in keyof PartFailure]: Cell }[];
-  }
-
-  undoCommand() {
-    if (this.commandHistory.length <= 0) {
-      return;
-    }
-
-    this.commandHistory.pop().undo();
-  }
-
   insertValue(cell: Cell, value: string) {
-    this.executeCommand(new InsertCommand(cell, value));
-  }
-
-  private executeCommand(command: Command<Cell>) {
-    if (command.execute()) {
-      this.commandHistory.push(command);
-    }
-
-    if (this.commandHistory.length > PartsEditorComponent.commandHistorySize) {
-      this.commandHistory.shift();
-    }
+    this.partEditor.insertValue(cell, value);
   }
 }
