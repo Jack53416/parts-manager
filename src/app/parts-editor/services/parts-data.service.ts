@@ -32,7 +32,7 @@ export class PartsDataService {
     if (index === this.uiState.activeIndex) {
       return;
     }
-    console.log(index);
+
     this.updateUiState({ activeIndex: index });
   }
 
@@ -64,10 +64,14 @@ export class PartsDataService {
 
     editors.splice(editorIdx, 1);
 
-    const activeEditorIndex =
-      editors.length === 0
-        ? null
-        : (this.uiState.activeIndex - 1) % editors.length;
+    let activeEditorIndex = this.uiState.activeIndex;
+
+    if (activeEditorIndex >= editors.length) {
+      activeEditorIndex =
+        editors.length === 0
+          ? null
+          : (this.uiState.activeIndex - 1) % editors.length;
+    }
 
     this.updateUiState({
       openedEditors: editors,
