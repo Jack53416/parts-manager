@@ -62,6 +62,8 @@ export class PartsDataService {
       return;
     }
 
+    editors.splice(editorIdx, 1);
+
     const activeEditorIndex =
       editors.length === 0
         ? null
@@ -76,7 +78,6 @@ export class PartsDataService {
   private updateUiState(newState: Partial<EditorsUiState>) {
     this.uiState = Object.freeze({ ...this.uiState, ...newState });
     this.uiStateSubject$.next(this.uiState);
-    console.log(this.uiState);
   }
 
   private convertReportToWorkbook(parts: Partial<PartFailure>[]): PartWorkbook {

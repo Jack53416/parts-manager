@@ -1,16 +1,11 @@
 <ng-container *ngIf="editorsUiState$ | async as uiState">
-    <mat-tab-group *ngIf="uiState.openedEditors.length else noEditorsCover" 
-        (selectedIndexChange)="tabChange($event)"
-        [selectedIndex]="uiState.activeIndex" 
-        [animationDuration]="0" 
-        fitInkBarToContent 
-        disableRipple
-        color="primary"
+    <mat-tab-group *ngIf="uiState.openedEditors.length else noEditorsCover" (selectedIndexChange)="tabChange($event)"
+        [selectedIndex]="uiState.activeIndex" [animationDuration]="0" fitInkBarToContent disableRipple color="primary"
         headerPosition="above">
         <mat-tab #tab *ngFor="let editor of uiState.openedEditors">
             <ng-template mat-tab-label>
                 <span>{{editor.name}}</span>
-                <button (click)="closeEditor(editor)" matRipple [class.hidden]="!tab.isActive" class="close-button"
+                <button app-icon-button (click)="closeEditor(editor)" matRipple [class.hidden]="!tab.isActive" class="close-button"
                     (click)="$event.stopPropagation();">
                     <mat-icon inline>close</mat-icon>
                 </button>

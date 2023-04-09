@@ -1,0 +1,15 @@
+@mixin theme() {
+  app-editor-workspace {
+    .mat-tab-label:hover {
+      button.close-button.hidden {
+        display: unset;
+      }
+    }
+
+    mat-tab-group {
+      .mat-tab-body-wrapper {
+        flex: 1;
+      }
+    }
+  }
+}
