@@ -28,6 +28,16 @@ export class PartsDataService {
     return this.uiStateSubject$.asObservable();
   }
 
+  get activeEditor(): PartEditor | null {
+    if (
+      this.uiState.activeIndex === null ||
+      this.uiState.activeIndex === undefined
+    ) {
+      return null;
+    }
+    return this.uiState.openedEditors[this.uiState.activeIndex];
+  }
+
   setActiveIdx(index: number) {
     if (index === this.uiState.activeIndex) {
       return;
@@ -85,9 +95,13 @@ export class PartsDataService {
   }
 
   private convertReportToWorkbook(parts: Partial<PartFailure>[]): PartWorkbook {
-    return parts.map((part) =>
+    return parts.map((part, rowIdx) =>
       PART_FAILURES.reduce((acc, key) => {
-        acc[key] = new Cell({ value: String(part[key] ?? '') });
+        acc[key] = new Cell({
+          column: key,
+          row: rowIdx,
+          value: String(part[key] ?? ''),
+        });
         return acc;
       }, {})
     ) as PartWorkbook;

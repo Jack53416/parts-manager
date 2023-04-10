@@ -5,8 +5,9 @@ import {
   Component,
   Input,
   OnDestroy,
+  ViewChild,
 } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { GridDataSource } from '../../../grid/models/grid-data-source';
 import { Cell } from '../../models/cell';
 import { Command } from '../../models/command';
@@ -16,6 +17,7 @@ import {
   PART_FAILURES,
 } from '../../models/part-failure';
 import { PartEditor } from '../../models/editor';
+import { GridDirective } from '../../../grid/directives/grid.directive';
 
 @Component({
   selector: 'app-parts-editor',
@@ -24,6 +26,7 @@ import { PartEditor } from '../../models/editor';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PartsEditorComponent implements AfterViewInit, OnDestroy {
+  @ViewChild(GridDirective, { static: true }) grid: GridDirective;
   stickyHeaders: Set<string> = new Set([
     'machine',
     'name',
@@ -42,8 +45,12 @@ export class PartsEditorComponent implements AfterViewInit, OnDestroy {
 
   @Input()
   set editor(editor: PartEditor) {
+    this.destroy$.next();
     this.partEditor = editor;
     this.dataSource.data.next(editor.workbook);
+    this.partEditor.focusChanges$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((focusedCell) => this.onCellFocusChanged(focusedCell));
   }
 
   ngOnDestroy(): void {
@@ -57,5 +64,21 @@ export class PartsEditorComponent implements AfterViewInit, OnDestroy {
 
   insertValue(cell: Cell, value: string) {
     this.partEditor.insertValue(cell, value);
+  }
+
+  private onCellFocusChanged(focusedCell: Cell) {
+    this.changeDetectorRef.detectChanges();
+    const columnIdx = this.partHeaders.findIndex(
+      (header) => header === focusedCell.column
+    );
+
+    if (columnIdx <= 0) {
+      return;
+    }
+
+    this.grid.selectCell({
+      x: columnIdx,
+      y: focusedCell.row,
+    });
   }
 }

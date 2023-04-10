@@ -69,8 +69,12 @@ export class GridDirective
     this.destroy$.complete();
   }
 
-  selectCell(cell: GridCellDirective): void {
-    const position = this.keyManager.findCellPosition(cell);
+  selectCell(cell: GridCellDirective | Point): void {
+    const position =
+      cell instanceof GridCellDirective
+        ? this.keyManager.findCellPosition(cell)
+        : cell;
+
     if (position) {
       this.keyManager.cursor.setPosition(position);
     }
