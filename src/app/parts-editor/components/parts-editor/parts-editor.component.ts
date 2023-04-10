@@ -45,8 +45,9 @@ export class PartsEditorComponent implements OnInit {
   //}
 
   ngOnInit(): void {
-    this.partsDataService.testEvent.subscribe((data: string) => {
-      console.log('dupka' + data);
+    this.partsDataService.getDataFromTable.subscribe((msgFromToolbar: string) => {
+      console.log(msgFromToolbar);
+      console.log(this.getCellsValues());
     });
 
     this.partsDataService.sendReporttoTable.subscribe((parts) => {
@@ -71,6 +72,10 @@ export class PartsEditorComponent implements OnInit {
 
   insertValue(cell: Cell, value: string) {
     this.executeCommand(new InsertCommand(cell, value));
+  }
+
+  getCellsValues() {
+    return this.dataSource.data.value;
   }
 
   private executeCommand(command: Command<Cell>) {

@@ -8,8 +8,8 @@ import { ElectronService } from '../../core/services/electron/electron.service';
 })
 export class PartsDataService {
 
-  @Output() testEvent = new EventEmitter<string>();
-  @Output() sendReporttoTable = new EventEmitter<Part>();
+  @Output() getDataFromTable = new EventEmitter<string>();
+  @Output() sendReporttoTable = new EventEmitter<{[key: string]: Part}>();
 
   constructor(private electronService: ElectronService) {}
 
@@ -19,15 +19,19 @@ export class PartsDataService {
   //  }));
   //}
 
-  getFailureReport() {
+  getFailureReport(): Promise<{[key: string]: Part}> {
     const report = this.electronService.readExcelFile();
     //console.log('getFailiureReport - part service');
     //console.log(report);
     return report;
   };
 
-  eventSendReportDataToTable(report) {
+  eventSendReportDataToTable(report: {[key: string]: Part}) {
     this.sendReporttoTable.emit(report);
+  }
+
+  eventGetDataFromTable(msg: string){
+    this.getDataFromTable.emit(msg);
   }
 
 }

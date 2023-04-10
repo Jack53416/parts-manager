@@ -43,7 +43,7 @@ export class Part {
   }
 }
 
-export async function readExcel(reportPath: string) {
+export async function readExcel(reportPath: string): Promise<{[key: string]: Part}> {
   const woorkbookReport: XLSX.WorkBook = XLSX.readFile(reportPath);
   const parts: { [key: string]: Part } = {};
 
