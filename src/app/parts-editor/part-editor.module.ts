@@ -9,6 +9,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [PartsEditorComponent, EditorWorkspaceComponent],
@@ -21,6 +22,7 @@ import { MatRippleModule } from '@angular/material/core';
     MatIconModule,
     MatButtonModule,
     MatRippleModule,
+    ScrollingModule
   ],
 })
 export class PartsEditorModule {}
