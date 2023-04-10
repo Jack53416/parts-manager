@@ -1,32 +1,122 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ElectronService } from '../../core/services';
 import { MOCK_PRODUCTION_REPORT } from '../models/part';
-import { PartFailure } from '../models/part-failure';
+import { PART_FAILURES, PartFailure } from '../models/part-failure';
+import { PartEditor, PartWorkbook } from '../models/editor';
+import { Cell } from '../models/cell';
+
+export interface EditorsUiState {
+  activeIndex: number | null;
+  openedEditors: PartEditor[];
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class PartsDataService {
-  private activeReportSubject$ = new Subject<Partial<PartFailure>[]>();
+  private uiState: EditorsUiState = {
+    openedEditors: [],
+    activeIndex: null,
+  };
+
+  private uiStateSubject$ = new BehaviorSubject(this.uiState);
 
   constructor(private electronService: ElectronService) {}
 
-  get currentReport$(): Observable<Partial<PartFailure>[]> {
-    return this.activeReportSubject$.asObservable();
+  get uiState$(): Observable<EditorsUiState> {
+    return this.uiStateSubject$.asObservable();
   }
 
-  async getFailureReport(): Promise<void> {
-    if (this.electronService.isElectron) {
-      const result = await this.electronService.ipcRenderer?.invoke('openExcel');
-      return this.activeReportSubject$.next(result);
+  get activeEditor(): PartEditor | null {
+    if (
+      this.uiState.activeIndex === null ||
+      this.uiState.activeIndex === undefined
+    ) {
+      return null;
+    }
+    return this.uiState.openedEditors[this.uiState.activeIndex];
+  }
+
+  setActiveIdx(index: number) {
+    if (index === this.uiState.activeIndex) {
+      return;
     }
 
-    this.activeReportSubject$.next(this.getMockedData());
+    this.updateUiState({ activeIndex: index });
+  }
+
+  async openEditor() {
+    // ToDo(Jacek): Name editors better
+    const report = await this.getFailureReport();
+    const editors = this.uiState.openedEditors;
+
+    const editorCount = editors.push(
+      new PartEditor(
+        this.convertReportToWorkbook(report),
+        `new-workbook(${editors.length})`
+      )
+    );
+
+    this.updateUiState({
+      activeIndex: editorCount - 1,
+      openedEditors: editors,
+    });
+  }
+
+  closeEditor(editor: PartEditor) {
+    const editors = this.uiState.openedEditors;
+    const editorIdx = editors.findIndex((arrEditor) => arrEditor === editor);
+
+    if (editorIdx === -1) {
+      return;
+    }
+
+    editors.splice(editorIdx, 1);
+
+    let activeEditorIndex = this.uiState.activeIndex;
+
+    if (activeEditorIndex >= editors.length) {
+      activeEditorIndex =
+        editors.length === 0
+          ? null
+          : (this.uiState.activeIndex - 1) % editors.length;
+    }
+
+    this.updateUiState({
+      openedEditors: editors,
+      activeIndex: activeEditorIndex,
+    });
+  }
+
+  private updateUiState(newState: Partial<EditorsUiState>) {
+    this.uiState = Object.freeze({ ...this.uiState, ...newState });
+    this.uiStateSubject$.next(this.uiState);
+  }
+
+  private convertReportToWorkbook(parts: Partial<PartFailure>[]): PartWorkbook {
+    return parts.map((part, rowIdx) =>
+      PART_FAILURES.reduce((acc, key) => {
+        acc[key] = new Cell({
+          column: key,
+          row: rowIdx,
+          value: String(part[key] ?? ''),
+        });
+        return acc;
+      }, {})
+    ) as PartWorkbook;
+  }
+
+  private async getFailureReport(): Promise<Partial<PartFailure>[]> {
+    if (this.electronService.isElectron) {
+      return await this.electronService.ipcRenderer?.invoke('openExcel');
+    }
+
+    return this.getMockedData();
   }
 
   private getMockedData(): Partial<PartFailure>[] {
-    return Array(100)
+    return Array(20)
       .fill(0)
       .map((_, index) => ({
         ...MOCK_PRODUCTION_REPORT[index % MOCK_PRODUCTION_REPORT.length],

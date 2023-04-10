@@ -55,12 +55,9 @@ export class GridKeyManager<T extends Foscusable> {
 
   set cells(cellMatrix: T[][]) {
     this.cellMatrix = cellMatrix;
-    const activePosiion = this.findCellPosition(this.activeItem);
-    if (activePosiion) {
-      this.selectCell(activePosiion);
-    } else {
-      this.cursor.reset();
-    }
+    this.activeItem = null;
+    this.previousActiveItem = null;
+    this.cursor.setPosition({x: 0, y: 0});
   }
 
   findCellPosition(cell: T): Point | null {
