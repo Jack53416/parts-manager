@@ -15,9 +15,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { GridCellValueComponent } from '../components/grid-cell-value/grid-cell-value.component';
 import { AriaGrid, ARIA_GRID } from '../models/aria-grid';
 import { Foscusable } from '../models/editable';
+import { PlaneDirection } from '../utils/point';
+import { ScrollManagerService } from '../services/scroll-manager.service';
 
 @Directive({
   selector: 'td[appGridCell]',
+  providers: [{ provide: ScrollManagerService }],
 })
 export class GridCellDirective
   implements Foscusable, OnInit, OnDestroy, AfterViewInit
@@ -29,6 +32,7 @@ export class GridCellDirective
     @Inject(ARIA_GRID) private grid: AriaGrid,
     private elementRef: ElementRef,
     private render2: Renderer2,
+    private scrollManager: ScrollManagerService,
     @Optional() private cdkColumnDef: CdkColumnDef
   ) {}
 
@@ -45,6 +49,10 @@ export class GridCellDirective
 
   get nativeElement(): HTMLTableCellElement {
     return this.elementRef.nativeElement as HTMLTableCellElement;
+  }
+
+  get boundingRect(): DOMRect {
+    return this.nativeElement.getBoundingClientRect();
   }
 
   set selectionSource(value: boolean) {
@@ -80,8 +88,9 @@ export class GridCellDirective
     this.destroy$.next();
   }
 
-  focus() {
-    this.nativeElement.focus();
+  focus(cursorDirection?: PlaneDirection) {
+    this.nativeElement.focus({ preventScroll: true });
+    this.scrollManager.scrollIntoView(cursorDirection);
     this.render2.setAttribute(this.nativeElement, 'tabindex', '0');
   }
 

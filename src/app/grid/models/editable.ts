@@ -1,3 +1,5 @@
+import { PlaneDirection } from '../utils/point';
+
 export interface Editable {
   editMode: boolean;
   edit(key?: string): void;
@@ -5,6 +7,6 @@ export interface Editable {
 
 export interface Foscusable {
   value: Editable;
-  focus(): void;
+  focus(cursorDirection?: PlaneDirection): void;
   focusOut(): void;
 }
