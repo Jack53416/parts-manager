@@ -6,7 +6,7 @@ export class Cursor implements Point {
 
   constructor(
     private getBounds: (pos: Point) => Point,
-    private positionChanged: (pos: Point) => void,
+    private positionChanged: (currPos: Point, oldPos: Point) => void,
     private startingPoint: Point = {x: -1, y: -1},
     public wrap = true
   ) {
@@ -22,8 +22,9 @@ export class Cursor implements Point {
   }
 
   set x(xPos: number) {
+    const oldX = this.x;
     this.position.x = normalizeIndex(xPos, this.bounds.x, this.wrap);
-    this.notifyPositionChanged();
+    this.notifyPositionChanged({...this.position, x: oldX});
   }
 
   get y(): number {
@@ -31,13 +32,16 @@ export class Cursor implements Point {
   }
 
   set y(yPos: number) {
+    const oldY = this.y;
+
     this.position.y = normalizeIndex(yPos, this.bounds.y, this.wrap);
-    this.notifyPositionChanged();
+    this.notifyPositionChanged({...this.position, y: oldY});
   }
 
   setPosition(pos: Point) {
+    const oldPos = {...this.position};
     this.position = {...pos};
-    this.notifyPositionChanged();
+    this.notifyPositionChanged(oldPos);
   }
 
   moveUp() {
@@ -76,7 +80,7 @@ export class Cursor implements Point {
     this.position = {...this.startingPoint};
   }
 
-  private notifyPositionChanged() {
-    this.positionChanged({ ...this.position });
+  private notifyPositionChanged(oldPosition: Point) {
+    this.positionChanged({ ...this.position }, oldPosition);
   }
 }

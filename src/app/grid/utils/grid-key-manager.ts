@@ -3,7 +3,7 @@ import { describePressedKey } from '../../shared/utils/keyboard';
 import { GridCursorEvent } from '../models/grid-cursor-event';
 import { Foscusable } from '../models/editable';
 import { Cursor } from './cursor';
-import { Point } from './point';
+import { PlaneDirection, Point } from './point';
 import { hasModifierKey } from '@angular/cdk/keycodes';
 
 export class GridKeyManager<T extends Foscusable> {
@@ -37,7 +37,7 @@ export class GridKeyManager<T extends Foscusable> {
         x: this.cellMatrix?.at(cursor.y).length ?? 0,
         y: this.cellMatrix?.length ?? 0,
       }),
-      (cursor) => this.selectCell(cursor)
+      (currCursor, oldCursor) => this.selectCell(currCursor, oldCursor)
     );
   }
 
@@ -98,16 +98,35 @@ export class GridKeyManager<T extends Foscusable> {
     this.activeItemChanges$.complete();
   }
 
-  private selectCell(cursor: Point) {
+  private selectCell(cursor: Point, oldCursor?: Point) {
     const previousActiveItem = this.activeItem;
     const item = this.getItem(cursor);
 
     if (item && item !== previousActiveItem) {
       this.activeItem?.focusOut();
-      item.focus();
+      item.focus(this.getCursorDirection(cursor, oldCursor));
       this.activeItem = item;
       this.previousActiveItem = previousActiveItem;
       this.activeItemChanges$.next({ position: cursor, item });
     }
+  }
+
+  private getCursorDirection(
+    cursor: Point,
+    oldCursor?: Point
+  ): PlaneDirection | null {
+    if (!oldCursor) {
+      return null;
+    }
+
+    const scrollDirection = {
+      x: cursor.x - oldCursor.x,
+      y: cursor.y - oldCursor.y,
+    };
+
+    scrollDirection.x /= Math.abs(scrollDirection.x || 1);
+    scrollDirection.y /= Math.abs(scrollDirection.y || 1);
+
+    return scrollDirection as PlaneDirection;
   }
 }
