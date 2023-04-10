@@ -12,7 +12,7 @@ export class GridDataSource<T> extends DataSource<T> {
 
   /** Connect function called by the table to retrieve one stream containing the data to render. */
   connect(): Observable<T[]> {
-    return this.data;
+    return this.data.asObservable();
   }
 
   disconnect() {}

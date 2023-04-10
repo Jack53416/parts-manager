@@ -12,14 +12,15 @@
     background: var(--table-background);
   }
 
-  &:focus-within {
+  & {
     tr.selected th,
     th.selected {
       background: #d6d6d6;
     }
 
-    td[role="gridcell"].selected::before {
-      border: 2px solid var(--cursor-border-color);
+    td[role="gridcell"][tabindex="0"] {
+      outline: 2px solid var(--cursor-border-color);
+      outline-offset: -2px;
     }
   }
 }
@@ -71,24 +72,6 @@
 
     td {
       position: relative;
-
-      &[role="gridcell"].selected::before {
-        content: "";
-        display: block;
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-      }
-
-      &[role="gridcell"].selected:focus-visible {
-        outline: none;
-      }
-
-      &.selection-source.selected::before {
-        opacity: 0.5;
-      }
 
       &.selection-source {
         background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;

@@ -1,0 +1,35 @@
+@mixin color() {
+  button[app-icon-button] {
+    &:hover,
+    &:focus {
+      background: #00000011;
+    }
+
+    &:focus {
+      outline: thin solid #00000011;
+    }
+  }
+}
+
+@mixin theme() {
+  @include color();
+  button[app-icon-button] {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    outline: none;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 1em;
+    display: inline-flex;
+    justify-content: center;
+    background: unset;
+    align-items: center;
+    cursor: pointer;
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}

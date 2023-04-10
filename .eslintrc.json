@@ -1,7 +1,8 @@
 {
   "root": true,
   "ignorePatterns": [
-    //"app/**/*", // ignore nodeJs files
+    "app/node_modules/*", // ignore nodeJs files
+    "app/*.js",
     "dist/**/*",
     "release/**/*"
   ],

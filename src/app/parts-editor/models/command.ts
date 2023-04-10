@@ -9,6 +9,10 @@ export abstract class Command<T extends Prototype<T>> {
     this.item = item;
   }
 
+  get element(): T {
+    return this.item.copy();
+  }
+
   undo() {
     this.item.apply(this.backup);
   }

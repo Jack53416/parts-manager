@@ -1,4 +1,6 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -16,10 +18,12 @@ import { Editable } from '../../models/editable';
   selector: 'app-grid-cell-value',
   templateUrl: './grid-cell-value.component.html',
   styleUrls: ['./grid-cell-value.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GridCellValueComponent implements OnInit, Editable {
   @Input() value: string;
   @Input() comment: string;
+  @Input() formula: string;
 
   @Output() editDiscarded = new EventEmitter<void>();
   @Output() editConfirmed = new EventEmitter<string>();
@@ -36,7 +40,7 @@ export class GridCellValueComponent implements OnInit, Editable {
       },
     ],
   ]);
-  constructor() {}
+  constructor(private changeDetectorRef: ChangeDetectorRef) {}
 
   @ViewChild('textInput', { static: false, read: ElementRef })
   set textInputRef(value: ElementRef) {
@@ -65,12 +69,14 @@ export class GridCellValueComponent implements OnInit, Editable {
   }
 
   edit(key?: string) {
-    this.editInput.reset(key ?? this.value);
+    this.editInput.reset(key ?? this.formula ?? this.value);
     this.editMode = true;
+    this.changeDetectorRef.markForCheck();
   }
 
   confirmChanges() {
     this.editMode = false;
     this.editConfirmed.next(this.editInput.value);
+    this.changeDetectorRef.markForCheck();
   }
 }

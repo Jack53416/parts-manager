@@ -9,6 +9,7 @@ import { PartsEditorModule } from './parts-editor/part-editor.module';
 import { SharedModule } from './shared/shared.module';
 import { ToolbarModule } from './toolbar/toolbar.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,6 +23,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     PartsEditorModule,
     AppRoutingModule,
     ToolbarModule,
+    ScrollingModule
   ],
   providers: [],
   bootstrap: [AppComponent],

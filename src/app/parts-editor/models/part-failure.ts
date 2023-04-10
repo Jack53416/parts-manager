@@ -25,7 +25,6 @@ export const PART_FAILURES: PartColumns[] = [
     'name',
     'articleNo',
     'tool',
-    'comment',
     'totalPartsProduced',
     'scrapNo',
     'shortShot',
