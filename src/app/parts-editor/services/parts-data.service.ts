@@ -96,7 +96,7 @@ export class PartsDataService {
 
   private convertReportToWorkbook(parts: Partial<PartFailure>[]): PartWorkbook {
     return parts.map((part, rowIdx) =>
-      PART_FAILURES.reduce((acc, key) => {
+      Array.from(PART_FAILURES.keys()).reduce((acc, key) => {
         acc[key] = new Cell({
           column: key,
           row: rowIdx,
