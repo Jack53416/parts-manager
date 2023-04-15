@@ -54,6 +54,7 @@ export class PartsDataService {
     // ToDo(Jacek): Name editors better
 
     const report = await this.getFailureReport();
+    console.log('2');
     const editors = this.uiState.openedEditors;
 
     const editorCount = editors.push(
@@ -110,7 +111,8 @@ export class PartsDataService {
   }
 
   private convertReportToWorkbook(parts: Partial<PartFailure>[]): PartWorkbook {
-    return parts.map((part, rowIdx) =>
+    console.log(parts);
+    return Object.values(parts).map((part, rowIdx) =>
       PART_FAILURES.reduce((acc, key) => {
         acc[key] = new Cell({
           column: key,
@@ -124,6 +126,7 @@ export class PartsDataService {
 
   private async getFailureReport(): Promise<Partial<PartFailure>[]> {
     if (this.electronService.isElectron) {
+      console.log('1');
       return await this.electronService.readExcelFile();
     }
 
