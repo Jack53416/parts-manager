@@ -34,7 +34,7 @@ export const PART_FAILURES: PartColumns = new Map([
   ['scrapNo', $localize`Scrap No`],
   ['shortShot', $localize`Short Shot`],
   ['startupParts', $localize`Startup Parts`],
-  ['burns', $localize`BuSrns`],
+  ['burns', $localize`Burns`],
   ['contaminated', $localize`Contaminated`],
   ['oilContaminations', $localize`Oil contaminations`],
   ['smudges', $localize`Smudges`],

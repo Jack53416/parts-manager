@@ -1,198 +1,102 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-<file>
- <body>
+  <file>
+    <body>
       <trans-unit id="c2fe7cb26ca3e99297fcb8e71d9ed64fd6cd2471" datatype="html">
         <source>To start open an excel</source>
         <target>Aby zacząć, otwórz plik excel</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/components/editor-workspace/editor-workspace.component.html</context>
-          <context context-type="linenumber">27</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1088161574006703857" datatype="html">
         <source>Machine</source>
         <target>Maszyna</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">29</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="8953033926734869941" datatype="html">
         <source>Name</source>
         <target>Nazwa</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="2292600158043304863" datatype="html">
         <source>Article No</source>
         <target>Numer artykułu</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">31</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="2932360890997178383" datatype="html">
         <source>Tool</source>
         <target>Narzędzie</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">32</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="8811139637533655149" datatype="html">
         <source>Total parts produced</source>
         <target>Ilość wyprodukowana</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">33</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="3036541990805848521" datatype="html">
         <source>Scrap No</source>
         <target>Ilość braków</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">34</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="5571468811587707272" datatype="html">
         <source>Short Shot</source>
         <target>Niedotryski</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">35</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="8122270278149043742" datatype="html">
         <source>Startup Parts</source>
         <target>Rozruchowe</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">36</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="7313181862604992367" datatype="html">
         <source>Burns</source>
-        <target>Przypalenia</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">37</context>
-        </context-group>
+        <target state="new">Przypalenia</target>
       </trans-unit>
       <trans-unit id="5385970007813672127" datatype="html">
         <source>Contaminated</source>
         <target>Zanieczyszczenia materiałowe</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">38</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="5952384276786014138" datatype="html">
         <source>Oil contaminations</source>
         <target>Zanieczyszczenia olejowe</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">39</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="259179819880948238" datatype="html">
         <source>Smudges</source>
         <target>Smugi</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">40</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="8880995869711235254" datatype="html">
         <source>Deformations</source>
         <target>Deformacje</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">41</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1355416511346786137" datatype="html">
         <source>Damaged in transport</source>
         <target>Uszkodzenia transportowe</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">42</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1966685607285355765" datatype="html">
         <source>Mechanical damages</source>
         <target>Uszkodzenia mechaniczne</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">43</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1137151974264426363" datatype="html">
         <source>Scratches</source>
         <target>Rysy</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">44</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="3022382972003980443" datatype="html">
         <source>Flashes</source>
         <target>Nadlewy</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">45</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="4497286046107815585" datatype="html">
         <source>Silvering</source>
         <target>Srebrzenia</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">46</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="2134729872317704278" datatype="html">
         <source>Removed by robot</source>
         <target>Odrzucone przez robota</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">47</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="4154180272404279405" datatype="html">
         <source>Air bubbles</source>
         <target>Pęcherze</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">48</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="7040288612202036661" datatype="html">
         <source>Others</source>
         <target>Inne</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/parts-editor/models/part-failure.ts</context>
-          <context context-type="linenumber">49</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
         <source>Save</source>
         <target>Zapisz</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/toolbar/components/toolbar/toolbar.component.html</context>
-          <context context-type="linenumber">4</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
         <source>Open</source>
         <target>Otwórz</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/toolbar/components/toolbar/toolbar.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
       </trans-unit>
     </body>
   </file>
