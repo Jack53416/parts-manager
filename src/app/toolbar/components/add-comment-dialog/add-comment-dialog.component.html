@@ -1,0 +1,17 @@
+<header mat-dialog-title>
+    <span>Leave comment</span>
+</header>
+
+<mat-dialog-content>
+    <mat-form-field>
+        <mat-label>Comment</mat-label>
+        <textarea #textarea matInput cdkTextareaAutosize [formControl]="commentFormControl"></textarea>
+        <mat-hint>{{textarea.value.length}} / {{commentMaxLength}}</mat-hint>
+        <mat-error>Invalid comment</mat-error>
+    </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-button (click)="dismiss()">Cancel</button>
+    <button mat-button color="primary" (click)="confirm()">Confirm</button>
+</mat-dialog-actions>
