@@ -4,7 +4,7 @@ import { DialogDateComponent } from '../dialog-date/dialog-date.component';
 import { MatDialog } from '@angular/material/dialog';
 
 export interface DialogData {
-  date: string;
+  date: Date;
 }
 
 @Component({
@@ -13,9 +13,11 @@ export interface DialogData {
   styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent {
-  date = '';
-
-  constructor(private partsDataService: PartsDataService, public dialog: MatDialog) {}
+  date: Date;
+  constructor(
+    private partsDataService: PartsDataService,
+    public dialog: MatDialog
+  ) {}
 
   readTable() {
     const msg = 'msg from toolbar';
@@ -23,18 +25,28 @@ export class ToolbarComponent {
   }
 
   async readExcel() {
-    await this.partsDataService.openEditor();
+    //const dateFormat = { year: 'numeric', month: 'long', day: 'numeric' };
+    if (this.date) {
+      await this.partsDataService.openEditor(
+        this.date.toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        })
+      );
+    } else {
+      // ToDo: show message on screen
+      console.log('enter date');
+    }
   }
 
   openDialog() {
-    const dialogRef = this.dialog.open(DialogDateComponent, {data: {date: this.date}});
+    const dialogRef = this.dialog.open(DialogDateComponent, {
+      data: { date: this.date },
+    });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
+    dialogRef.afterClosed().subscribe((result) => {
       this.date = result;
-      console.log(`data: ${this.date}`);
     });
   }
-
-
 }

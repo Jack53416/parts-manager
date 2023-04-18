@@ -1,9 +1,9 @@
-<h1 mat-dialog-title>Enter date</h1>
-<div mat-dialog-content>Date of raport:</div>
-<mat-form-field appearance="fill">
-  <mat-label>Enter date</mat-label>
-  <input *ngIf="data.date" matInput [(ngModel)]="data.date">
-  <input *ngIf="!data.date" matInput [(ngModel)]="newDate">
+<div mat-dialog-content>Enter date of raport</div>
+<mat-form-field>
+  <input matInput [matDatepicker]="picker" (dateChange)="getDate($event)" [(ngModel)]="this.oldDate" cdkFocusInitial>
+  <mat-hint>DD/MM/YYYY</mat-hint>
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
 </mat-form-field>
 <div mat-dialog-actions>
   <button mat-button (click)="onClearClick()">Clear</button>
