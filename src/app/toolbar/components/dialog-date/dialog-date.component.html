@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Enter date</h1>
+<div mat-dialog-content>Date of raport:</div>
+<mat-form-field appearance="fill">
+  <mat-label>Enter date</mat-label>
+  <input *ngIf="data.date" matInput [(ngModel)]="data.date">
+  <input *ngIf="!data.date" matInput [(ngModel)]="newDate">
+</mat-form-field>
+<div mat-dialog-actions>
+  <button mat-button (click)="onClearClick()">Clear</button>
+  <button mat-button (click)="onConfirmClick()">Confirm</button>
+</div>

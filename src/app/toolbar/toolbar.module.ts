@@ -4,10 +4,26 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
+import { DialogDateComponent } from './components/dialog-date/dialog-date.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { BrowserModule } from '@angular/platform-browser';
 
 @NgModule({
-  declarations: [ToolbarComponent],
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatRippleModule],
+  declarations: [ToolbarComponent, DialogDateComponent],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    MatRippleModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    BrowserModule
+  ],
   exports: [ToolbarComponent],
 })
 export class ToolbarModule {}
