@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { PartsDataService } from '../../../parts-editor/services/parts-data.service';
 import { DialogDateComponent } from '../dialog-date/dialog-date.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface DialogData {
   date: Date;
@@ -14,9 +15,11 @@ export interface DialogData {
 })
 export class ToolbarComponent {
   date: Date;
+
   constructor(
     private partsDataService: PartsDataService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) {}
 
   readTable() {
@@ -25,7 +28,7 @@ export class ToolbarComponent {
   }
 
   async readExcel() {
-    //const dateFormat = { year: 'numeric', month: 'long', day: 'numeric' };
+    //const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit' };
     if (this.date) {
       await this.partsDataService.openEditor(
         this.date.toLocaleDateString(undefined, {
@@ -35,8 +38,7 @@ export class ToolbarComponent {
         })
       );
     } else {
-      // ToDo: show message on screen
-      console.log('enter date');
+      this.msgNoDate();
     }
   }
 
@@ -47,6 +49,14 @@ export class ToolbarComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       this.date = result;
+    });
+  }
+
+  msgNoDate() {
+    this.snackBar.open('Enter Date', 'OK', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
     });
   }
 }

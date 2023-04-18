@@ -17,6 +17,7 @@ import {
   MAT_DATE_LOCALE,
 } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 const DATE_FORMAT = {
   parse: {
@@ -44,6 +45,7 @@ const DATE_FORMAT = {
     BrowserModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatSnackBarModule
   ],
   exports: [ToolbarComponent],
   providers: [
