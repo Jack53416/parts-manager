@@ -11,12 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import {
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
-} from '@angular/material/core';
-import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import {  MAT_DATE_LOCALE,} from '@angular/material/core';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 const DATE_FORMAT = {
@@ -25,9 +20,6 @@ const DATE_FORMAT = {
   },
   display: {
     dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MMMM YYYY',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM YYYY'
   }
 };
 
@@ -49,12 +41,7 @@ const DATE_FORMAT = {
   ],
   exports: [ToolbarComponent],
   providers: [
-    {
-      provide: DateAdapter,
-      useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE],
-    },
-    { provide: MAT_DATE_FORMATS, useValue: DATE_FORMAT },
+    {provide: MAT_DATE_LOCALE, useValue: DATE_FORMAT},
   ],
 })
 export class ToolbarModule {}

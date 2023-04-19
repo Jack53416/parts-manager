@@ -3,6 +3,7 @@ import { PartsDataService } from '../../../parts-editor/services/parts-data.serv
 import { DialogDateComponent } from '../dialog-date/dialog-date.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { formatDate } from '@angular/common';
 
 export interface DialogData {
   date: Date;
@@ -28,15 +29,8 @@ export class ToolbarComponent {
   }
 
   async readExcel() {
-    //const dateFormat = { year: 'numeric', month: '2-digit', day: '2-digit' };
     if (this.date) {
-      await this.partsDataService.openEditor(
-        this.date.toLocaleDateString(undefined, {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-        })
-      );
+      await this.partsDataService.openEditor(formatDate(this.date, 'dd.MM.YYYY', 'en-US'));
     } else {
       this.msgNoDate();
     }
