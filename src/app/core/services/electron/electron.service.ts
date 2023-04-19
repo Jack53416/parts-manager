@@ -61,8 +61,8 @@ export class ElectronService {
     return !!(window && window.process && window.process.type);
   }
 
-  async readExcelFile() {
-    const result = await this.ipcRenderer?.invoke('openExcel');
+  async readExcelFile(date: string) {
+    const result = await this.ipcRenderer?.invoke('openExcel', [date]);
     //console.log('readExcelFile - electron service');
     //console.log(result);
     return result;

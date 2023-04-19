@@ -3,11 +3,11 @@ import { getPartPropertiesFromDatabase } from './database';
 import { reportConfig } from './config';
 
 //TODO Reveive date from user
-const shiftNames: Array<string> = [
-  '04.10.2022 zm.A',
-  '04.10.2022 zm.B',
-  '04.10.2022 zm.C',
-];
+//const shiftNames: Array<string> = [
+//  '04.10.2022 zm.A',
+//  '04.10.2022 zm.B',
+//  '04.10.2022 zm.C',
+//];
 
 export class Part {
   name: string;
@@ -43,9 +43,16 @@ export class Part {
   }
 }
 
-export async function readExcel(reportPath: string): Promise<{[key: string]: Part}> {
+function generateShiftNames(date: string): string[] {
+  // ToDo: validation of sheets names
+  const suffixList = [' zm.A', ' zm.B', ' zm.C'];
+  return suffixList.map(element => date + element);
+};
+
+export async function readExcel(reportPath: string, date: string): Promise<{[key: string]: Part}> {
   const woorkbookReport: XLSX.WorkBook = XLSX.readFile(reportPath);
   const parts: { [key: string]: Part } = {};
+  const shiftNames = generateShiftNames(date);
 
   const promises = shiftNames.map(async (shiftName) => {
     const sheetShift: XLSX.Sheet = woorkbookReport.Sheets[shiftName];

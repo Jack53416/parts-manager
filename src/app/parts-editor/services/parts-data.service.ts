@@ -51,7 +51,7 @@ export class PartsDataService {
   }
 
   async openEditor(date: string) {
-    const report = await this.getFailureReport();
+    const report = await this.getFailureReport(date);
     const editors = this.uiState.openedEditors;
 
     const editorCount = editors.push(
@@ -120,9 +120,9 @@ export class PartsDataService {
     ) as PartWorkbook;
   }
 
-  private async getFailureReport(): Promise<Partial<PartFailure>[]> {
+  private async getFailureReport(date: string): Promise<Partial<PartFailure>[]> {
     if (this.electronService.isElectron) {
-      return await this.electronService.readExcelFile();
+      return await this.electronService.readExcelFile(date);
     }
 
     return this.getMockedData();
