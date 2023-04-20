@@ -120,26 +120,3 @@ function handleIPCEvents() {
 
   });
 }
-
-
-//function handleIPCEvents() {
-//  ipcMain.handle('openExcel', async (event, args) => {
-//    const result = await dialog.showOpenDialog(win, {
-//      title: 'Select a file',
-//      filters: [
-//        {
-//          name: 'Spreadsheets',
-//          extensions: ['xlsx', 'xls', 'xlsb'],
-//        },
-//      ],
-//    });
-//    /* result.filePaths is an array of selected files */
-//    if (result.filePaths.length == 0) {
-//      throw new Error('No file was selected!');
-//    }
-//
-//    const workbook = XLSX.readFile(result.filePaths[0]);
-//    const first_ws = workbook.Sheets[workbook.SheetNames[0]];
-//    return XLSX.utils.sheet_to_json(first_ws);
-//  });
-//}
