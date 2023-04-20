@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file>
+    <body>
+      <trans-unit id="c2fe7cb26ca3e99297fcb8e71d9ed64fd6cd2471" datatype="html">
+        <source>To start open an excel</source>
+        <target>Aby zacząć, otwórz plik excel</target>
+      </trans-unit>
+      <trans-unit id="1088161574006703857" datatype="html">
+        <source>Machine</source>
+        <target>Maszyna</target>
+      </trans-unit>
+      <trans-unit id="8953033926734869941" datatype="html">
+        <source>Name</source>
+        <target>Nazwa</target>
+      </trans-unit>
+      <trans-unit id="2292600158043304863" datatype="html">
+        <source>Article No</source>
+        <target>Numer artykułu</target>
+      </trans-unit>
+      <trans-unit id="2932360890997178383" datatype="html">
+        <source>Tool</source>
+        <target>Narzędzie</target>
+      </trans-unit>
+      <trans-unit id="8811139637533655149" datatype="html">
+        <source>Total parts produced</source>
+        <target>Ilość wyprodukowana</target>
+      </trans-unit>
+      <trans-unit id="3036541990805848521" datatype="html">
+        <source>Scrap No</source>
+        <target>Ilość braków</target>
+      </trans-unit>
+      <trans-unit id="5571468811587707272" datatype="html">
+        <source>Short Shot</source>
+        <target>Niedotryski</target>
+      </trans-unit>
+      <trans-unit id="8122270278149043742" datatype="html">
+        <source>Startup Parts</source>
+        <target>Rozruchowe</target>
+      </trans-unit>
+      <trans-unit id="7313181862604992367" datatype="html">
+        <source>Burns</source>
+        <target state="new">Przypalenia</target>
+      </trans-unit>
+      <trans-unit id="5385970007813672127" datatype="html">
+        <source>Contaminated</source>
+        <target>Zanieczyszczenia materiałowe</target>
+      </trans-unit>
+      <trans-unit id="5952384276786014138" datatype="html">
+        <source>Oil contaminations</source>
+        <target>Zanieczyszczenia olejowe</target>
+      </trans-unit>
+      <trans-unit id="259179819880948238" datatype="html">
+        <source>Smudges</source>
+        <target>Smugi</target>
+      </trans-unit>
+      <trans-unit id="8880995869711235254" datatype="html">
+        <source>Deformations</source>
+        <target>Deformacje</target>
+      </trans-unit>
+      <trans-unit id="1355416511346786137" datatype="html">
+        <source>Damaged in transport</source>
+        <target>Uszkodzenia transportowe</target>
+      </trans-unit>
+      <trans-unit id="1966685607285355765" datatype="html">
+        <source>Mechanical damages</source>
+        <target>Uszkodzenia mechaniczne</target>
+      </trans-unit>
+      <trans-unit id="1137151974264426363" datatype="html">
+        <source>Scratches</source>
+        <target>Rysy</target>
+      </trans-unit>
+      <trans-unit id="3022382972003980443" datatype="html">
+        <source>Flashes</source>
+        <target>Nadlewy</target>
+      </trans-unit>
+      <trans-unit id="4497286046107815585" datatype="html">
+        <source>Silvering</source>
+        <target>Srebrzenia</target>
+      </trans-unit>
+      <trans-unit id="2134729872317704278" datatype="html">
+        <source>Removed by robot</source>
+        <target>Odrzucone przez robota</target>
+      </trans-unit>
+      <trans-unit id="4154180272404279405" datatype="html">
+        <source>Air bubbles</source>
+        <target>Pęcherze</target>
+      </trans-unit>
+      <trans-unit id="7040288612202036661" datatype="html">
+        <source>Others</source>
+        <target>Inne</target>
+      </trans-unit>
+      <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
+        <source>Save</source>
+        <target>Zapisz</target>
+      </trans-unit>
+      <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
+        <source>Open</source>
+        <target>Otwórz</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

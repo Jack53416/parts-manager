@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="c2fe7cb26ca3e99297fcb8e71d9ed64fd6cd2471" datatype="html">
+        <source>To start open an excel</source>
+      </trans-unit>
+      <trans-unit id="1088161574006703857" datatype="html">
+        <source>Machine</source>
+      </trans-unit>
+      <trans-unit id="8953033926734869941" datatype="html">
+        <source>Name</source>
+      </trans-unit>
+      <trans-unit id="2292600158043304863" datatype="html">
+        <source>Article No</source>
+      </trans-unit>
+      <trans-unit id="2932360890997178383" datatype="html">
+        <source>Tool</source>
+      </trans-unit>
+      <trans-unit id="8811139637533655149" datatype="html">
+        <source>Total parts produced</source>
+      </trans-unit>
+      <trans-unit id="3036541990805848521" datatype="html">
+        <source>Scrap No</source>
+      </trans-unit>
+      <trans-unit id="5571468811587707272" datatype="html">
+        <source>Short Shot</source>
+      </trans-unit>
+      <trans-unit id="8122270278149043742" datatype="html">
+        <source>Startup Parts</source>
+      </trans-unit>
+      <trans-unit id="7313181862604992367" datatype="html">
+        <source>Burns</source>
+      </trans-unit>
+      <trans-unit id="5385970007813672127" datatype="html">
+        <source>Contaminated</source>
+      </trans-unit>
+      <trans-unit id="5952384276786014138" datatype="html">
+        <source>Oil contaminations</source>
+      </trans-unit>
+      <trans-unit id="259179819880948238" datatype="html">
+        <source>Smudges</source>
+      </trans-unit>
+      <trans-unit id="8880995869711235254" datatype="html">
+        <source>Deformations</source>
+      </trans-unit>
+      <trans-unit id="1355416511346786137" datatype="html">
+        <source>Damaged in transport</source>
+      </trans-unit>
+      <trans-unit id="1966685607285355765" datatype="html">
+        <source>Mechanical damages</source>
+      </trans-unit>
+      <trans-unit id="1137151974264426363" datatype="html">
+        <source>Scratches</source>
+      </trans-unit>
+      <trans-unit id="3022382972003980443" datatype="html">
+        <source>Flashes</source>
+      </trans-unit>
+      <trans-unit id="4497286046107815585" datatype="html">
+        <source>Silvering</source>
+      </trans-unit>
+      <trans-unit id="2134729872317704278" datatype="html">
+        <source>Removed by robot</source>
+      </trans-unit>
+      <trans-unit id="4154180272404279405" datatype="html">
+        <source>Air bubbles</source>
+      </trans-unit>
+      <trans-unit id="7040288612202036661" datatype="html">
+        <source>Others</source>
+      </trans-unit>
+      <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
+        <source>Save</source>
+      </trans-unit>
+      <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
+        <source>Open</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>
