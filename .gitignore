@@ -24,6 +24,7 @@ node_modules
 .settings/
 *.sublime-workspace
 /app/excel-parser/sqlite3.exe
+/app/excel-parser/parts.db
 
 # IDE - VSCode
 .vscode/*
