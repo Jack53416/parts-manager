@@ -12,9 +12,9 @@ import { GridDataSource } from '../../../grid/models/grid-data-source';
 import { Cell } from '../../models/cell';
 import { Command } from '../../models/command';
 import {
-  PartColumns,
   PartFailure,
-  PART_FAILURES,
+  PART_FAILURE_COLUMNS,
+  PartColumnDefinition,
 } from '../../models/part-failure';
 import { PartEditor } from '../../models/editor';
 import { GridDirective } from '../../../grid/directives/grid.directive';
@@ -34,8 +34,11 @@ export class PartsEditorComponent implements AfterViewInit, OnDestroy {
     'tool',
   ]);
 
-  partHeaders: PartColumns[] = [...PART_FAILURES];
-  displayedColumns: string[] = ['position', ...PART_FAILURES];
+  partHeaders: PartColumnDefinition[] = [...PART_FAILURE_COLUMNS];
+  displayedColumns: string[] = [
+    'position',
+    ...PART_FAILURE_COLUMNS.map((colDef) => colDef.name),
+  ];
   dataSource = new GridDataSource<{ [key in keyof PartFailure]: Cell }>([]);
   commandHistory: Command<Cell>[] = [];
   destroy$ = new Subject<void>();
@@ -69,7 +72,7 @@ export class PartsEditorComponent implements AfterViewInit, OnDestroy {
   private onCellFocusChanged(focusedCell: Cell) {
     this.changeDetectorRef.detectChanges();
     const columnIdx = this.partHeaders.findIndex(
-      (header) => header === focusedCell.column
+      (header) => header.name === focusedCell.column
     );
 
     if (columnIdx <= 0) {

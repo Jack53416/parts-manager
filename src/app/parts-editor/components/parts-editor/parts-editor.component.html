@@ -5,11 +5,13 @@
         <th role="rowheader" cdk-cell *cdkCellDef="let element; let idx = index">{{idx + 1}}</th>
     </ng-container>
 
-    <ng-container *ngFor="let column of partHeaders" cdkColumnDef="{{column}}" [sticky]="stickyHeaders.has(column)">
-        <th role="columnheader" cdk-header-cell *cdkHeaderCellDef>{{column | titlecase}}</th>
+    <ng-container *ngFor="let columnDef of partHeaders" cdkColumnDef="{{columnDef.name}}"
+        [sticky]="stickyHeaders.has(columnDef.name)">
+        <th role="columnheader" cdk-header-cell *cdkHeaderCellDef>{{columnDef.title}}</th>
         <td appGridCell cdk-cell *cdkCellDef="let element">
-            <app-grid-cell-value [formula]="element[column].formula" [value]="element[column].value"
-                [comment]="element[column].comment" (editConfirmed)="insertValue(element[column], $event)">
+            <app-grid-cell-value [formula]="element[columnDef.name].formula" [value]="element[columnDef.name].value"
+                [comment]="element[columnDef.name].comment"
+                (editConfirmed)="insertValue(element[columnDef.name], $event)">
             </app-grid-cell-value>
         </td>
     </ng-container>
