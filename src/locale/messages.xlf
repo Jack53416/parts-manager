@@ -74,6 +74,21 @@
       <trans-unit id="c9039b1b13b3ef165b66b3c5d79f810ab1ebb050" datatype="html">
         <source>Open</source>
       </trans-unit>
+      <trans-unit id="1d5e2f150fbc2a40b67884f4d83ae3c9979fd9b6" datatype="html">
+        <source>Enter Date</source>
+      </trans-unit>
+      <trans-unit id="604004e35e0ef430b3384abe9c124266465bf544" datatype="html">
+        <source>Enter date of raport</source>
+      </trans-unit>
+      <trans-unit id="68e710782ccb5398b3acb8844caf0b199da2c3da" datatype="html">
+        <source>Confirm</source>
+      </trans-unit>
+      <trans-unit id="7946980805904256266" datatype="html">
+        <source>Enter Date</source>
+      </trans-unit>
+      <trans-unit id="99ee4faa69cd2ea8e3678c1f557c0ff1f05aae46" datatype="html">
+        <source>Clear</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

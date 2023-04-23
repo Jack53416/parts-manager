@@ -10,5 +10,5 @@
     </button>
     
     <button *ngIf="date" mat-button (click)="openDialog()">{{ date | date: 'dd.MM.YYYY' }}</button>
-    <button *ngIf="!date" mat-button (click)="openDialog()">Enter Date</button>
+    <button *ngIf="!date" mat-button (click)="openDialog()" i18n>Enter Date</button>
 </div>

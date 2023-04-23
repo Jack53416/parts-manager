@@ -42,7 +42,7 @@ export class ToolbarComponent {
   }
 
   showMessageAboutNoDate() {
-    this.snackBar.open('Enter Date', 'OK', {
+    this.snackBar.open($localize`Enter Date`, 'OK', {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
