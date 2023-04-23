@@ -1,7 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain, screen } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as XLSX from 'xlsx';
 import { readExcel} from './excel-parser/read-report';
 
 let win: BrowserWindow = null;
@@ -89,11 +88,11 @@ try {
   handleIPCEvents();
 } catch (e) {
   // Catch Error
-  // throw e;
+  throw e;
 }
 
 function handleIPCEvents() {
-  ipcMain.handle('openExcel', async (event, arg) => {
+  ipcMain.handle('openExcel', async (_, arg) => {
     const date: string = arg[0];
     console.log(date);
     const result = await dialog.showOpenDialog(win, {
@@ -109,13 +108,7 @@ function handleIPCEvents() {
     if (result.filePaths.length === 0) {
       throw new Error('No file was selected!');
     }
-
-
-    //const workbook = XLSX.readFile(result.filePaths[0]);
-    //const first_ws = workbook.Sheets[workbook.SheetNames[0]];
-    //return XLSX.utils.sheet_to_json(first_ws);
     const partList = await readExcel(result.filePaths[0], date);
-    //console.log(partList)
     return partList;
 
   });

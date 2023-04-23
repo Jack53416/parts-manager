@@ -1,35 +1,34 @@
-import { Component, Inject, HostListener } from '@angular/core';
+import { Component, Inject, HostListener, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {DialogData} from '../toolbar/toolbar.component';
+import { FormBuilder, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-dialog-date',
   templateUrl: './dialog-date.component.html',
-  styleUrls: ['./dialog-date.component.scss']
+  styleUrls: ['./dialog-date.component.scss'],
 })
-export class DialogDateComponent {
-  newDate: Date;
-  oldDate: Date;
+export class DialogDateComponent implements OnInit {
+  initialDate: Date;
+  dateFormControl: FormControl<Date>;
 
-  constructor(public dialogRef: MatDialogRef<DialogDateComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-    this.oldDate = data.date;
+  constructor(
+    public dialogRef: MatDialogRef<DialogDateComponent>,
+    private formBuilder: FormBuilder,
+    @Inject(MAT_DIALOG_DATA) public date: Date
+  ) {
+    this.initialDate = date ?? new Date(new Date().setDate(new Date().getDate() - 1));
   }
 
   @HostListener('window:keyup.Enter', ['$event'])
-  onConfirmClick() {
-    if (this.newDate !== undefined) {
-      this.dialogRef.close(this.newDate);
-    } else {
-      this.dialogRef.close(this.oldDate);
-    }
+
+  ngOnInit(): void {
+    this.dateFormControl = this.formBuilder.control(this.initialDate);
   }
 
-  onClearClick(): void {
+  confirm() {
+    this.dialogRef.close(this.dateFormControl.value);
+  }
+  clear(): void {
     this.dialogRef.close();
-  }
-
-  getDate(dateObject){
-    // eslint-disable-next-line no-underscore-dangle
-    this.newDate = dateObject.value._d;
   }
 }

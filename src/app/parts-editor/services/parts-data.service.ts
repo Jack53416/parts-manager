@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Part } from '../models/part';
+import { Part, MOCK_PRODUCTION_REPORT } from '../models/part';
 import { ElectronService } from '../../core/services/electron/electron.service';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { MOCK_PRODUCTION_REPORT } from '../models/part';
 import { PART_FAILURES, PartFailure } from '../models/part-failure';
 import { PartEditor, PartWorkbook } from '../models/editor';
 import { Cell } from '../models/cell';
@@ -16,7 +15,6 @@ export interface EditorsUiState {
   providedIn: 'root',
 })
 export class PartsDataService {
-  getDataFromTable = new Subject<string>();
   sendReporttoTable = new Subject<{ [key: string]: Part }>();
 
   private uiState: EditorsUiState = {
@@ -65,8 +63,6 @@ export class PartsDataService {
       activeIndex: editorCount - 1,
       openedEditors: editors,
     });
-
-    // this.eventSendReportDataToTable(report);
   }
 
   closeEditor(editor: PartEditor) {
@@ -94,10 +90,6 @@ export class PartsDataService {
     });
   }
 
-  eventGetDataFromTable(msg: string) {
-    this.getDataFromTable.next(msg);
-  }
-
   eventSendReportDataToTable(report: { [key: string]: Part }) {
     this.sendReporttoTable.next(report);
   }
@@ -108,7 +100,7 @@ export class PartsDataService {
   }
 
   private convertReportToWorkbook(parts: Partial<PartFailure>[]): PartWorkbook {
-    return Object.values(parts).map((part, rowIdx) =>
+    return Array.from(parts.values()).map((part, rowIdx) =>
       Array.from(PART_FAILURES.keys()).reduce((acc, key) => {
         acc[key] = new Cell({
           column: key,

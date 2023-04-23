@@ -6,8 +6,6 @@ import { ipcRenderer, webFrame } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Part } from '../../../parts-editor/models/part';
-import { PartFailure } from '../../../parts-editor/models/part-failure';
 
 @Injectable({
   providedIn: 'root'
@@ -63,8 +61,6 @@ export class ElectronService {
 
   async readExcelFile(date: string) {
     const result = await this.ipcRenderer?.invoke('openExcel', [date]);
-    //console.log('readExcelFile - electron service');
-    //console.log(result);
     return result;
   }
 }

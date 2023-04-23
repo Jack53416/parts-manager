@@ -23,22 +23,17 @@ export class ToolbarComponent {
     private snackBar: MatSnackBar
   ) {}
 
-  readTable() {
-    const msg = 'msg from toolbar';
-    this.partsDataService.eventGetDataFromTable(msg);
-  }
-
   async readExcel() {
     if (this.date) {
       await this.partsDataService.openEditor(formatDate(this.date, 'dd.MM.YYYY', 'en-US'));
     } else {
-      this.msgNoDate();
+      this.showMessageAboutNoDate();
     }
   }
 
   openDialog() {
     const dialogRef = this.dialog.open(DialogDateComponent, {
-      data: { date: this.date },
+      data: this.date
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -46,7 +41,7 @@ export class ToolbarComponent {
     });
   }
 
-  msgNoDate() {
+  showMessageAboutNoDate() {
     this.snackBar.open('Enter Date', 'OK', {
       duration: 3000,
       horizontalPosition: 'center',

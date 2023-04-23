@@ -5,7 +5,6 @@ import {
   Component,
   Input,
   OnDestroy,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -19,7 +18,6 @@ import {
 } from '../../models/part-failure';
 import { PartEditor } from '../../models/editor';
 import { GridDirective } from '../../../grid/directives/grid.directive';
-import { PartsDataService } from '../../services/parts-data.service';
 
 @Component({
   selector: 'app-parts-editor',
@@ -27,7 +25,7 @@ import { PartsDataService } from '../../services/parts-data.service';
   styleUrls: ['./parts-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PartsEditorComponent implements OnInit, AfterViewInit, OnDestroy {
+export class PartsEditorComponent implements AfterViewInit, OnDestroy {
   @ViewChild(GridDirective, { static: true }) grid: GridDirective;
   stickyHeaders: Set<string> = new Set([
     'machine',
@@ -48,7 +46,6 @@ export class PartsEditorComponent implements OnInit, AfterViewInit, OnDestroy {
   private partEditor: PartEditor;
 
   constructor(
-    private partsDataService: PartsDataService,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
 
@@ -62,26 +59,6 @@ export class PartsEditorComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((focusedCell) => this.onCellFocusChanged(focusedCell));
   }
 
-  ngOnInit(): void {
-    // this.partsDataService.getDataFromTable.subscribe(
-    //   (msgFromToolbar: string) => {
-    //     console.log(msgFromToolbar);
-    //     console.log(this.getCellsValues());
-    //   }
-    // );
-
-    // this.partsDataService.sendReporttoTable.subscribe((parts) => {
-    //   console.log(parts);
-    //   const cellData = Object.values(parts).map((part) =>
-    //     PART_FAILURES.reduce((acc, key) => {
-    //       acc[key] = new Cell({ value: String(part[key] ?? '') });
-    //       return acc;
-    //     }, {})
-    //   ) as { [key in keyof PartFailure]: Cell }[];
-    //   this.dataSource.data.next(cellData);
-    // });
-  }
-
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -93,10 +70,6 @@ export class PartsEditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   insertValue(cell: Cell, value: string) {
     this.partEditor.insertValue(cell, value);
-  }
-
-  getCellsValues() {
-    return this.dataSource.data.value;
   }
 
   private onCellFocusChanged(focusedCell: Cell) {
