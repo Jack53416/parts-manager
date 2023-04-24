@@ -94,7 +94,6 @@ try {
 function handleIPCEvents() {
   ipcMain.handle('openExcel', async (_, arg) => {
     const date: string = arg[0];
-    console.log(date);
     const result = await dialog.showOpenDialog(win, {
       title: 'Select a file',
       filters: [

@@ -1,6 +1,8 @@
 import * as XLSX from 'xlsx';
 import { getPartPropertiesFromDatabase } from './database';
 import { columnReport, breakpointReport, shiftSuffixes } from './config';
+import { last } from 'rxjs';
+import { StringLiteralLike } from 'typescript/lib/tsserverlibrary';
 
 export class Part {
   name: string;
@@ -26,6 +28,7 @@ export class Part {
 function generateShiftNames(date: string): string[] {
   // ToDo (Mateusz): validation of sheets names
   const suffixList = [shiftSuffixes.a, shiftSuffixes.b, shiftSuffixes.c];
+  //const suffixList = [shiftSuffixes.a];
   return suffixList.map(element => date + element);
 };
 
@@ -101,38 +104,47 @@ async function parseShift(shiftSheet: XLSX.Sheet): Promise<Part[]> {
 
   const notEmptyRows: {[key: string]: string | number}[] = sheetObject
     .slice(firstRowInjection, lastRowInjection)
-    .filter(row => columnReport.articleNr in row && row[columnReport.production] !== 0);
+    //.filter(row => columnReport.articleNr in row && row[columnReport.production] !== 0);
+    .filter(row => columnReport.articleNr in row);
 
   for (const row of notEmptyRows) {
-    const part = await createPart(row, lastMachine);
-    partList.push(part);
-    lastMachine = part.machine;
+    if (row[columnReport.machine]) {
+      lastMachine = row[columnReport.machine].toString();
+    }
+
+
+
+    if (row[columnReport.production] !== 0) {
+      const part = await createPart(row, lastMachine);
+      partList.push(part);
+      lastMachine = part.machine;
+    }
   }
   return partList;
 }
 
 async function createPart(row: {[key: string]: string | number}, lastMachine: string): Promise<Part> {
-      const partNrFromReport = row[columnReport.articleNr].toString();
-      const toolFromReport = row[columnReport.tool].toString();
-      let machineFromReport = lastMachine;
+  const partNrFromReport = row[columnReport.articleNr].toString();
+  const toolFromReport = row[columnReport.tool].toString();
+  let machineFromReport = lastMachine;
 
-      if (row.hasOwnProperty(columnReport.machine)) {
-        machineFromReport = row[columnReport.machine].toString();
-      }
+  if (row.hasOwnProperty(columnReport.machine)) {
+    machineFromReport = row[columnReport.machine].toString();
+  }
 
-      const productionFromReport = +row[columnReport.production];
-      const scrapFromReport = +(row[columnReport.scrap] ?? 0) ;
-      const commentFromReport = (row[columnReport.comment] ?? '').toString();
+  const productionFromReport = +row[columnReport.production];
+  const scrapFromReport = +(row[columnReport.scrap] ?? 0);
+  const commentFromReport = (row[columnReport.comment] ?? '').toString();
 
-      const part = new Part(
-        toolFromReport,
-        machineFromReport,
-        productionFromReport,
-        scrapFromReport,
-        commentFromReport
-      );
-      await part.getPartProperties(partNrFromReport);
+  const part = new Part(
+    toolFromReport,
+    machineFromReport,
+    productionFromReport,
+    scrapFromReport,
+    commentFromReport
+  );
+  await part.getPartProperties(partNrFromReport);
 
-      return part;
+  return part;
 }
 
