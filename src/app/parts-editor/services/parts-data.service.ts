@@ -49,12 +49,12 @@ export class PartsDataService {
   }
 
   async openEditor(date: Date) {
-    const report = await this.getFailureReport(date);
+    const reportParts = await this.getFailureReport(date);
     const editors = this.uiState.openedEditors;
 
     const editorCount = editors.push(
       new PartEditor(
-        this.convertReportToWorkbook(report),
+        this.convertReportToWorkbook(reportParts),
         date
       )
     );
@@ -100,7 +100,13 @@ export class PartsDataService {
   }
 
   private convertReportToWorkbook(parts: Partial<PartFailure>[] | Map<string, Part>): PartWorkbook {
-    return Array.from(parts.values()).map((part, rowIdx) =>
+    const sortedParts = Array.from(parts.values()).sort((a: Part, b: Part) => {
+      if (a.machine < b.machine) { return -1; }
+      if (a.machine > b.machine) { return 1; }
+      return 0;
+    });
+
+    return Array.from(sortedParts.values()).map((part, rowIdx) =>
       Array.from(PART_FAILURES.keys()).reduce((acc, key) => {
         acc[key] = new Cell({
           column: key,

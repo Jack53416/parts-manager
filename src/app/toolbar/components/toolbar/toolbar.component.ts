@@ -32,7 +32,11 @@ export class ToolbarComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.dateOnToolbar = result.toDate();
+      try {
+        this.dateOnToolbar = result.toDate();
+      } catch (_) {
+        this.dateOnToolbar = result;
+      }
     });
   }
 
