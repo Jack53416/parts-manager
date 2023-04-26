@@ -1,8 +1,7 @@
 import * as XLSX from 'xlsx';
 import { getPartPropertiesFromDatabase } from './database';
 import { columnReport, breakpointReport, shiftSuffixes } from './config';
-import { last } from 'rxjs';
-import { StringLiteralLike } from 'typescript/lib/tsserverlibrary';
+import * as dayjs from 'dayjs';
 
 export class Part {
   name: string;
@@ -25,14 +24,14 @@ export class Part {
   }
 }
 
-function generateShiftNames(date: string): string[] {
+function generateShiftNames(date: Date): string[] {
   // ToDo (Mateusz): validation of sheets names
+  const dateString = dayjs(date).format('DD.MM.YYYY');
   const suffixList = [shiftSuffixes.a, shiftSuffixes.b, shiftSuffixes.c];
-  //const suffixList = [shiftSuffixes.a];
-  return suffixList.map(element => date + element);
+  return suffixList.map(element => dateString + element);
 };
 
-export async function readExcel(reportPath: string, date: string): Promise<Map<string, Part>> {
+export async function readExcel(reportPath: string, date: Date): Promise<Map<string, Part>> {
   const woorkbookReport: XLSX.WorkBook = XLSX.readFile(reportPath);
   const partsResult: Map<string, Part> = new Map();
   const shiftNames = generateShiftNames(date);
@@ -104,7 +103,6 @@ async function parseShift(shiftSheet: XLSX.Sheet): Promise<Part[]> {
 
   const notEmptyRows: {[key: string]: string | number}[] = sheetObject
     .slice(firstRowInjection, lastRowInjection)
-    //.filter(row => columnReport.articleNr in row && row[columnReport.production] !== 0);
     .filter(row => columnReport.articleNr in row);
 
   for (const row of notEmptyRows) {

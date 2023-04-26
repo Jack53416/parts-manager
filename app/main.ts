@@ -93,8 +93,8 @@ try {
 }
 
 function handleIPCEvents() {
-  ipcMain.handle('openExcel', async (_, arg) => {
-    const date: string = arg[0];
+  ipcMain.handle('openExcel', async (_, dateNumber: number) => {
+    const date = new Date(dateNumber);
     const result = await dialog.showOpenDialog(win, {
       title: 'Select a file',
       filters: [
@@ -108,8 +108,7 @@ function handleIPCEvents() {
     if (result.filePaths.length === 0) {
       throw new Error('No file was selected!');
     }
-    const partList = await readExcel(result.filePaths[0], date);
-    return partList;
 
+    return await readExcel(result.filePaths[0], date);
   });
 }

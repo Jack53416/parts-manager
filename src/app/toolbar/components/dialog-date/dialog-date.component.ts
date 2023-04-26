@@ -14,9 +14,9 @@ export class DialogDateComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<DialogDateComponent>,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public date: Date
+    @Inject(MAT_DIALOG_DATA) public dateOnToolbar: Date
   ) {
-    this.initialDate = date ?? new Date(new Date().setDate(new Date().getDate() - 1));
+    this.initialDate = dateOnToolbar ?? new Date(new Date().setDate(new Date().getDate() - 1));
   }
 
   @HostListener('window:keyup.Enter', ['$event'])

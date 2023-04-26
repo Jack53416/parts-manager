@@ -3,11 +3,6 @@ import { PartsDataService } from '../../../parts-editor/services/parts-data.serv
 import { DialogDateComponent } from '../dialog-date/dialog-date.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { formatDate } from '@angular/common';
-
-export interface DialogData {
-  date: Date;
-}
 
 @Component({
   selector: 'app-toolbar',
@@ -15,7 +10,7 @@ export interface DialogData {
   styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent {
-  date: Date;
+  dateOnToolbar: Date;
 
   constructor(
     private partsDataService: PartsDataService,
@@ -24,8 +19,8 @@ export class ToolbarComponent {
   ) {}
 
   async readExcel() {
-    if (this.date) {
-      await this.partsDataService.openEditor(formatDate(this.date, 'dd.MM.YYYY', 'en-US'));
+    if (this.dateOnToolbar) {
+      this.partsDataService.openEditor(this.dateOnToolbar);
     } else {
       this.showMessageAboutNoDate();
     }
@@ -33,11 +28,11 @@ export class ToolbarComponent {
 
   openDialog() {
     const dialogRef = this.dialog.open(DialogDateComponent, {
-      data: this.date
+      data: this.dateOnToolbar
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      this.date = result;
+      this.dateOnToolbar = result.toDate();
     });
   }
 

@@ -6,6 +6,7 @@ import { ipcRenderer, webFrame } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Part } from '../../../../../app/excel-parser/read-report';
 
 @Injectable({
   providedIn: 'root'
@@ -59,8 +60,8 @@ export class ElectronService {
     return !!(window && window.process && window.process.type);
   }
 
-  async readExcelFile(date: string) {
-    const result = await this.ipcRenderer?.invoke('openExcel', [date]);
+  async readExcelFile(date: Date): Promise<Map<string, Part>> {
+    const result = await this.ipcRenderer?.invoke('openExcel', date.getTime());
     return result;
   }
 }
