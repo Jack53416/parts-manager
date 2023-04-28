@@ -2,11 +2,14 @@ import { Subject } from 'rxjs';
 import { Cell } from './cell';
 import { Command, InsertCommand } from './command';
 import { PartFailure } from './part-failure';
+import { formatDate } from '@angular/common';
 
 export type PartWorkbook = { [key in keyof PartFailure]: Cell }[];
 
 export class PartEditor {
   static commandHistorySize = 30;
+
+  public name: string;
 
   private commandHistory: Command<Cell>[] = [];
   private undoCommandHistory: Command<Cell>[] = [];
@@ -14,8 +17,10 @@ export class PartEditor {
 
   constructor(
     private readonly data: PartWorkbook,
-    public readonly name: string
-  ) {}
+    public readonly reportDate: Date
+  ) {
+    this.name = formatDate(this.reportDate, 'dd.MM.YYYY', 'en-US');
+  }
 
   get focusChanges$() {
     return this.focusChangeSubject.asObservable();

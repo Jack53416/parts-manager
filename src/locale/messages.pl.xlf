@@ -98,6 +98,26 @@
         <source>Open</source>
         <target>Otwórz</target>
       </trans-unit>
+      <trans-unit id="604004e35e0ef430b3384abe9c124266465bf544" datatype="html">
+        <source>Enter date of raport</source>
+        <target state="new">Wprowadź datę raportu</target>
+      </trans-unit>
+      <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
+        <source>Close</source>
+        <target state="new">Anuluj</target>
+      </trans-unit>
+      <trans-unit id="68e710782ccb5398b3acb8844caf0b199da2c3da" datatype="html">
+        <source>Confirm</source>
+        <target state="new">Potwierdź</target>
+      </trans-unit>
+      <trans-unit id="1d5e2f150fbc2a40b67884f4d83ae3c9979fd9b6" datatype="html">
+        <source>Enter Date</source>
+        <target state="new">Wprowadź datę</target>
+      </trans-unit>
+      <trans-unit id="7946980805904256266" datatype="html">
+        <source>Enter Date</source>
+        <target state="new">Wprowadź datę</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

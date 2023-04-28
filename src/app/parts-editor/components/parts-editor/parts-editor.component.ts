@@ -44,7 +44,10 @@ export class PartsEditorComponent implements AfterViewInit, OnDestroy {
   destroy$ = new Subject<void>();
 
   private partEditor: PartEditor;
-  constructor(private changeDetectorRef: ChangeDetectorRef) {}
+
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   @Input()
   set editor(editor: PartEditor) {

@@ -1,11 +1,11 @@
 import { app, BrowserWindow, dialog, ipcMain, screen } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as XLSX from 'xlsx';
+import { readExcel} from './excel-parser/read-report';
 
 let win: BrowserWindow = null;
-const args = process.argv.slice(1),
-  serve = args.some((val) => val === '--serve');
+const args = process.argv.slice(1);
+const serve = args.some((val) => val === '--serve');
 
 function getIndexURL(): URL {
   let pathIndex = './index.html';
@@ -64,7 +64,9 @@ try {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
+  // Added 400 ms to fix the black background issue while using
+  // transparent window. More detais at https://github.com/electron/electron/issues/15947
+  app.commandLine.appendSwitch('--no-sandbox');
   app.on('ready', () => setTimeout(createWindow, 400));
 
   // Quit when all windows are closed.
@@ -87,11 +89,12 @@ try {
   handleIPCEvents();
 } catch (e) {
   // Catch Error
-  // throw e;
+  throw e;
 }
 
 function handleIPCEvents() {
-  ipcMain.handle('openExcel', async (event, args) => {
+  ipcMain.handle('openExcel', async (_, dateNumber: number) => {
+    const date = new Date(dateNumber);
     const result = await dialog.showOpenDialog(win, {
       title: 'Select a file',
       filters: [
@@ -102,12 +105,10 @@ function handleIPCEvents() {
       ],
     });
     /* result.filePaths is an array of selected files */
-    if (result.filePaths.length == 0) {
+    if (result.filePaths.length === 0) {
       throw new Error('No file was selected!');
     }
 
-    const workbook = XLSX.readFile(result.filePaths[0]);
-    const first_ws = workbook.Sheets[workbook.SheetNames[0]];
-    return XLSX.utils.sheet_to_json(first_ws);
+    return await readExcel(result.filePaths[0], date);
   });
 }

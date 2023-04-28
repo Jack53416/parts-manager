@@ -1,0 +1,18 @@
+<header mat-dialog-title i18n>Enter date of raport</header>
+<mat-dialog-content>
+  <mat-form-field>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      cdkFocusInitial
+      [formControl]="dateFormControl"
+    />
+    <mat-hint>DD.MM.YYYY</mat-hint>
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="close()" i18n>Close</button>
+  <button mat-button [disabled]="dateFormControl.invalid" (click)="confirm()" i18n>Confirm</button>
+</mat-dialog-actions>

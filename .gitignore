@@ -10,6 +10,7 @@ main.js
 src/**/*.js
 !src/karma.conf.js
 *.js.map
+app/*/*.js
 
 # dependencies
 node_modules
@@ -22,6 +23,8 @@ node_modules
 *.launch
 .settings/
 *.sublime-workspace
+/app/excel-parser/sqlite3.exe
+/app/excel-parser/parts.db
 
 # IDE - VSCode
 .vscode/*
