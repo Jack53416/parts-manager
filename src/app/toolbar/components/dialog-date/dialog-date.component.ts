@@ -1,34 +1,47 @@
-import { Component, Inject, HostListener, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import * as moment from 'moment';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-dialog-date',
   templateUrl: './dialog-date.component.html',
   styleUrls: ['./dialog-date.component.scss'],
 })
-export class DialogDateComponent implements OnInit {
-  initialDate: Date;
-  dateFormControl: FormControl<Date>;
+export class DialogDateComponent implements OnInit, OnDestroy {
+  destroy$ = new Subject<void>();
+  dateFormControl: FormControl<moment.Moment> = this.formBuilder.control(
+    moment().subtract(1, 'days'),
+    [Validators.required]
+  );
 
   constructor(
     public dialogRef: MatDialogRef<DialogDateComponent>,
     private formBuilder: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public dateOnToolbar: Date
+    @Inject(MAT_DIALOG_DATA) public initialDate: Date
   ) {
-    this.initialDate = dateOnToolbar ?? new Date(new Date().setDate(new Date().getDate() - 1));
+    this.dateFormControl.setValue(moment(initialDate));
   }
-
-  @HostListener('window:keyup.Enter', ['$event'])
 
   ngOnInit(): void {
-    this.dateFormControl = this.formBuilder.control(this.initialDate);
-  }
+    this.dialogRef.keydownEvents().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe((event) => {
+      if (event.key === 'Enter') {
+        this.confirm();
+      };
+    });
+  };
+ ngOnDestroy(): void {
+   this.destroy$.next();
+   this.destroy$.complete();
+ }
 
-  confirm() {
-    this.dialogRef.close(this.dateFormControl.value);
+  confirm(): void {
+    this.dialogRef.close(this.dateFormControl.value.toDate());
   }
-  clear(): void {
-    this.dialogRef.close();
+  close(): void {
+    this.dialogRef.close(null);
   }
 }

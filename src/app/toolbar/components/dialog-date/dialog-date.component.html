@@ -13,6 +13,6 @@
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-button (click)="clear()" i18n>Clear</button>
-  <button mat-button (click)="confirm()" i18n>Confirm</button>
+  <button mat-button (click)="close()" i18n>Close</button>
+  <button mat-button [disabled]="dateFormControl.invalid" (click)="confirm()" i18n>Confirm</button>
 </mat-dialog-actions>

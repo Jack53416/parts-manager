@@ -100,9 +100,9 @@ export class PartsDataService {
   }
 
   private convertReportToWorkbook(parts: Partial<PartFailure>[] | Map<string, Part>): PartWorkbook {
-    const sortedParts = Array.from(parts.values()).sort((a: Part, b: Part) => {
-      if (a.machine < b.machine) { return -1; }
-      if (a.machine > b.machine) { return 1; }
+    const sortedParts = Array.from(parts.values()).sort((objectA: Part, objectB: Part) => {
+      if (objectA.machine < objectB.machine) { return -1; }
+      if (objectA.machine > objectB.machine) { return 1; }
       return 0;
     });
 

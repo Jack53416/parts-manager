@@ -9,6 +9,6 @@
         <span i18n>Open</span>
     </button>
     
-    <button *ngIf="dateOnToolbar" mat-button (click)="openDialog()">{{ dateOnToolbar | date: 'dd.MM.YYYY' }}</button>
-    <button *ngIf="!dateOnToolbar" mat-button (click)="openDialog()" i18n>Enter Date</button>
+    <button *ngIf="reportDate" mat-button (click)="openDialog()">{{ reportDate | date: 'dd.MM.YYYY' }}</button>
+    <button *ngIf="!reportDate" mat-button (click)="openDialog()" i18n>Enter Date</button>
 </div>

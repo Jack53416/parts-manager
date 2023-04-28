@@ -102,9 +102,9 @@
         <source>Enter date of raport</source>
         <target state="new">Wprowadź datę raportu</target>
       </trans-unit>
-      <trans-unit id="99ee4faa69cd2ea8e3678c1f557c0ff1f05aae46" datatype="html">
-        <source>Clear</source>
-        <target state="new">Wyczyść</target>
+      <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
+        <source>Close</source>
+        <target state="new">Anuluj</target>
       </trans-unit>
       <trans-unit id="68e710782ccb5398b3acb8844caf0b199da2c3da" datatype="html">
         <source>Confirm</source>

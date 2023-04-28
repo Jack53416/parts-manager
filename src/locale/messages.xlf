@@ -86,8 +86,8 @@
       <trans-unit id="7946980805904256266" datatype="html">
         <source>Enter Date</source>
       </trans-unit>
-      <trans-unit id="99ee4faa69cd2ea8e3678c1f557c0ff1f05aae46" datatype="html">
-        <source>Clear</source>
+      <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
+        <source>Close</source>
       </trans-unit>
     </body>
   </file>
