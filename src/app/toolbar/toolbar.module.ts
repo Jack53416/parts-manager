@@ -13,6 +13,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 const DATE_FORMAT = {
   parse: {
@@ -39,7 +40,8 @@ const DATE_FORMAT = {
     MatDatepickerModule,
     MatNativeDateModule,
     MatSnackBarModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressBarModule
   ],
   exports: [ToolbarComponent],
   providers: [

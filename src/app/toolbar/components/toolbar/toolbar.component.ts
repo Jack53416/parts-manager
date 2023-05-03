@@ -11,8 +11,8 @@ import * as moment from 'moment';
   styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent {
-  //reportDate: Date = moment().subtract(1, 'days').toDate();
-  reportDate = new Date(1664842320000); //date for testing
+  reportDate: Date = moment().subtract(1, 'days').toDate();
+  progressBarVisible = false;
 
   constructor(
     private partsDataService: PartsDataService,
@@ -29,8 +29,10 @@ export class ToolbarComponent {
   }
 
   async saveParts() {
-    const result = await this.partsDataService.saveEditor(this.partsDataService.activeEditor.workbook, this.reportDate);
-    console.log(result);
+    this.progressBarVisible = true;
+    await this.partsDataService.saveEditor(this.partsDataService.activeEditor.workbook, this.reportDate);
+    this.progressBarVisible = false;
+    this.showMessageSavingDone();
   }
 
   openDialog() {
@@ -45,6 +47,14 @@ export class ToolbarComponent {
 
   showMessageAboutNoDate() {
     this.snackBar.open($localize`Enter Date`, 'OK', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+    });
+  }
+
+  showMessageSavingDone() {
+    this.snackBar.open(`Done`, 'OK', {
       duration: 3000,
       horizontalPosition: 'center',
       verticalPosition: 'top',
