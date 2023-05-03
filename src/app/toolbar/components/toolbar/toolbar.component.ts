@@ -11,7 +11,8 @@ import * as moment from 'moment';
   styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent {
-  reportDate: Date = moment().subtract(1, 'days').toDate();
+  //reportDate: Date = moment().subtract(1, 'days').toDate();
+  reportDate = new Date(1664842320000); //date for testing
 
   constructor(
     private partsDataService: PartsDataService,
@@ -25,6 +26,11 @@ export class ToolbarComponent {
     } else {
       this.showMessageAboutNoDate();
     }
+  }
+
+  async saveParts() {
+    const result = await this.partsDataService.saveEditor(this.partsDataService.activeEditor.workbook, this.reportDate);
+    console.log(result);
   }
 
   openDialog() {

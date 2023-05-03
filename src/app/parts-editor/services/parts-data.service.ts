@@ -15,8 +15,6 @@ export interface EditorsUiState {
   providedIn: 'root',
 })
 export class PartsDataService {
-  sendReporttoTable = new Subject<{ [key: string]: Part }>();
-
   private uiState: EditorsUiState = {
     openedEditors: [],
     activeIndex: null,
@@ -90,8 +88,8 @@ export class PartsDataService {
     });
   }
 
-  eventSendReportDataToTable(report: { [key: string]: Part }) {
-    this.sendReporttoTable.next(report);
+  saveEditor(parts: PartWorkbook, dateReport: Date) {
+    return this.electronService.savePartsToStatistic(parts, dateReport);
   }
 
   private updateUiState(newState: Partial<EditorsUiState>) {
