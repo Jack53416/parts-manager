@@ -145,12 +145,28 @@ export class PartsDataService {
 
   private openDialogDatabase(partsMissing: PartWorkbook) {
     const dialogRef = this.dialog.open(DialogDatabaseComponent, {
-      data: partsMissing
+      data: partsMissing,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(result);
-    });
+    dialogRef.afterClosed().subscribe(
+        (result: {
+          updatedParts: {
+            rowIndex: number;
+            nameReport: string;
+            nameSap: string;
+            numberSap: string;
+            addToDatabase: boolean;
+          }[];
+        }) => {
+          //send new part to db
+
+          //change table
+          for (const part of Object.values(result.updatedParts)) {
+            this.activeEditor.changeCell('articleNo', part.rowIndex, part.numberSap);
+            this.activeEditor.changeCell('name', part.rowIndex, part.nameSap);
+          }
+        }
+      );
   }
 
   private getMockedData(): Partial<PartFailure>[] {

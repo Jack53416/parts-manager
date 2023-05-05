@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { PartWorkbook } from '../../models/editor';
 import { Subject } from 'rxjs';
+import { Cell } from '../../models/cell';
 
 @Component({
   selector: 'app-dialog-database',
@@ -21,11 +22,12 @@ export class DialogDatabaseComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.missingPartsForm = this.formBuilder.group({
-      parts: this.formBuilder.array([]),
+      updatedParts: this.formBuilder.array([]),
     });
 
     for (const part of this.missingParts) {
-      this.addPart(part.articleNo.value);
+      console.log(part);
+      this.addPart(part);
     }
   }
 
@@ -34,12 +36,20 @@ export class DialogDatabaseComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  parts(): FormArray {
-    return this.missingPartsForm.get('parts') as FormArray;
+  updatedParts(): FormArray {
+    return this.missingPartsForm.get('updatedParts') as FormArray;
   }
 
-  addPart(partNumber: string) {
-    this.parts().push(this.newPart(partNumber));
+  addPart(part: {[key: string]: Cell}) {
+    const newPart = this.formBuilder.group({
+      rowIndex: part.articleNo.row,
+      nameReport: part.articleNo.value,
+      nameSap: '',
+      numberSap:'',
+      addToDatabase: false
+    });
+
+    this.updatedParts().push(newPart);
   }
 
   newPart(partNumber: string): FormGroup {
@@ -52,7 +62,6 @@ export class DialogDatabaseComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log('dialog: ', this.missingPartsForm.value);
     this.dialogRef.close(this.missingPartsForm.value);
   }
 }
