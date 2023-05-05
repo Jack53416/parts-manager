@@ -5,6 +5,8 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { PART_FAILURES, PartFailure } from '../models/part-failure';
 import { PartEditor, PartWorkbook } from '../models/editor';
 import { Cell } from '../models/cell';
+import { DialogDatabaseComponent } from '../components/dialog-database/dialog-database.component';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface EditorsUiState {
   activeIndex: number | null;
@@ -24,7 +26,7 @@ export class PartsDataService {
 
   private uiStateSubject$ = new BehaviorSubject(this.uiState);
 
-  constructor(private electronService: ElectronService) {}
+  constructor(private electronService: ElectronService, public dialog: MatDialog,) {}
 
   get uiState$(): Observable<EditorsUiState> {
     return this.uiStateSubject$.asObservable();
@@ -63,6 +65,8 @@ export class PartsDataService {
       activeIndex: editorCount - 1,
       openedEditors: editors,
     });
+
+    this.updateDatabase();
   }
 
   closeEditor(editor: PartEditor) {
@@ -124,6 +128,29 @@ export class PartsDataService {
     }
 
     return this.getMockedData();
+  }
+
+  private updateDatabase() {
+    const partsMissing = [];
+
+    for (const part of this.activeEditor.workbook) {
+      if (part.name.value === 'Not in db') {
+        partsMissing.push(part);
+      }
+    }
+    console.log(partsMissing);
+
+    this.openDialogDatabase(partsMissing);
+  }
+
+  private openDialogDatabase(partsMissing: PartWorkbook) {
+    const dialogRef = this.dialog.open(DialogDatabaseComponent, {
+      data: partsMissing
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(result);
+    });
   }
 
   private getMockedData(): Partial<PartFailure>[] {

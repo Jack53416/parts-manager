@@ -15,7 +15,7 @@ export async function getPartPropertiesFromDatabase(partNr: string): Promise<{sa
              // eslint-disable-next-line @typescript-eslint/naming-convention
              (_, row: {report_nr: string; sap_nr: string; sap_name: string}) => {
             if (row === undefined) {
-                resolve({sapNr: 'Not in db', sapName: 'Not in db'});
+                resolve({sapNr: partNr, sapName: 'Not in db'});
             } else {
                 resolve({sapNr: row.sap_nr, sapName: row.sap_name});
             }
