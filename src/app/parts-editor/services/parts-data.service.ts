@@ -13,6 +13,14 @@ export interface EditorsUiState {
   openedEditors: PartEditor[];
 }
 
+export interface UpdatedPart {
+    rowIndex: number;
+    nameReport: string;
+    nameSap: string;
+    numberSap: string;
+    addToDatabase: boolean;
+  }
+
 @Injectable({
   providedIn: 'root',
 })
@@ -138,9 +146,8 @@ export class PartsDataService {
         partsMissing.push(part);
       }
     }
-    console.log(partsMissing);
 
-    this.openDialogDatabase(partsMissing);
+    if (partsMissing.length > 0) {this.openDialogDatabase(partsMissing);}
   }
 
   private openDialogDatabase(partsMissing: PartWorkbook) {
@@ -148,19 +155,10 @@ export class PartsDataService {
       data: partsMissing,
     });
 
-    dialogRef.afterClosed().subscribe(
-        (result: {
-          updatedParts: {
-            rowIndex: number;
-            nameReport: string;
-            nameSap: string;
-            numberSap: string;
-            addToDatabase: boolean;
-          }[];
-        }) => {
-          //send new part to db
+    dialogRef.afterClosed().subscribe((result: {updatedParts: UpdatedPart[]}) => {
 
-          //change table
+          this.electronService.addPartToDatabase(result.updatedParts);
+
           for (const part of Object.values(result.updatedParts)) {
             this.activeEditor.changeCell('articleNo', part.rowIndex, part.numberSap);
             this.activeEditor.changeCell('name', part.rowIndex, part.nameSap);

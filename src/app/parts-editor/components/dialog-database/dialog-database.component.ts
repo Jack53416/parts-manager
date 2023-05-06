@@ -26,7 +26,6 @@ export class DialogDatabaseComponent implements OnInit, OnDestroy {
     });
 
     for (const part of this.missingParts) {
-      console.log(part);
       this.addPart(part);
     }
   }

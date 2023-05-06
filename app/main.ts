@@ -2,6 +2,15 @@ import { app, BrowserWindow, dialog, ipcMain, screen } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { readExcel} from './excel-parser/read-report';
+import { addParts } from './excel-parser/database';
+
+export interface UpdatedPart {
+  rowIndex: number;
+  nameReport: string;
+  nameSap: string;
+  numberSap: string;
+  addToDatabase: boolean;
+}
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1);
@@ -110,5 +119,9 @@ function handleIPCEvents() {
     }
 
     return await readExcel(result.filePaths[0], date);
+  });
+
+  ipcMain.handle('addPartsToDatabase', async (_, updatedParts: UpdatedPart[]) => {
+    addParts(updatedParts);
   });
 }

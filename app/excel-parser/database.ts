@@ -1,5 +1,6 @@
 import { Database} from 'sqlite3';
 import { databasePath } from './config';
+import { UpdatedPart } from '../main';
 
 const db: Database = new Database(databasePath, (err: Error) => {
     if (err) {
@@ -21,4 +22,11 @@ export async function getPartPropertiesFromDatabase(partNr: string): Promise<{sa
             }
         });
     });
+}
+
+export async function addParts(newParts: UpdatedPart[]) {
+    const placeholders = newParts.map((_) => '(?, ?, ?)').join(',');
+    const values = newParts.map(part => [part.nameReport, part.numberSap, part.nameSap]);
+
+    db.run('INSERT INTO part_translate(report_nr, sap_nr, sap_name) VALUES ' + placeholders, values.flat());
 }

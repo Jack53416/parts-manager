@@ -11,8 +11,7 @@ import * as moment from 'moment';
   styleUrls: ['./toolbar.component.scss'],
 })
 export class ToolbarComponent {
-  //reportDate: Date = moment().subtract(1, 'days').toDate();
-  reportDate = new Date(1664842320000 - 86400000);
+  reportDate: Date = moment().subtract(1, 'days').toDate();
   constructor(
     private partsDataService: PartsDataService,
     public dialog: MatDialog,
