@@ -66,8 +66,36 @@ export class ElectronService {
     return result;
   }
 
-  async savePartsToStatistic(parts: PartWorkbook, dateReport: Date) {
-    const result = await this.ipcRenderer.invoke('saveParts', parts, dateReport);
-    return result;
+  async savePartsToStatistic(parts: PartWorkbook, dateReport: Date): Promise<void> {
+    const partsToSave = [];
+
+    for (const part of parts) {
+      const partDataToSave = {
+        machine: part.machine.value,
+        articleNo: part.articleNo.value,
+        name: part.name.value,
+        tool: part.tool.value,
+        totalPartsProduced: part.totalPartsProduced.value,
+        shortShot: part.shortShot.value,
+        startupParts: part.startupParts.value,
+        burns: part.burns.value,
+        contaminated: part.contaminated.value,
+        oilContaminations: part.oilContaminations.value,
+        smudges: part.smudges.value,
+        deformations: part.deformations.value,
+        damagedInTransport: part.damagedInTransport.value,
+        mechanicalDamages: part.mechanicalDamages.value,
+        scratches: part.scratches.value,
+        flashes: part.flashes.value,
+        silvering: part.silvering.value,
+        removedByRobot: part.removedByRobot.value,
+        airBubbles: part.airBubbles.value,
+        others: part.others.value,
+      };
+
+      partsToSave.push(partDataToSave);
+    }
+
+    await this.ipcRenderer.invoke('saveParts', partsToSave, dateReport);
   }
 }

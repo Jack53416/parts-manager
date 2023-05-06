@@ -88,8 +88,8 @@ export class PartsDataService {
     });
   }
 
-  saveEditor(parts: PartWorkbook, dateReport: Date) {
-    return this.electronService.savePartsToStatistic(parts, dateReport);
+  async saveEditor(parts: PartWorkbook, dateReport: Date): Promise<void> {
+    await this.electronService.savePartsToStatistic(parts, dateReport);
   }
 
   private updateUiState(newState: Partial<EditorsUiState>) {

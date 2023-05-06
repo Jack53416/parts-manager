@@ -4,6 +4,29 @@ import * as path from 'path';
 import { readExcel } from './excel-parser/read-report';
 import { saveParts } from './excel-parser/save-report';
 
+export interface PartToSave {
+  machine: string;
+  name: string;
+  articleNo: string;
+  tool: string;
+  totalPartsProduced: string;
+  shortShot: string;
+  startupParts: string;
+  burns: string;
+  contaminated: string;
+  oilContaminations: string;
+  smudges: string;
+  deformations: string;
+  damagedInTransport: string;
+  mechanicalDamages: string;
+  scratches: string;
+  flashes: string;
+  silvering: string;
+  removedByRobot: string;
+  airBubbles: string;
+  others: string;
+}
+
 let win: BrowserWindow = null;
 const args = process.argv.slice(1);
 const serve = args.some((val) => val === '--serve');
@@ -113,12 +136,8 @@ function handleIPCEvents() {
     return await readExcel(result.filePaths[0], date);
   });
 
-  ipcMain.handle(
-    'saveParts',
-    async (
-      _,
-      parts,
-      reportDate: Date
-    ) => await saveParts(parts, reportDate)
+  ipcMain.handle('saveParts', async (_, parts: PartToSave[], reportDate: Date) => {
+    await saveParts(parts, reportDate);
+    }
   );
 }

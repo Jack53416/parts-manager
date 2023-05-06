@@ -89,6 +89,9 @@
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
       </trans-unit>
+      <trans-unit id="397098723873502323" datatype="html">
+        <source>Done</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>
