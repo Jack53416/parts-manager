@@ -11,12 +11,14 @@ export async function saveParts(parts: PartToSave[], reportDate: Date) {
   let partWorkbook = new excelJs.Workbook();
 
   for (const part of parts) {
-    const fileName = `${part.machine}_${part.articleNo.replace('/', '_')}_wkz ${part.tool} -${yearShort}`;
+    const partName = `${part.articleNo.replace('/', '_')}_wkz ${part.tool} -${yearShort}`;
+    let fileName = fileList.find(file => file.includes(partName));
 
-    if (!(fileList.includes(fileName + '.xlsx'))) {
-      partWorkbook = await createPartWorkbook(fileName, yearShort);
+    if (fileName) {
+      await partWorkbook.xlsx.readFile(`${statisticsPath}/${fileName}`);
     } else {
-      await partWorkbook.xlsx.readFile(`${statisticsPath}/${fileName}.xlsx`);
+      fileName = `${part.machine}_${partName}.xlsx`;
+      partWorkbook = await createPartWorkbook(fileName, yearShort);
     }
     await savePartWoorkbook(partWorkbook, part, fileName, reportDate);
   }
@@ -31,7 +33,7 @@ async function createPartWorkbook(fileName: string, yearShort: string): Promise<
     worksheet.getCell(partStatisticNameCell).value = fileName;
   });
 
-  await partTemplate.xlsx.writeFile(`${statisticsPath}/${fileName}.xlsx`);
+  await partTemplate.xlsx.writeFile(`${statisticsPath}/${fileName}`);
   return partTemplate;
 }
 
@@ -39,15 +41,27 @@ async function savePartWoorkbook(partWorkbook: excelJs.Workbook, partData: PartT
   const monthIndex = reportDate.getMonth();
 
   const monthSheet = partWorkbook.worksheets[monthIndex];
+  const row = firstRowPartStatistic + reportDate.getDate();
 
   for (const [columnName, value] of Object.entries(partData)) {
     const columnLetter = partStatisticColumns[columnName];
-    const row = firstRowPartStatistic + reportDate.getDate();
 
     if (columnLetter) {
       monthSheet.getCell(`${columnLetter}${row}`).value = +value;
     }
   }
 
-  await partWorkbook.xlsx.writeFile(`${statisticsPath}/${fileName}.xlsx`);
+  if (partData.machine !== fileName.slice(0, 6)) {
+    monthSheet.getCell(`${partStatisticColumns.totalPartsProduced}${row}`).note = partData.machine;
+  }
+
+  // set edited worksheet to be active when open file manually
+  partWorkbook.views = [
+    {
+      x: 0, y: 0, width: 10000, height: 20000,
+      firstSheet: 0, activeTab: monthIndex, visibility: 'visible'
+    }
+  ];
+
+  await partWorkbook.xlsx.writeFile(`${statisticsPath}/${fileName}`);
 }
