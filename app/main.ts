@@ -3,14 +3,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { readExcel} from './excel-parser/read-report';
 import { addParts } from './excel-parser/database';
+import { saveParts } from './excel-parser/save-report';
+import { PartToSave } from './models/part-to-save';
+import { UpdatedPart } from './models/updated-part';
 
-export interface UpdatedPart {
-  rowIndex: number;
-  nameReport: string;
-  nameSap: string;
-  numberSap: string;
-  addToDatabase: boolean;
-}
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1);
@@ -124,4 +120,8 @@ function handleIPCEvents() {
   ipcMain.handle('addPartsToDatabase', async (_, updatedParts: UpdatedPart[]) => {
     addParts(updatedParts);
   });
+  ipcMain.handle('saveParts', async (_, parts: PartToSave[], reportDate: Date) => {
+    await saveParts(parts, reportDate);
+    }
+  );
 }

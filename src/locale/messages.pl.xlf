@@ -142,6 +142,10 @@
         <source>Number Report</source>
         <target state="new">Numer raport</target>
       </trans-unit>
+      <trans-unit id="397098723873502323" datatype="html">
+        <source>Done</source>
+        <target state="new">Zrobione</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

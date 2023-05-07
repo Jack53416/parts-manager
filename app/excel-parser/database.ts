@@ -1,6 +1,7 @@
 import { Database} from 'sqlite3';
 import { databasePath } from './config';
-import { UpdatedPart } from '../main';
+import { UpdatedPart } from '../models/updated-part';
+
 
 const db: Database = new Database(databasePath, (err: Error) => {
     if (err) {
