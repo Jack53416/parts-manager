@@ -1,5 +1,5 @@
 <div class="toolbar-container">
-    <button class="toolbar-button" matRipple>
+    <button class="toolbar-button" matRipple (click)="saveParts()">
         <mat-icon inline fontSet="material-icons-outlined">save</mat-icon>
         <span i18n>Save</span>
     </button>
@@ -11,4 +11,8 @@
     
     <button *ngIf="reportDate" mat-button (click)="openDialog()">{{ reportDate | date: 'dd.MM.YYYY' }}</button>
     <button *ngIf="!reportDate" mat-button (click)="openDialog()" i18n>Enter Date</button>
+
+</div>
+<div class="progressbar" *ngIf="progressBarVisible">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>

@@ -7,6 +7,7 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Part } from '../../../../../app/excel-parser/read-report';
+import { PartWorkbook } from '../../../parts-editor/models/editor';
 
 @Injectable({
   providedIn: 'root'
@@ -63,5 +64,16 @@ export class ElectronService {
   async readExcelFile(date: Date): Promise<Map<string, Part>> {
     const result = await this.ipcRenderer?.invoke('openExcel', date.getTime());
     return result;
+  }
+
+  async savePartsToStatistic(parts: PartWorkbook, dateReport: Date): Promise<void> {
+      const partsToSave = parts.map(part =>
+        Object.entries(part).reduce((acc, [key, cell]) => {
+          acc[key] = cell.value;
+          return acc;
+        }, {})
+      );
+
+    await this.ipcRenderer.invoke('saveParts', partsToSave, dateReport);
   }
 }

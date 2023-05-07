@@ -1,7 +1,10 @@
 import { app, BrowserWindow, dialog, ipcMain, screen } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import { readExcel} from './excel-parser/read-report';
+import { readExcel } from './excel-parser/read-report';
+import { saveParts } from './excel-parser/save-report';
+import { PartToSave } from './models/part-to-save';
+
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1);
@@ -111,4 +114,9 @@ function handleIPCEvents() {
 
     return await readExcel(result.filePaths[0], date);
   });
+
+  ipcMain.handle('saveParts', async (_, parts: PartToSave[], reportDate: Date) => {
+    await saveParts(parts, reportDate);
+    }
+  );
 }

@@ -118,6 +118,10 @@
         <source>Enter Date</source>
         <target state="new">Wprowadź datę</target>
       </trans-unit>
+      <trans-unit id="397098723873502323" datatype="html">
+        <source>Done</source>
+        <target state="new">Zrobione</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
