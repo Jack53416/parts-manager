@@ -2,8 +2,7 @@ import { statisticsPath, partStatisticTemplatePath, partStatisticColumns, firstR
 import * as fs from 'fs';
 import * as excelJs from 'exceljs';
 import * as dayjs from 'dayjs';
-import { PartToSave } from '../main';
-
+import { PartToSave } from '../models/part-to-save';
 
 
 export async function saveParts(parts: PartToSave[], reportDate: Date) {

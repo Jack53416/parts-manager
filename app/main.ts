@@ -3,29 +3,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { readExcel } from './excel-parser/read-report';
 import { saveParts } from './excel-parser/save-report';
+import { PartToSave } from './models/part-to-save';
 
-export interface PartToSave {
-  machine: string;
-  name: string;
-  articleNo: string;
-  tool: string;
-  totalPartsProduced: string;
-  shortShot: string;
-  startupParts: string;
-  burns: string;
-  contaminated: string;
-  oilContaminations: string;
-  smudges: string;
-  deformations: string;
-  damagedInTransport: string;
-  mechanicalDamages: string;
-  scratches: string;
-  flashes: string;
-  silvering: string;
-  removedByRobot: string;
-  airBubbles: string;
-  others: string;
-}
 
 let win: BrowserWindow = null;
 const args = process.argv.slice(1);
