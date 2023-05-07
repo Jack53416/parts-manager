@@ -89,6 +89,24 @@
       <trans-unit id="f4e529ae5ffd73001d1ff4bbdeeb0a72e342e5c8" datatype="html">
         <source>Close</source>
       </trans-unit>
+      <trans-unit id="107d00e449da7d7542cd11faf52db3f616c19635" datatype="html">
+        <source>Sap number</source>
+      </trans-unit>
+      <trans-unit id="5013ef0b2525de13cf62ecb02f31c6ad26940a9a" datatype="html">
+        <source>Report number :</source>
+      </trans-unit>
+      <trans-unit id="69492fc09a0aac5253d5751b624a8afaebd71c24" datatype="html">
+        <source>Parts missing from database</source>
+      </trans-unit>
+      <trans-unit id="8568b6b2110cb61a68e340f3fa39508dba2932f7" datatype="html">
+        <source>Sap name</source>
+      </trans-unit>
+      <trans-unit id="aa7bbedb426aee28d1924519fecd5263bd702740" datatype="html">
+        <source>Add to databse</source>
+      </trans-unit>
+      <trans-unit id="2553527224552985514" datatype="html">
+        <source>Number Report</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -27,6 +27,7 @@ export type PartColumns = Map<keyof PartFailure, string>;
 
 export const PART_FAILURES: PartColumns = new Map([
   ['machine', $localize`Machine`],
+  ['reportNumber', $localize`Number Report`],
   ['name', $localize`Name`],
   ['articleNo', $localize`Article No`],
   ['tool', $localize`Tool`],

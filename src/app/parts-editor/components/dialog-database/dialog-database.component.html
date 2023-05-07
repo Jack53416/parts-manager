@@ -1,23 +1,20 @@
-<h1>Parts missing from database</h1>
- 
+<h1 i18n>Parts missing from database</h1>
+
 <form [formGroup]="missingPartsForm" (ngSubmit)="onSubmit()">
   <div formArrayName="updatedParts">
-    <div *ngFor="let part of updatedParts().controls; let partIndex=index">
-      <div
-        [formGroupName]="partIndex"
-       
-      > <input type="text" readonly formControlName="rowIndex" style="width:auto" />
-         name report :
+    <div *ngFor="let part of updatedParts().controls; let partIndex = index">
+      <div [formGroupName]="partIndex">
+        <input type="text" readonly formControlName="rowIndex" style="width: auto" />
+        <span i18n>Report number :</span>
         <input type="text" readonly formControlName="nameReport" />
-        name sap:
+        <span i18n>Sap name</span>
         <input type="text" formControlName="nameSap" />
-        nr sap:
+        <span i18n>Sap number</span>
         <input type="text" formControlName="numberSap" />
-        dodaj do bazy:
+        <span i18n>Add to databse</span>
         <input type="checkbox" formControlName="addToDatabase" />
       </div>
     </div>
   </div>
-<button type="submit">Ok</button>
+  <button type="submit">Ok</button>
 </form>
- 
