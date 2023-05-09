@@ -76,4 +76,8 @@ export class ElectronService {
 
     await this.ipcRenderer.invoke('saveParts', partsToSave, dateReport);
   }
+
+  summarizeMonth(date: Date) {
+    this.ipcRenderer.invoke('summarizeMonth', date);
+  }
 }

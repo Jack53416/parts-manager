@@ -4,6 +4,7 @@ import * as path from 'path';
 import { readExcel } from './excel-parser/read-report';
 import { saveParts } from './excel-parser/save-report';
 import { PartToSave } from './models/part-to-save';
+import {summarizeMonth} from './excel-parser/month-summary';
 
 
 let win: BrowserWindow = null;
@@ -119,4 +120,8 @@ function handleIPCEvents() {
     await saveParts(parts, reportDate);
     }
   );
+
+  ipcMain.handle('summarizeMonth', (_, date: Date) => {
+    summarizeMonth(date);
+  });
 }

@@ -35,6 +35,11 @@ export class ToolbarComponent {
     this.showMessageSavingDone();
   }
 
+  summarizeMonth() {
+    const date = new Date(1680307200);
+    this.partsDataService.summarizeMonth(date);
+  }
+
   openDialog() {
     const dialogRef = this.dialog.open(DialogDateComponent, {
       data: this.reportDate

@@ -92,6 +92,10 @@ export class PartsDataService {
     await this.electronService.savePartsToStatistic(parts, dateReport);
   }
 
+  summarizeMonth(date: Date) {
+    this.electronService.summarizeMonth(date);
+  }
+
   private updateUiState(newState: Partial<EditorsUiState>) {
     this.uiState = Object.freeze({ ...this.uiState, ...newState });
     this.uiStateSubject$.next(this.uiState);

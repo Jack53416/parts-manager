@@ -14,14 +14,18 @@ export const statisticsPath = 'E:/tempStaty';
 
 export const partStatisticTemplatePath = './app/excel-parser/m_template.xlsx';
 
+export const partSummaryTemplate = './app/excel-parser/part_summary_template.xlsx';
+
+export const partSummaryPath = 'P:/summary';
+
 export const breakpointReport = {
     firstRow: 'Maszyna' //Header of first row, column A
 };
 
 export const shiftSuffixes = {
-    a: ' zm.A',
-    b: ' zm.B',
-    c: ' zm.C'
+    a: '. zm.A',
+    b: '. zm.B',
+    c: '. zm.C'
 };
 
 export const partStatisticColumns = {
@@ -51,3 +55,15 @@ export const partStatisticColumns = {
 export const firstRowPartStatistic = 5;
 
 export const partStatisticNameCell = 'O2';
+
+export const monthSummaryColumns = {
+    tool: 'A',
+    project: 'B',
+    nrSap: 'C',
+    name: 'D',
+    month: 'E',
+    scrapNames: 'F',
+    totalProduction: 'G',
+    totalScrap: 'H',
+    partCost: 'L'
+};
