@@ -29,7 +29,6 @@ async function createPartWorkbook(fileName: string, yearShort: string): Promise<
   await partTemplate.xlsx.readFile(partStatisticTemplatePath);
 
   partTemplate.eachSheet((worksheet, _) => {
-    worksheet.name = `${worksheet.name} ${yearShort}`;
     worksheet.getCell(partStatisticNameCell).value = fileName;
   });
 
