@@ -56,11 +56,15 @@ async function savePartWoorkbook(partWorkbook: excelJs.Workbook, partData: PartT
   }
 
   // set edited worksheet to be active when open file manually
-  partWorkbook.views = [
-    {
-      x: 0, y: 0, width: 10000, height: 20000,
-      firstSheet: 0, activeTab: monthIndex, visibility: 'visible'
-    }
+  partWorkbook.views = [{
+      x: 0,
+      y: 0,
+      width: 10000,
+      height: 20000,
+      firstSheet: 0,
+      activeTab: monthIndex,
+      visibility: 'visible',
+    },
   ];
 
   await partWorkbook.xlsx.writeFile(`${statisticsPath}/${fileName}`);

@@ -1,7 +1,6 @@
 import { Database} from 'sqlite3';
 import { databasePath } from './config';
-import { UpdatedPart } from '../models/updated-part';
-
+import { PartToUpdate } from '../models/part-to-update';
 
 const db: Database = new Database(databasePath, (err: Error) => {
     if (err) {
@@ -17,7 +16,7 @@ export async function getPartPropertiesFromDatabase(partNr: string): Promise<{sa
              // eslint-disable-next-line @typescript-eslint/naming-convention
              (_, row: {report_nr: string; sap_nr: string; sap_name: string}) => {
             if (row === undefined) {
-                resolve({sapNr: partNr, sapName: 'Not in db'});
+                resolve({sapNr: partNr, sapName: undefined});
             } else {
                 resolve({sapNr: row.sap_nr, sapName: row.sap_name});
             }
@@ -25,7 +24,7 @@ export async function getPartPropertiesFromDatabase(partNr: string): Promise<{sa
     });
 }
 
-export async function addParts(newParts: UpdatedPart[]) {
+export async function addParts(newParts: PartToUpdate[]) {
     const placeholders = newParts.map((_) => '(?, ?, ?)').join(',');
     const values = newParts.map(part => [part.nameReport, part.numberSap, part.nameSap]);
 

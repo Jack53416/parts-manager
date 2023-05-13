@@ -7,8 +7,8 @@ import * as childProcess from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Part } from '../../../../../app/excel-parser/read-report';
-import { UpdatedPart } from '../../../parts-editor/services/parts-data.service';
 import { PartWorkbook } from '../../../parts-editor/models/editor';
+import { PartToUpdate } from '../../../parts-editor/models/part-to-update';
 
 @Injectable({
   providedIn: 'root'
@@ -67,14 +67,12 @@ export class ElectronService {
     return result;
   }
 
-  async addPartToDatabase(updatedParts: UpdatedPart[]) {
-    const partsToUpdate: UpdatedPart[] = [];
+  async addPartToDatabase(updatedParts: PartToUpdate[]) {
+    const partsToUpdate = updatedParts.filter(part => part.addToDatabase === true);
 
-    for (const part of updatedParts) {
-      if (part.addToDatabase) {partsToUpdate.push(part);}
+    if (partsToUpdate.length > 0) {
+      await this.ipcRenderer?.invoke('addPartsToDatabase', partsToUpdate);
     }
-
-    if (partsToUpdate.length > 0) {await this.ipcRenderer?.invoke('addPartsToDatabase', partsToUpdate);}
 }
 
   async savePartsToStatistic(parts: PartWorkbook, dateReport: Date): Promise<void> {

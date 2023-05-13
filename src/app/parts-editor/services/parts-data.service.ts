@@ -7,19 +7,12 @@ import { PartEditor, PartWorkbook } from '../models/editor';
 import { Cell } from '../models/cell';
 import { DialogDatabaseComponent } from '../components/dialog-database/dialog-database.component';
 import { MatDialog } from '@angular/material/dialog';
+import { PartToUpdate } from '../models/part-to-update';
 
 export interface EditorsUiState {
   activeIndex: number | null;
   openedEditors: PartEditor[];
 }
-
-export interface UpdatedPart {
-    rowIndex: number;
-    nameReport: string;
-    nameSap: string;
-    numberSap: string;
-    addToDatabase: boolean;
-  }
 
 @Injectable({
   providedIn: 'root',
@@ -137,15 +130,11 @@ export class PartsDataService {
   }
 
   private updateDatabase() {
-    const partsMissing = [];
+    const partsMissing = this.activeEditor.workbook.filter(part => !part.name.value);
 
-    for (const part of this.activeEditor.workbook) {
-      if (part.name.value === 'Not in db') {
-        partsMissing.push(part);
-      }
+    if (partsMissing.length > 0) {
+      this.openDialogDatabase(partsMissing);
     }
-
-    if (partsMissing.length > 0) {this.openDialogDatabase(partsMissing);}
   }
 
   private openDialogDatabase(partsMissing: PartWorkbook) {
@@ -153,8 +142,7 @@ export class PartsDataService {
       data: partsMissing,
     });
 
-    dialogRef.afterClosed().subscribe((result: {updatedParts: UpdatedPart[]}) => {
-
+    dialogRef.afterClosed().subscribe((result: {updatedParts: PartToUpdate[]}) => {
           this.electronService.addPartToDatabase(result.updatedParts);
 
           for (const part of Object.values(result.updatedParts)) {

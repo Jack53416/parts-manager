@@ -25,9 +25,9 @@ export class DialogDatabaseComponent implements OnInit, OnDestroy {
       updatedParts: this.formBuilder.array([]),
     });
 
-    for (const part of this.missingParts) {
+    this.missingParts.map(part => {
       this.addPart(part);
-    }
+    });
   }
 
   ngOnDestroy(): void {
@@ -49,15 +49,6 @@ export class DialogDatabaseComponent implements OnInit, OnDestroy {
     });
 
     this.updatedParts().push(newPart);
-  }
-
-  newPart(partNumber: string): FormGroup {
-    return this.formBuilder.group({
-      nameReport: partNumber,
-      nameSap: '',
-      numberSap:'',
-      addToDatabase: false
-    });
   }
 
   onSubmit() {

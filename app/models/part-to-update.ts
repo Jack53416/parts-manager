@@ -1,4 +1,4 @@
-export interface UpdatedPart {
+export interface PartToUpdate {
   rowIndex: number;
   nameReport: string;
   nameSap: string;
