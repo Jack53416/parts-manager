@@ -5,7 +5,7 @@ import { readExcel} from './excel-parser/read-report';
 import { addParts } from './excel-parser/database';
 import { saveParts } from './excel-parser/save-report';
 import { PartToSave } from './models/part-to-save';
-import { UpdatedPart } from './models/updated-part';
+import { PartToUpdate } from './models/part-to-update';
 
 
 let win: BrowserWindow = null;
@@ -117,7 +117,7 @@ function handleIPCEvents() {
     return await readExcel(result.filePaths[0], date);
   });
 
-  ipcMain.handle('addPartsToDatabase', async (_, updatedParts: UpdatedPart[]) => {
+  ipcMain.handle('addPartsToDatabase', async (_, updatedParts: PartToUpdate[]) => {
     addParts(updatedParts);
   });
   ipcMain.handle('saveParts', async (_, parts: PartToSave[], reportDate: Date) => {
