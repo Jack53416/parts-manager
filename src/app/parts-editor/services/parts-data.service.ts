@@ -92,8 +92,8 @@ export class PartsDataService {
     await this.electronService.savePartsToStatistic(parts, dateReport);
   }
 
-  summarizeMonth(date: Date) {
-    this.electronService.summarizeMonth(date);
+  async summarizeMonth(date: Date) {
+    await this.electronService.summarizeMonth(date);
   }
 
   private updateUiState(newState: Partial<EditorsUiState>) {

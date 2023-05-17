@@ -4,13 +4,14 @@ import * as dayjs from 'dayjs';
 import { partSummaryTemplate, partSummaryPath, monthSummaryColumns, statisticsPath } from './config';
 
 
+
 export async function summarizeMonth(date: Date) {
     date = new Date(1680307200000); //01.04.2023
     const fileList = fs.readdirSync(partSummaryPath);
     console.log(dayjs(date).format('MM.YYYY'));
     let summaryWorkbook = new excelJs.Workbook();
 
-    console.log(fileList);
+    //console.log(fileList);
     if (fileList.some(file => file.includes(dayjs(date).format('YYYY')))) {
         console.log('read');
         await summaryWorkbook.xlsx.readFile(`${partSummaryPath}/podsumowanie ${date.getFullYear()}.xlsx`);
@@ -18,22 +19,35 @@ export async function summarizeMonth(date: Date) {
         summaryWorkbook = await createSummary(date, summaryWorkbook);
     }
 
-    await saveStatistic(summaryWorkbook);
+    await saveStatistic(summaryWorkbook, date);
+
 }
 
-async function saveStatistic(summaryWorkbook: excelJs.Workbook) {
+async function saveStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
     const worksheetseparat = summaryWorkbook.getWorksheet('Arkusz1');
     const partStatisticFiles = fs.readdirSync(statisticsPath);
     const partWorkbook = new excelJs.Workbook();
 
-    const partsList = partStatisticFiles.map(async partFile => {
-        //getPartData(await partWorkbook.xlsx.readFile(`${statisticsPath}/${partFile}`));
-        getPartData(partFile);
-    });
+   //const partsList = partStatisticFiles.map(async partFile => {
+   //    console.log(`${statisticsPath}/${partFile}`);
+   //    await partWorkbook.xlsx.readFile(`${statisticsPath}/${partFile}`);
+   //    return await getPartData(partWorkbook, date);
+   //    //getPartData(partFile);
+   //});
+
+    const partsList = await Promise.all(partStatisticFiles.map(async partFile =>{
+        console.log(`${statisticsPath}/${partFile}`);
+        await partWorkbook.xlsx.readFile(`${statisticsPath}/${partFile}`);
+        await getPartData(partWorkbook, date);
+    }));
 }
 
-async function getPartData(partFile) {
-    console.log(partFile);
+async function getPartData(partFile: excelJs.Workbook, date: Date) {
+    //console.log(partFile);
+    // name, number, tool, prod, scrap, wady
+    const monthWorksheet = partFile.worksheets[date.getMonth()+1];
+    console.log(monthWorksheet.getCell('B38').result);
+    return 10;
 };
 
 async function createSummary(date: Date, summaryWorkbook: excelJs.Workbook): Promise<excelJs.Workbook> {

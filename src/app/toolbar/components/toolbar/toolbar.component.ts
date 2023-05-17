@@ -35,9 +35,9 @@ export class ToolbarComponent {
     this.showMessageSavingDone();
   }
 
-  summarizeMonth() {
+  async summarizeMonth() {
     const date = new Date(1680307200);
-    this.partsDataService.summarizeMonth(date);
+    await this.partsDataService.summarizeMonth(date);
   }
 
   openDialog() {

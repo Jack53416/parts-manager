@@ -121,7 +121,7 @@ function handleIPCEvents() {
     }
   );
 
-  ipcMain.handle('summarizeMonth', (_, date: Date) => {
-    summarizeMonth(date);
+  ipcMain.handle('summarizeMonth', async (_, date: Date) => {
+    await summarizeMonth(date);
   });
 }

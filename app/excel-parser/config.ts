@@ -10,7 +10,7 @@ export const columnReport = {
 
 export const databasePath = './app/excel-parser/parts.db';
 
-export const statisticsPath = 'E:/tempStaty';
+export const statisticsPath = 'P:/tempStaty';
 
 export const partStatisticTemplatePath = './app/excel-parser/m_template.xlsx';
 
