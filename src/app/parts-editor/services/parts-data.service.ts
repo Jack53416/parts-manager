@@ -142,13 +142,13 @@ export class PartsDataService {
       data: partsMissing,
     });
 
-    dialogRef.afterClosed().subscribe((result: {updatedParts: PartToUpdate[]}) => {
-          this.electronService.addPartToDatabase(result.updatedParts);
+      dialogRef.afterClosed().subscribe((result: PartToUpdate[]) => {
+          this.electronService.addPartToDatabase(result);
 
-          for (const part of Object.values(result.updatedParts)) {
+          result.map(part => {
             this.activeEditor.changeCell('articleNo', part.rowIndex, part.numberSap);
             this.activeEditor.changeCell('name', part.rowIndex, part.nameSap);
-          }
+          });
         }
       );
   }

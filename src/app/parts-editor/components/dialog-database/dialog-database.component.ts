@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { PartWorkbook } from '../../models/editor';
 import { Subject } from 'rxjs';
 import { Cell } from '../../models/cell';
@@ -12,22 +12,24 @@ import { Cell } from '../../models/cell';
 })
 export class DialogDatabaseComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
-  missingPartsForm: FormGroup;
+  missingPartsForm: FormArray<FormGroup>;
 
   constructor(
     public dialogRef: MatDialogRef<DialogDatabaseComponent>,
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public missingParts: PartWorkbook
-  ) {}
+  ) {
+    dialogRef.disableClose = true;
+  }
 
   ngOnInit() {
-    this.missingPartsForm = this.formBuilder.group({
-      updatedParts: this.formBuilder.array([]),
-    });
+    const partArray: FormGroup[] = [];
 
     this.missingParts.map(part => {
-      this.addPart(part);
+      partArray.push(this.addPart(part));
     });
+
+    this.missingPartsForm = this.formBuilder.array(partArray);
   }
 
   ngOnDestroy(): void {
@@ -35,23 +37,17 @@ export class DialogDatabaseComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  updatedParts(): FormArray {
-    return this.missingPartsForm.get('updatedParts') as FormArray;
-  }
-
-  addPart(part: {[key: string]: Cell}) {
-    const newPart = this.formBuilder.group({
+  addPart(part: {[key: string]: Cell}): FormGroup {
+    return this.formBuilder.group({
       rowIndex: part.articleNo.row,
       nameReport: part.articleNo.value,
-      nameSap: '',
-      numberSap:'',
+      nameSap: new FormControl(null),
+      numberSap: new FormControl(null, [Validators.required]),
       addToDatabase: false
     });
-
-    this.updatedParts().push(newPart);
   }
 
-  onSubmit() {
+  confirm() {
     this.dialogRef.close(this.missingPartsForm.value);
   }
 }
