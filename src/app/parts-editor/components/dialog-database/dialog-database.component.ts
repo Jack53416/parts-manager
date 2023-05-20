@@ -26,7 +26,7 @@ export class DialogDatabaseComponent implements OnInit, OnDestroy {
     const partArray: FormGroup[] = [];
 
     this.missingParts.map(part => {
-      partArray.push(this.addPart(part));
+      partArray.push(this.createPartForm(part));
     });
 
     this.missingPartsForm = this.formBuilder.array(partArray);
@@ -37,12 +37,12 @@ export class DialogDatabaseComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  addPart(part: {[key: string]: Cell}): FormGroup {
+  createPartForm(part: {[key: string]: Cell}): FormGroup {
     return this.formBuilder.group({
       rowIndex: part.articleNo.row,
       nameReport: part.articleNo.value,
-      nameSap: new FormControl(null),
-      numberSap: new FormControl(null, [Validators.required]),
+      nameSap: null,
+      numberSap: [null, [Validators.required]],
       addToDatabase: false
     });
   }

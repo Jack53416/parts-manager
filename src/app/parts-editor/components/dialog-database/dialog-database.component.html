@@ -4,14 +4,14 @@
     <div *ngFor="let part of missingPartsForm.controls">
       <ng-container [formGroup]="part">
         <input type="text" readonly formControlName="rowIndex"/>
-        <label i18n>Report number :</label>
-        <input type="text" readonly formControlName="nameReport" />
-        <label i18n>Sap name</label>
-        <input type="text" formControlName="nameSap" />
-        <label i18n>Sap number</label>
-        <input type="text" formControlName="numberSap" />
-        <label i18n>Add to database</label>
-        <input type="checkbox" formControlName="addToDatabase" />
+        <label i18n for="nameReport">Report number :</label>
+        <input id="nameReport" type="text" readonly formControlName="nameReport" />
+        <label i18n for="nameSap">Sap name</label>
+        <input id="nameSap" type="text" formControlName="nameSap" />
+        <label for="numberSap" i18n>Sap number</label>
+        <input id="numberSap" type="text" formControlName="numberSap" />
+        <label for="addToDatabase" i18n>Add to database</label>
+        <input id="addToDatabase" type="checkbox" formControlName="addToDatabase" />
       </ng-container>
     </div>
   <button (click)="confirm()" [disabled]="missingPartsForm.invalid">Ok</button>
