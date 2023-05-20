@@ -118,6 +118,30 @@
         <source>Enter Date</source>
         <target state="new">Wprowadź datę</target>
       </trans-unit>
+      <trans-unit id="69492fc09a0aac5253d5751b624a8afaebd71c24" datatype="html">
+        <source>Parts missing from database</source>
+        <target state="new">Numery nie znajdujące się w bazie danych</target>
+      </trans-unit>
+      <trans-unit id="5013ef0b2525de13cf62ecb02f31c6ad26940a9a" datatype="html">
+        <source>Report number :</source>
+        <target state="new">Numer z raportu :</target>
+      </trans-unit>
+      <trans-unit id="8568b6b2110cb61a68e340f3fa39508dba2932f7" datatype="html">
+        <source>Sap name</source>
+        <target state="new">Nazwa SAP</target>
+      </trans-unit>
+      <trans-unit id="107d00e449da7d7542cd11faf52db3f616c19635" datatype="html">
+        <source>Sap number</source>
+        <target state="new">Numer SAP</target>
+      </trans-unit>
+      <trans-unit id="f561672ec61df4f7dc427bd620d55c44344e8ac3" datatype="html">
+        <source>Add to database</source>
+        <target state="new">Dodaj do bazy</target>
+      </trans-unit>
+      <trans-unit id="2553527224552985514" datatype="html">
+        <source>Number Report</source>
+        <target state="new">Numer raport</target>
+      </trans-unit>
       <trans-unit id="397098723873502323" datatype="html">
         <source>Done</source>
         <target state="new">Zrobione</target>

@@ -19,9 +19,9 @@ export const breakpointReport = {
 };
 
 export const shiftSuffixes = {
-    a: ' zm.A',
-    b: ' zm.B',
-    c: ' zm.C'
+    a: '. zm.A',
+    b: '. zm.B',
+    c: '. zm.C'
 };
 
 export const partStatisticColumns = {
