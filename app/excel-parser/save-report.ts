@@ -11,7 +11,7 @@ export async function saveParts(parts: PartToSave[], reportDate: Date) {
   let partWorkbook = new excelJs.Workbook();
 
   for (const part of parts) {
-    const fileName = `${part.machine}_${part.articleNo.replace('/', '_')}_wkz ${part.tool} -${yearShort}`;
+    const fileName = `${part.machine}_${part.articleNo.replace('/', '-')}_wkz ${part.tool} -${yearShort}`;
 
     if (!(fileList.includes(fileName + '.xlsx'))) {
       partWorkbook = await createPartWorkbook(fileName, yearShort);

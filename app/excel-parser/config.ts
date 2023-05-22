@@ -10,13 +10,13 @@ export const columnReport = {
 
 export const databasePath = './app/excel-parser/parts.db';
 
-export const statisticsPath = 'P:/tempStaty';
+export const statisticsPath = 'E:/tempStaty';
 
 export const partStatisticTemplatePath = './app/excel-parser/m_template.xlsx';
 
 export const partSummaryTemplate = './app/excel-parser/part_summary_template.xlsx';
 
-export const partSummaryPath = 'P:/summary';
+export const partSummaryPath = 'E:/summary';
 
 export const breakpointReport = {
     firstRow: 'Maszyna' //Header of first row, column A
@@ -27,6 +27,8 @@ export const shiftSuffixes = {
     b: '. zm.B',
     c: '. zm.C'
 };
+
+export const partStatisticScrapCategoriesRow = 5;
 
 export const partStatisticColumns = {
     airBubbles: 'Q',
@@ -49,8 +51,26 @@ export const partStatisticColumns = {
     tool: null,
     name: null,
     machine: null,
-    scrapNo: null
+    scrapNo: null,
+    scrap: 'D'
 };
+
+export const partSummaryColumnsLetters = [
+    'E',
+    'F',
+    'G',
+    'H',
+    'I',
+    'J',
+    'K',
+    'L',
+    'M',
+    'N',
+    'O',
+    'P',
+    'R',
+    'S',
+];
 
 export const firstRowPartStatistic = 5;
 
@@ -67,3 +87,12 @@ export const monthSummaryColumns = {
     totalScrap: 'H',
     partCost: 'L'
 };
+
+const firstPartFileRow = 6;
+const lastPartFileRow = 36;
+
+export const partFileRowsRange = getRange(firstPartFileRow, lastPartFileRow);
+
+function getRange(start: number, end: number): number[] {
+    return [...Array(end - start + 1).keys()].map(x => x + start);
+}
