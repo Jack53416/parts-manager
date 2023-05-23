@@ -5,6 +5,9 @@ import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { PART_FAILURES, PartFailure } from '../models/part-failure';
 import { PartEditor, PartWorkbook } from '../models/editor';
 import { Cell } from '../models/cell';
+import { DialogDatabaseComponent } from '../components/dialog-database/dialog-database.component';
+import { MatDialog } from '@angular/material/dialog';
+import { PartToUpdate } from '../models/part-to-update';
 
 export interface EditorsUiState {
   activeIndex: number | null;
@@ -22,7 +25,7 @@ export class PartsDataService {
 
   private uiStateSubject$ = new BehaviorSubject(this.uiState);
 
-  constructor(private electronService: ElectronService) {}
+  constructor(private electronService: ElectronService, public dialog: MatDialog,) {}
 
   get uiState$(): Observable<EditorsUiState> {
     return this.uiStateSubject$.asObservable();
@@ -61,6 +64,8 @@ export class PartsDataService {
       activeIndex: editorCount - 1,
       openedEditors: editors,
     });
+
+    this.updateDatabase();
   }
 
   closeEditor(editor: PartEditor) {
@@ -126,6 +131,30 @@ export class PartsDataService {
     }
 
     return this.getMockedData();
+  }
+
+  private updateDatabase() {
+    const partsMissing = this.activeEditor.workbook.filter(part => !part.name.value);
+
+    if (partsMissing.length > 0) {
+      this.openDialogDatabase(partsMissing);
+    }
+  }
+
+  private openDialogDatabase(partsMissing: PartWorkbook) {
+    const dialogRef = this.dialog.open(DialogDatabaseComponent, {
+      data: partsMissing,
+    });
+
+      dialogRef.afterClosed().subscribe((result: PartToUpdate[]) => {
+          this.electronService.addPartToDatabase(result);
+
+          result.map(part => {
+            this.activeEditor.changeCell('articleNo', part.rowIndex, part.numberSap);
+            this.activeEditor.changeCell('name', part.rowIndex, part.nameSap);
+          });
+        }
+      );
   }
 
   private getMockedData(): Partial<PartFailure>[] {

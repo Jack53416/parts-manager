@@ -57,6 +57,7 @@ export class PartsEditorComponent implements AfterViewInit, OnDestroy {
     this.partEditor.focusChanges$
       .pipe(takeUntil(this.destroy$))
       .subscribe((focusedCell) => this.onCellFocusChanged(focusedCell));
+    this.partEditor.valuesChanges$.pipe(takeUntil(this.destroy$)).subscribe(_ => this.changeDetectorRef.detectChanges());
   }
 
   ngOnDestroy(): void {

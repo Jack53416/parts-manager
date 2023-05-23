@@ -14,9 +14,10 @@ export class PartEditor {
   private commandHistory: Command<Cell>[] = [];
   private undoCommandHistory: Command<Cell>[] = [];
   private focusChangeSubject = new Subject<Cell>();
+  private valuesChangesSubject = new Subject<void>();
 
   constructor(
-    private readonly data: PartWorkbook,
+    private data: PartWorkbook,
     public readonly reportDate: Date
   ) {
     this.name = formatDate(this.reportDate, 'dd.MM.YYYY', 'en-US');
@@ -26,8 +27,17 @@ export class PartEditor {
     return this.focusChangeSubject.asObservable();
   }
 
+  get valuesChanges$() {
+    return this.valuesChangesSubject.asObservable();
+  }
+
   get workbook(): PartWorkbook {
     return this.data;
+  }
+
+  changeCell(columnName: string, row: number, value: string) {
+    this.data[row][columnName].value = value;
+    this.valuesChangesSubject.next();
   }
 
   undo() {

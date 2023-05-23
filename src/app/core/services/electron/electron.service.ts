@@ -8,6 +8,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Part } from '../../../../../app/excel-parser/read-report';
 import { PartWorkbook } from '../../../parts-editor/models/editor';
+import { PartToUpdate } from '../../../parts-editor/models/part-to-update';
 
 @Injectable({
   providedIn: 'root'
@@ -65,6 +66,14 @@ export class ElectronService {
     const result = await this.ipcRenderer?.invoke('openExcel', date.getTime());
     return result;
   }
+
+  async addPartToDatabase(updatedParts: PartToUpdate[]) {
+    const partsToUpdate = updatedParts.filter(part => part.addToDatabase === true);
+
+    if (partsToUpdate.length > 0) {
+      await this.ipcRenderer?.invoke('addPartsToDatabase', partsToUpdate);
+    }
+}
 
   async savePartsToStatistic(parts: PartWorkbook, dateReport: Date): Promise<void> {
       const partsToSave = parts.map(part =>

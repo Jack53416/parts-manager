@@ -10,6 +10,7 @@ export class Part {
 
   constructor(
     public tool: string,
+    public reportNumber: string,
     public machine: string,
     public totalPartsProduced: number,
     public scrapNo: number,
@@ -110,9 +111,7 @@ async function parseShift(shiftSheet: XLSX.Sheet): Promise<Part[]> {
       lastMachine = row[columnReport.machine].toString();
     }
 
-
-
-    if (row[columnReport.production] !== 0) {
+    if (row[columnReport.production] !== 0 && row[columnReport.production] !== undefined) {
       const part = await createPart(row, lastMachine);
       partList.push(part);
       lastMachine = part.machine;
@@ -133,9 +132,11 @@ async function createPart(row: {[key: string]: string | number}, lastMachine: st
   const productionFromReport = +row[columnReport.production];
   const scrapFromReport = +(row[columnReport.scrap] ?? 0);
   const commentFromReport = (row[columnReport.comment] ?? '').toString();
+  const reportNumber = row[columnReport.articleNr].toString();
 
   const part = new Part(
     toolFromReport,
+    reportNumber,
     machineFromReport,
     productionFromReport,
     scrapFromReport,
