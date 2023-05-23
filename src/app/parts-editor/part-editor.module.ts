@@ -9,15 +9,18 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatRippleModule } from '@angular/material/core';
-import {ScrollingModule} from '@angular/cdk/scrolling';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { DialogDatabaseComponent } from './components/dialog-database/dialog-database.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 @NgModule({
-  declarations: [PartsEditorComponent, EditorWorkspaceComponent, DialogDatabaseComponent],
+  declarations: [
+    PartsEditorComponent,
+    EditorWorkspaceComponent,
+    DialogDatabaseComponent,
+  ],
   imports: [
     CommonModule,
     SharedModule,
@@ -32,7 +35,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     MatInputModule,
     MatFormFieldModule,
-    FormsModule
+    FormsModule,
   ],
 })
 export class PartsEditorModule {}

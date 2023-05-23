@@ -30,18 +30,23 @@ export class ToolbarComponent {
 
   async saveParts() {
     this.progressBarVisible = true;
-    await this.partsDataService.saveEditor(this.partsDataService.activeEditor.workbook, this.reportDate);
+    await this.partsDataService.saveEditor(
+      this.partsDataService.activeEditor.workbook,
+      this.reportDate
+    );
     this.progressBarVisible = false;
     this.showMessageSavingDone();
   }
 
   openDialog() {
     const dialogRef = this.dialog.open(DialogDateComponent, {
-      data: this.reportDate
+      data: this.reportDate,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {this.reportDate = result;};
+      if (result) {
+        this.reportDate = result;
+      }
     });
   }
 
@@ -57,5 +62,10 @@ export class ToolbarComponent {
       horizontalPosition: 'center',
       verticalPosition: 'top',
     });
+  }
+
+  updateComment() {
+    // ToDo(Jacek): Add custom overlay for entering dialog data
+    this.partsDataService.activeEditor?.updateComment('Test Comment');
   }
 }

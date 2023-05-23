@@ -18,6 +18,8 @@ import {
 } from '../../models/part-failure';
 import { PartEditor } from '../../models/editor';
 import { GridDirective } from '../../../grid/directives/grid.directive';
+import { GridCursorEvent } from '../../../grid/models/grid-cursor-event';
+import { GridCellDirective } from '../../../grid/directives/grid-cell.directive';
 
 @Component({
   selector: 'app-parts-editor',
@@ -45,9 +47,7 @@ export class PartsEditorComponent implements AfterViewInit, OnDestroy {
 
   private partEditor: PartEditor;
 
-  constructor(
-    private changeDetectorRef: ChangeDetectorRef
-  ) {}
+  constructor(private changeDetectorRef: ChangeDetectorRef) {}
 
   @Input()
   set editor(editor: PartEditor) {
@@ -57,7 +57,9 @@ export class PartsEditorComponent implements AfterViewInit, OnDestroy {
     this.partEditor.focusChanges$
       .pipe(takeUntil(this.destroy$))
       .subscribe((focusedCell) => this.onCellFocusChanged(focusedCell));
-    this.partEditor.valuesChanges$.pipe(takeUntil(this.destroy$)).subscribe(_ => this.changeDetectorRef.detectChanges());
+    this.partEditor.valuesChanges$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((_) => this.changeDetectorRef.detectChanges());
   }
 
   ngOnDestroy(): void {
@@ -71,6 +73,23 @@ export class PartsEditorComponent implements AfterViewInit, OnDestroy {
 
   insertValue(cell: Cell, value: string) {
     this.partEditor.insertValue(cell, value);
+  }
+
+  updateComment(cell: Cell) {
+    this.partEditor.updateComment('Dupa', cell);
+  }
+
+  saveCursorPos(event: GridCursorEvent<GridCellDirective>) {
+    const partEditor = this.partEditor;
+
+    if (partEditor === null) {
+      return;
+    }
+
+    partEditor.cursor = {
+      row: event.position.y,
+      columnName: event.item.columnName,
+    };
   }
 
   private onCellFocusChanged(focusedCell: Cell) {
