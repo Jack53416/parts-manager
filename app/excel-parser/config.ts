@@ -79,13 +79,16 @@ export const partStatisticNameCell = 'O2';
 export const monthSummaryColumns = {
     tool: 'A',
     project: 'B',
-    nrSap: 'C',
-    name: 'D',
+    partNr: 'C',
+    partName: 'D',
     month: 'E',
     scrapNames: 'F',
     totalProduction: 'G',
     totalScrap: 'H',
-    partCost: 'L'
+    partCost: 'L',
+    scrapPercent: 'I',
+    totalScrapCost: 'K',
+    ppm: 'M'
 };
 
 const firstPartFileRow = 6;
