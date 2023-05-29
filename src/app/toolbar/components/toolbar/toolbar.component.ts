@@ -24,7 +24,7 @@ export class ToolbarComponent {
     if (this.reportDate) {
       this.partsDataService.openEditor(this.reportDate);
     } else {
-      this.showMessageAboutNoDate();
+      this.showSnackBar($localize`Enter Date`);
     }
   }
 
@@ -32,12 +32,15 @@ export class ToolbarComponent {
     this.progressBarVisible = true;
     await this.partsDataService.saveEditor(this.partsDataService.activeEditor.workbook, this.reportDate);
     this.progressBarVisible = false;
-    this.showMessageSavingDone();
+    this.showSnackBar($localize`Done`);
   }
 
   async summarizeMonth() {
     const date = new Date(1680307200);
+    this.progressBarVisible = true;
     await this.partsDataService.summarizeMonth(date);
+    this.progressBarVisible = false;
+    this.showSnackBar($localize`Done`);
   }
 
   openDialog() {
@@ -50,15 +53,8 @@ export class ToolbarComponent {
     });
   }
 
-  showMessageAboutNoDate() {
-    this.snackBar.open($localize`Enter Date`, 'OK', {
-      horizontalPosition: 'center',
-      verticalPosition: 'top',
-    });
-  }
-
-  showMessageSavingDone() {
-    this.snackBar.open($localize`Done`, 'OK', {
+  showSnackBar(message: string) {
+    this.snackBar.open(message, 'OK', {
       horizontalPosition: 'center',
       verticalPosition: 'top',
     });

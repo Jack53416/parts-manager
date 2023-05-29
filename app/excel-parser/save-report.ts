@@ -1,9 +1,15 @@
-import { statisticsPath, partStatisticTemplatePath, partStatisticColumns, firstRowPartStatistic, partStatisticNameCell } from './config';
+import {
+  statisticsPath,
+  partStatisticTemplatePath,
+  partStatisticColumns,
+  firstRowPartStatistic,
+  partStatisticNameCell,
+  partStatisticNrCell,
+} from './config';
 import * as fs from 'fs';
 import * as excelJs from 'exceljs';
 import * as dayjs from 'dayjs';
 import { PartToSave } from '../models/part-to-save';
-
 
 export async function saveParts(parts: PartToSave[], reportDate: Date) {
   const fileList = fs.readdirSync(statisticsPath);
@@ -11,32 +17,43 @@ export async function saveParts(parts: PartToSave[], reportDate: Date) {
   let partWorkbook = new excelJs.Workbook();
 
   for (const part of parts) {
-    const partName = `${part.articleNo.replace('/', '-')}_wkz ${part.tool} -${yearShort}`;
-    let fileName = fileList.find(file => file.includes(partName));
+    const partName = `${part.articleNo.replace('/', '-')}_wkz ${
+      part.tool
+    } -${yearShort}`;
+    let fileName = fileList.find((file) => file.includes(partName));
 
     if (fileName) {
       await partWorkbook.xlsx.readFile(`${statisticsPath}/${fileName}`);
     } else {
       fileName = `${part.machine}_${partName}.xlsx`;
-      partWorkbook = await createPartWorkbook(fileName, yearShort);
+      partWorkbook = await createPartWorkbook(fileName, part.name);
     }
     await savePartWoorkbook(partWorkbook, part, fileName, reportDate);
   }
 }
 
-async function createPartWorkbook(fileName: string, yearShort: string): Promise<excelJs.Workbook> {
+async function createPartWorkbook(
+  fileName: string,
+  partName: string
+): Promise<excelJs.Workbook> {
   const partTemplate = new excelJs.Workbook();
   await partTemplate.xlsx.readFile(partStatisticTemplatePath);
 
   partTemplate.eachSheet((worksheet, _) => {
-    worksheet.getCell(partStatisticNameCell).value = fileName;
+    worksheet.getCell(partStatisticNrCell).value = fileName;
+    worksheet.getCell(partStatisticNameCell).value = partName;
   });
 
   await partTemplate.xlsx.writeFile(`${statisticsPath}/${fileName}`);
   return partTemplate;
 }
 
-async function savePartWoorkbook(partWorkbook: excelJs.Workbook, partData: PartToSave, fileName: string, reportDate: Date) {
+async function savePartWoorkbook(
+  partWorkbook: excelJs.Workbook,
+  partData: PartToSave,
+  fileName: string,
+  reportDate: Date
+) {
   const monthIndex = reportDate.getMonth();
 
   const monthSheet = partWorkbook.worksheets[monthIndex];
@@ -51,11 +68,14 @@ async function savePartWoorkbook(partWorkbook: excelJs.Workbook, partData: PartT
   }
 
   if (partData.machine !== fileName.slice(0, 6)) {
-    monthSheet.getCell(`${partStatisticColumns.totalPartsProduced}${row}`).note = partData.machine;
+    monthSheet.getCell(
+      `${partStatisticColumns.totalPartsProduced}${row}`
+    ).note = partData.machine;
   }
 
   // set edited worksheet to be active when open file manually
-  partWorkbook.views = [{
+  partWorkbook.views = [
+    {
       x: 0,
       y: 0,
       width: 10000,

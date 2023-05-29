@@ -39,6 +39,9 @@ export async function readExcel(reportPath: string, date: Date): Promise<Map<str
 
   const promises = shiftNames.map(async (shiftName) => {
     const sheetShift: XLSX.Sheet = woorkbookReport.Sheets[shiftName];
+    if (!sheetShift) {
+      console.log(`${shiftName} not found`);
+    }
     const partsInSheet: Part[] = await parseShift(sheetShift);
 
     for (const part of partsInSheet) {

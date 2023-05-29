@@ -10,13 +10,13 @@ export const columnReport = {
 
 export const databasePath = './app/excel-parser/parts.db';
 
-export const statisticsPath = 'E:/tempStaty';
+export const statisticsPath = 'P:/tempStaty';
 
 export const partStatisticTemplatePath = './app/excel-parser/m_template.xlsx';
 
 export const partSummaryTemplate = './app/excel-parser/part_summary_template.xlsx';
 
-export const partSummaryPath = 'E:/summary';
+export const partSummaryPath = 'P:/summary';
 
 export const breakpointReport = {
     firstRow: 'Maszyna' //Header of first row, column A
@@ -68,13 +68,15 @@ export const partSummaryColumnsLetters = [
     'N',
     'O',
     'P',
+    'Q',
     'R',
     'S',
 ];
 
 export const firstRowPartStatistic = 5;
 
-export const partStatisticNameCell = 'O2';
+export const partStatisticNrCell = 'O2';
+export const partStatisticNameCell = 'O3';
 
 export const monthSummaryColumns = {
     tool: 'A',
