@@ -9,7 +9,7 @@ import {
   statisticsPath,
   partFileRowsRange,
   partStatisticColumns,
-  partSummaryColumnsLetters,
+  partSummaryColumns,
   partStatisticScrapCategoriesRow,
   partStatisticNameCell
 } from './config';
@@ -31,7 +31,77 @@ export async function summarizeMonth(date: Date) {
     }
 
     await saveStatistic(summaryWorkbook, date);
+    await saveAssemblyStatistic(summaryWorkbook, date);
 }
+
+async function saveAssemblyStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
+    const assemblyStatPath = 'P:/maj staty';
+
+    const partStatisticFiles = fs.readdirSync(assemblyStatPath);
+    const partWorkbook = new excelJs.Workbook();
+    const monthIndex = +dayjs(date).month();
+
+    const partsList = await Promise.all(partStatisticFiles.map(async partFileName =>{
+        await partWorkbook.xlsx.readFile(`${assemblyStatPath}/${partFileName}`);
+        return await getAssemblyPartData(partWorkbook, date, partFileName);
+
+    }));
+
+        //save to template
+    const summaryWorksheet = summaryWorkbook.getWorksheet('Arkusz1');
+    const rows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount+1);
+
+    let lastSummaryRow = summaryWorksheet.rowCount;
+
+    partsList.map(partStatisticsData => {
+        //check if exist in stat
+        console.log(partStatisticsData.partNr);
+        let partRow: number;
+
+        lastSummaryRow = summaryWorksheet.rowCount;
+
+        // find part number
+        for (const row of rows) { //row -> 1 based
+            if (row.getCell('C').value === partStatisticsData.partNr) {
+                partRow = row.number;
+                console.log(row.getCell('C').value, row.number, 'aaa');
+                break;
+            }
+        }
+        // if part not in table
+        if (!partRow) {
+            addNewPartTable(partStatisticsData, summaryWorkbook, summaryWorksheet, lastSummaryRow);
+            partRow = lastSummaryRow+1;
+        }
+        //insert data
+
+        Object.entries(partStatisticsData).forEach(([key, v]) => {
+            summaryWorksheet.getCell(`${monthSummaryColumns[key]}${partRow+monthIndex}`).value = v;
+        });
+    });
+
+    await summaryWorkbook.xlsx.writeFile(`${partSummaryPath}/podsumowanie ${date.getFullYear()}.xlsx`);
+}
+
+async function getAssemblyPartData(
+    partFile: excelJs.Workbook,
+    date: Date,
+    partHeadline: string
+  ): Promise<{
+    totalProduction: number;
+    totalScrap: number;
+    partNr: string;
+  }> {
+
+    const monthWorksheet = partFile.worksheets[date.getMonth()];
+    const producitonData = await getProductionData(monthWorksheet);
+
+    return {
+      totalProduction: producitonData.productionSum,
+      totalScrap: producitonData.scrapSum,
+      partNr: partHeadline,
+    };
+  };
 
 async function saveStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
     const partStatisticFiles = fs.readdirSync(statisticsPath);
@@ -142,7 +212,7 @@ async function getPartData(
 }> {
 
   const monthWorksheet = partFile.worksheets[date.getMonth()];
-  const producitonData = await getProductionSum(monthWorksheet);
+  const producitonData = await getProductionData(monthWorksheet);
   const partHeadlineData = getDataFromPartHeadline(partHeadline);
   const partName = monthWorksheet.getCell(partStatisticNameCell).value;
 
@@ -157,53 +227,55 @@ async function getPartData(
 };
 
 function getDataFromPartHeadline(partHeadline: string): {machine: string; partNr: string; tool: string} {
+    //SG-XXX_PARTNR_TOOL -YY
     const headLineArray = partHeadline.split('_');
 
     return {machine: headLineArray[0], partNr: headLineArray[1], tool: headLineArray[2].slice(4, -8)};
 }
 
-async function getProductionSum(
-    partSheet: excelJs.Worksheet
-): Promise<{
+async function getProductionData(partSheet: excelJs.Worksheet): Promise<{
     productionSum: number;
     scrapSum: number;
     scrapCategories: Set<string>;
 }> {
-
     let productionSum = 0;
     let scrapSum = 0;
     const scrapCategoriesArray = [];
 
     for (const rowNr of partFileRowsRange) {
-        productionSum = productionSum + +partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`).value;
+        if (typeof(partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`).value) === 'number') {
+            productionSum = productionSum + +partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`).value;
+        } else {
+            productionSum = productionSum + +partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`).result;
+        }
+
         const scrapData = await parseScrapRow(partSheet, rowNr);
 
         scrapSum = scrapSum + scrapData.rowScrapSum;
-        scrapCategoriesArray.push(...scrapData.scrapCategoriesArray);
+        scrapCategoriesArray.push(...scrapData.scrapCategories);
     }
 
     const scrapCategories = new Set(scrapCategoriesArray);
     return {productionSum, scrapSum, scrapCategories};
 }
 
-async function parseScrapRow(partSheet: excelJs.Worksheet, rowNr: number): Promise<{rowScrapSum: number; scrapCategoriesArray: string[]}> {
+async function parseScrapRow(partSheet: excelJs.Worksheet, rowNr: number): Promise<{rowScrapSum: number; scrapCategories: string[]}> {
     let rowScrapSum = 0;
-    const scrapCategoriesArray = [];
+    const scrapCategories = [];
 
-    partSummaryColumnsLetters.map(column => {
+    partSummaryColumns.map(column => {
         const cellScrapValue = +partSheet.getCell(`${column}${rowNr}`).value;
 
-        rowScrapSum = rowScrapSum + cellScrapValue;
         if (cellScrapValue > 0) {
-            scrapCategoriesArray.push(partSheet.getCell(`${column}${partStatisticScrapCategoriesRow}`).value.toString());
+            rowScrapSum = rowScrapSum + cellScrapValue;
+            scrapCategories.push(partSheet.getCell(`${column}${partStatisticScrapCategoriesRow}`).value.toString());
         };
     });
 
-    return {rowScrapSum, scrapCategoriesArray};
+    return {rowScrapSum, scrapCategories};
 }
 
 async function createSummary(date: Date, summaryWorkbook: excelJs.Workbook): Promise<excelJs.Workbook> {
-    console.log(`create summary for ${dayjs(date).format('YYYY')}`);
     await summaryWorkbook.xlsx.readFile(`${partSummaryTemplate}`);
 
     const summaryWorksheet = summaryWorkbook.getWorksheet('Empty');

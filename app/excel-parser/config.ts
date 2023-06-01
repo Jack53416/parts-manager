@@ -55,7 +55,7 @@ export const partStatisticColumns = {
     scrap: 'D'
 };
 
-export const partSummaryColumnsLetters = [
+export const partSummaryColumns = [
     'E',
     'F',
     'G',
