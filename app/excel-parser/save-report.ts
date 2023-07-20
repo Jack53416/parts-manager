@@ -17,9 +17,7 @@ export async function saveParts(parts: PartToSave[], reportDate: Date) {
   let partWorkbook = new excelJs.Workbook();
 
   for (const part of parts) {
-    const partName = `${part.articleNo.replace('/', '-')}_wkz ${
-      part.tool
-    } -${yearShort}`;
+    const partName = `${part.articleNo.replace('/', '-')}_wkz ${part.tool} -${yearShort}`;
     let fileName = fileList.find((file) => file.includes(partName));
 
     if (fileName) {

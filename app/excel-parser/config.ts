@@ -18,14 +18,16 @@ export const partSummaryTemplate = './app/excel-parser/part_summary_template.xls
 
 export const partSummaryPath = 'P:/summary';
 
+export const partAssemblyStatisticsPath = 'P:/czerwiec staty';
+
 export const breakpointReport = {
     firstRow: 'Maszyna' //Header of first row, column A
 };
 
 export const shiftSuffixes = {
-    a: '. zm.A',
-    b: '. zm.B',
-    c: '. zm.C'
+    a: ' zm.A',
+    b: ' zm.B',
+    c: ' zm.C'
 };
 
 export const partStatisticScrapCategoriesRow = 5;

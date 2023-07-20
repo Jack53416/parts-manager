@@ -11,14 +11,13 @@ import {
   partStatisticColumns,
   partSummaryColumns,
   partStatisticScrapCategoriesRow,
-  partStatisticNameCell
+  partStatisticNameCell,
+  partAssemblyStatisticsPath
 } from './config';
 
 
-
 export async function summarizeMonth(date: Date) {
-    //date = new Date(1680307200000); //01.04.2023
-    date = new Date(1685350267312); //29.05.2023
+    date = new Date(1685996260000); //05.06.2023 - date for testing
     const fileList = fs.readdirSync(partSummaryPath);
     console.log(dayjs(date).format('MM.YYYY'));
     let summaryWorkbook = new excelJs.Workbook();
@@ -35,16 +34,13 @@ export async function summarizeMonth(date: Date) {
 }
 
 async function saveAssemblyStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
-    const assemblyStatPath = 'P:/maj staty';
-
-    const partStatisticFiles = fs.readdirSync(assemblyStatPath);
+    const partStatisticFiles = fs.readdirSync(partAssemblyStatisticsPath);
     const partWorkbook = new excelJs.Workbook();
     const monthIndex = +dayjs(date).month();
 
     const partsList = await Promise.all(partStatisticFiles.map(async partFileName =>{
-        await partWorkbook.xlsx.readFile(`${assemblyStatPath}/${partFileName}`);
+        await partWorkbook.xlsx.readFile(`${partAssemblyStatisticsPath}/${partFileName}`);
         return await getAssemblyPartData(partWorkbook, date, partFileName);
-
     }));
 
         //save to template
@@ -62,9 +58,8 @@ async function saveAssemblyStatistic(summaryWorkbook: excelJs.Workbook, date: Da
 
         // find part number
         for (const row of rows) { //row -> 1 based
-            if (row.getCell('C').value === partStatisticsData.partNr) {
+            if (row.getCell(monthSummaryColumns.partNr).value === partStatisticsData.partNr) {
                 partRow = row.number;
-                console.log(row.getCell('C').value, row.number, 'aaa');
                 break;
             }
         }
@@ -129,9 +124,10 @@ async function saveStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
 
         // find part number
         for (const row of rows) { //row -> 1 based
-            if (row.getCell('C').value === partStatisticsData.partNr) {
+            if ((row.getCell(monthSummaryColumns.partNr).value === partStatisticsData.partNr) &&
+            (row.getCell(monthSummaryColumns.tool).value === partStatisticsData.tool)
+            ) {
                 partRow = row.number;
-                console.log(row.getCell('C').value, row.number, 'aaa');
                 break;
             }
         }
@@ -243,10 +239,16 @@ async function getProductionData(partSheet: excelJs.Worksheet): Promise<{
     const scrapCategoriesArray = [];
 
     for (const rowNr of partFileRowsRange) {
-        if (typeof(partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`).value) === 'number') {
-            productionSum = productionSum + +partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`).value;
-        } else {
-            productionSum = productionSum + +partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`).result;
+        const currentCell = partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`);
+        // dont count trials (yellow lines)
+        if (currentCell.fill.type === 'pattern' && currentCell.fill.bgColor) {
+            continue;
+        }
+
+        if (typeof(currentCell.value) === 'number') {
+            productionSum = productionSum + +currentCell.value;
+        } else if (!(currentCell.value === null)) {
+            productionSum = productionSum + +currentCell.result;
         }
 
         const scrapData = await parseScrapRow(partSheet, rowNr);
@@ -264,12 +266,15 @@ async function parseScrapRow(partSheet: excelJs.Worksheet, rowNr: number): Promi
     const scrapCategories = [];
 
     partSummaryColumns.map(column => {
-        const cellScrapValue = +partSheet.getCell(`${column}${rowNr}`).value;
+        const scrapCell = partSheet.getCell(`${column}${rowNr}`);
 
-        if (cellScrapValue > 0) {
-            rowScrapSum = rowScrapSum + cellScrapValue;
-            scrapCategories.push(partSheet.getCell(`${column}${partStatisticScrapCategoriesRow}`).value.toString());
-        };
+        if (typeof(scrapCell.value) === 'number') {
+            rowScrapSum = rowScrapSum + +scrapCell.value;
+        } else if (!(scrapCell.value === null)) {
+            rowScrapSum = rowScrapSum + +scrapCell.result;
+        }
+
+        scrapCategories.push(partSheet.getCell(`${column}${partStatisticScrapCategoriesRow}`).value.toString());
     });
 
     return {rowScrapSum, scrapCategories};

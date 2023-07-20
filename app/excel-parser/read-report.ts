@@ -79,7 +79,7 @@ function findLastReportRow(
   let rowCounter = 0;
 
   for (const row of sheetObject) {
-    if ( //last row only contains scrap number and production number
+    if ( //last row only contains scrap number and production number   //TODO (Mateusz): confirm that next row is empty
       columnReport.production in row &&
       row[columnReport.production] !== 0 &&
       columnReport.scrap in row &&
@@ -113,8 +113,7 @@ async function parseShift(shiftSheet: XLSX.Sheet): Promise<Part[]> {
     if (row[columnReport.machine]) {
       lastMachine = row[columnReport.machine].toString();
     }
-
-    if (row[columnReport.production] !== 0 && row[columnReport.production] !== undefined) {
+      if ((row[columnReport.production] !== 0 && row[columnReport.production] !== undefined) || (row[columnReport.scrap] !== 0))  {
       const part = await createPart(row, lastMachine);
       partList.push(part);
       lastMachine = part.machine;
@@ -125,7 +124,7 @@ async function parseShift(shiftSheet: XLSX.Sheet): Promise<Part[]> {
 
 async function createPart(row: {[key: string]: string | number}, lastMachine: string): Promise<Part> {
   const partNrFromReport = row[columnReport.articleNr].toString();
-  const toolFromReport = row[columnReport.tool].toString();
+  const toolFromReport = row[columnReport.tool].toString(); // TODO (Mateusz): check if not empty
   let machineFromReport = lastMachine;
 
   if (row.hasOwnProperty(columnReport.machine)) {
