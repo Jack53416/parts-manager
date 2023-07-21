@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { PartsDataService } from '../../../parts-editor/services/parts-data.service';
 import { DialogDateComponent } from '../dialog-date/dialog-date.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as moment from 'moment';
+import { MatCalendar } from '@angular/material/datepicker';
+
 
 @Component({
   selector: 'app-toolbar',
@@ -13,6 +15,7 @@ import * as moment from 'moment';
 export class ToolbarComponent {
   reportDate: Date = moment().subtract(1, 'days').toDate();
   progressBarVisible = false;
+  private summaryDate: Date;
 
   constructor(
     private partsDataService: PartsDataService,
@@ -36,9 +39,10 @@ export class ToolbarComponent {
   }
 
   async summarizeMonth() {
-    const date = new Date(1680307200);
+    //const date = new Date(1680307200);
+    console.log(this.summaryDate);
     this.progressBarVisible = true;
-    await this.partsDataService.summarizeMonth(date);
+    //await this.partsDataService.summarizeMonth(date);
     this.progressBarVisible = false;
     this.showSnackBar($localize`Done`);
   }
@@ -49,8 +53,23 @@ export class ToolbarComponent {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {this.reportDate = result;};
+      if (result) {
+        this.reportDate = result;
+      };
     });
+  }
+
+  chosenMonthHandler(selectedMonth: moment.Moment) {
+    console.log(selectedMonth.toDate());
+    this.summaryDate = selectedMonth.toDate();
+  }
+
+  viewChangedHandler(_event: any, calendar: MatCalendar<moment.Moment>) {
+    calendar.currentView = 'year';
+  }
+
+  resetSummaryDate() {
+    this.summaryDate = new Date();
   }
 
   showSnackBar(message: string) {

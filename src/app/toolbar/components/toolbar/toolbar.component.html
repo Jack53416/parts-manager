@@ -1,8 +1,16 @@
 <div class="toolbar-container">
-    <button class="toolbar-button" matRipple (click)="summarizeMonth()">
+    <button class="toolbar-button" matRipple 
+        (menuOpened)="resetSummaryDate()"
+        [matMenuTriggerFor]="appMenu" >
         <mat-icon inline fontSet="material-icons-outlined">archive</mat-icon>
         <span>Summary</span>
     </button>
+    
+    <mat-menu #appMenu="matMenu" >
+        <mat-calendar style="width:15rem"  #calendar startView="year" (monthSelected)="chosenMonthHandler($event)" (viewChanged)="viewChangedHandler($event, calendar)" (click)="$event.stopPropagation();">
+        </mat-calendar>
+        <button mat-button (click)="summarizeMonth()">Save summary</button>
+    </mat-menu>
 
     <button class="toolbar-button" matRipple (click)="saveParts()">
         <mat-icon inline fontSet="material-icons-outlined">save</mat-icon>

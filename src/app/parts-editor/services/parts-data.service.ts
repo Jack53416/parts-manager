@@ -151,7 +151,7 @@ export class PartsDataService {
 
           result.map(part => {
             this.activeEditor.changeCell('articleNo', part.rowIndex, part.numberSap);
-            this.activeEditor.changeCell('name', part.rowIndex, part.nameSap);
+            this.activeEditor.changeCell('name', part.rowIndex, part.nameSap || '');
           });
         }
       );
