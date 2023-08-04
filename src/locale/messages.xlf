@@ -110,6 +110,24 @@
       <trans-unit id="397098723873502323" datatype="html">
         <source>Done</source>
       </trans-unit>
+      <trans-unit id="3d3ae7deebc5949b0c1c78b9847886a94321d9fd" datatype="html">
+        <source>No</source>
+      </trans-unit>
+      <trans-unit id="4f20f2d5a6882190892e58b85f6ccbedfa737952" datatype="html">
+        <source>Yes</source>
+      </trans-unit>
+      <trans-unit id="a8233de047500bf0f0d9f9f1712ddb071501a283" datatype="html">
+        <source>Summary</source>
+      </trans-unit>
+      <trans-unit id="b3249aa3714bf1a6c40f71448362104b8cb341c2" datatype="html">
+        <source>Month is not over yet</source>
+      </trans-unit>
+      <trans-unit id="f2cf97e3b5d8f8477448dd2a414b4c5a996ab992" datatype="html">
+        <source>You are going to create summary for <x id="START_BOLD_TEXT" ctype="x-b" equiv-text="&lt;b&gt;"/><x id="INTERPOLATION" equiv-text="{{summaryDate | date: &apos;MMMM YYYY&apos; }}"/><x id="CLOSE_BOLD_TEXT" ctype="x-b" equiv-text="&lt;/b&gt;"/>. Are you sure?</source>
+      </trans-unit>
+      <trans-unit id="5409ad2e99a80abc9924ed95ee8612cedd5b8b12" datatype="html">
+        <source>Save summary</source>
+      </trans-unit>
     </body>
   </file>
 </xliff>

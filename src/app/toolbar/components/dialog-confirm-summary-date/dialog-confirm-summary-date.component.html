@@ -1,0 +1,8 @@
+<mat-dialog-content>
+    <p i18n>You are going to create summary for <b>{{summaryDate | date: 'MMMM YYYY' }}</b>. Are you sure?</p>
+    <p *ngIf="warningMessage" class="warning" i18n>Month is not over yet</p>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button (click)="dateConfirmed()" i18n>Yes</button>
+    <button mat-raised-button (click)="dateRejected()" i18n>No</button>
+</mat-dialog-actions>

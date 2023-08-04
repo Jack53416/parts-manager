@@ -18,7 +18,11 @@ export const partSummaryTemplate = './app/excel-parser/part_summary_template.xls
 
 export const partSummaryPath = 'P:/summary';
 
-export const partAssemblyStatisticsPath = 'P:/czerwiec staty';
+export const partAssemblyStatisticsPath = 'P:/lipiec staty';
+
+export const partSummaryMainSheetName = 'Arkusz1';
+
+export const partSummaryEmptySheetName = 'Empty';
 
 export const breakpointReport = {
     firstRow: 'Maszyna' //Header of first row, column A

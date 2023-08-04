@@ -15,6 +15,7 @@ import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from '@angular/materia
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter } from '@angular/material-moment-adapter';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatMenuModule} from '@angular/material/menu';
+import { DialogConfirmSummaryDateComponent } from './components/dialog-confirm-summary-date/dialog-confirm-summary-date.component';
 
 const DATE_FORMAT = {
   parse: {
@@ -27,7 +28,7 @@ const DATE_FORMAT = {
 };
 
 @NgModule({
-  declarations: [ToolbarComponent, DialogDateComponent],
+  declarations: [ToolbarComponent, DialogDateComponent, DialogConfirmSummaryDateComponent],
   imports: [
     CommonModule,
     MatIconModule,

@@ -12,17 +12,19 @@ import {
   partSummaryColumns,
   partStatisticScrapCategoriesRow,
   partStatisticNameCell,
-  partAssemblyStatisticsPath
+  partAssemblyStatisticsPath,
+  partSummaryMainSheetName,
+  partSummaryEmptySheetName
 } from './config';
+import { PartToSave } from '../models/part-to-save';
 
 
 export async function summarizeMonth(date: Date) {
-    date = new Date(1685996260000); //05.06.2023 - date for testing
+    //date = new Date(1685996260000); //05.06.2023 - date for testing
     const fileList = fs.readdirSync(partSummaryPath);
     console.log(dayjs(date).format('MM.YYYY'));
     let summaryWorkbook = new excelJs.Workbook();
 
-    //console.log(fileList);
     if (fileList.some(file => file.includes(dayjs(date).format('YYYY')))) {
         await summaryWorkbook.xlsx.readFile(`${partSummaryPath}/podsumowanie ${date.getFullYear()}.xlsx`);
     } else {
@@ -44,7 +46,7 @@ async function saveAssemblyStatistic(summaryWorkbook: excelJs.Workbook, date: Da
     }));
 
         //save to template
-    const summaryWorksheet = summaryWorkbook.getWorksheet('Arkusz1');
+    const summaryWorksheet = summaryWorkbook.getWorksheet(partSummaryMainSheetName);
     const rows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount+1);
 
     let lastSummaryRow = summaryWorksheet.rowCount;
@@ -70,8 +72,8 @@ async function saveAssemblyStatistic(summaryWorkbook: excelJs.Workbook, date: Da
         }
         //insert data
 
-        Object.entries(partStatisticsData).forEach(([key, v]) => {
-            summaryWorksheet.getCell(`${monthSummaryColumns[key]}${partRow+monthIndex}`).value = v;
+        Object.entries(partStatisticsData).forEach(([key, value]) => {
+            summaryWorksheet.getCell(`${monthSummaryColumns[key]}${partRow+monthIndex}`).value = value;
         });
     });
 
@@ -110,14 +112,13 @@ async function saveStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
     }));
 
     //save to template
-    const summaryWorksheet = summaryWorkbook.getWorksheet('Arkusz1');
+    const summaryWorksheet = summaryWorkbook.getWorksheet(partSummaryMainSheetName);
     const rows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount+1);
 
     let lastSummaryRow = summaryWorksheet.rowCount;
 
     partsList.map(partStatisticsData => {
         //check if exist in stat
-        console.log(partStatisticsData.partNr);
         let partRow: number;
 
         lastSummaryRow = summaryWorksheet.rowCount;
@@ -152,9 +153,9 @@ function addNewPartTable(
     summaryWorksheet: excelJs.Worksheet,
     lastSummaryRow: number
     ) {
-    const templateWorksheet = summaryWorkbook.getWorksheet('Empty');
+    const templateWorksheet = summaryWorkbook.getWorksheet(partSummaryEmptySheetName);
     const emptyTable: excelJs.Row[] = templateWorksheet.getRows(1, 13);
-    console.log(lastSummaryRow);
+
     // copy each cell in table
     emptyTable.forEach(row => {
         row.getCell(monthSummaryColumns.partNr).value = partStatisticsData.partNr;
@@ -240,7 +241,7 @@ async function getProductionData(partSheet: excelJs.Worksheet): Promise<{
 
     for (const rowNr of partFileRowsRange) {
         const currentCell = partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`);
-        // dont count trials (yellow lines)
+        // dont count trials (yellow rows)
         if (currentCell.fill.type === 'pattern' && currentCell.fill.bgColor) {
             continue;
         }
@@ -283,7 +284,7 @@ async function parseScrapRow(partSheet: excelJs.Worksheet, rowNr: number): Promi
 async function createSummary(date: Date, summaryWorkbook: excelJs.Workbook): Promise<excelJs.Workbook> {
     await summaryWorkbook.xlsx.readFile(`${partSummaryTemplate}`);
 
-    const summaryWorksheet = summaryWorkbook.getWorksheet('Empty');
+    const summaryWorksheet = summaryWorkbook.getWorksheet(partSummaryEmptySheetName);
     const dates = [];
 
     for (let i = 1; i < 13; i++) {
@@ -291,7 +292,7 @@ async function createSummary(date: Date, summaryWorkbook: excelJs.Workbook): Pro
     }
 
     dates.forEach((month, i) => {
-        summaryWorksheet.getCell(`E${i+1}`).value = month;
+        summaryWorksheet.getCell(`${monthSummaryColumns.month}${i+1}`).value = month;
     });
 
     await summaryWorkbook.xlsx.writeFile(`${partSummaryPath}/podsumowanie ${date.getFullYear()}.xlsx`);

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { PartsDataService } from '../../../parts-editor/services/parts-data.service';
 import { DialogDateComponent } from '../dialog-date/dialog-date.component';
+import { DialogConfirmSummaryDateComponent } from '../dialog-confirm-summary-date/dialog-confirm-summary-date.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as moment from 'moment';
@@ -20,7 +21,8 @@ export class ToolbarComponent {
   constructor(
     private partsDataService: PartsDataService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async readExcel() {
@@ -39,12 +41,16 @@ export class ToolbarComponent {
   }
 
   async summarizeMonth() {
-    //const date = new Date(1680307200);
-    console.log(this.summaryDate);
-    this.progressBarVisible = true;
-    //await this.partsDataService.summarizeMonth(date);
-    this.progressBarVisible = false;
-    this.showSnackBar($localize`Done`);
+    const dialogRef =  this.dialog.open(DialogConfirmSummaryDateComponent, {data: this.summaryDate} );
+
+    dialogRef.afterClosed().subscribe(async (dateConfirmed: boolean) => {
+      if (dateConfirmed) {
+        this.progressBarVisible = true;
+        await this.partsDataService.summarizeMonth(this.summaryDate);
+        this.progressBarVisible = false;
+        this.showSnackBar($localize`Done`);
+      }
+    });
   }
 
   openDialog() {
@@ -60,12 +66,12 @@ export class ToolbarComponent {
   }
 
   chosenMonthHandler(selectedMonth: moment.Moment) {
-    console.log(selectedMonth.toDate());
     this.summaryDate = selectedMonth.toDate();
   }
 
   viewChangedHandler(_event: any, calendar: MatCalendar<moment.Moment>) {
     calendar.currentView = 'year';
+    this.cdr.reattach();
   }
 
   resetSummaryDate() {
