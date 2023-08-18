@@ -16,7 +16,6 @@ import {
   partSummaryMainSheetName,
   partSummaryEmptySheetName
 } from './config';
-import { PartToSave } from '../models/part-to-save';
 
 
 export async function summarizeMonth(date: Date) {
@@ -25,7 +24,7 @@ export async function summarizeMonth(date: Date) {
     console.log(dayjs(date).format('MM.YYYY'));
     let summaryWorkbook = new excelJs.Workbook();
 
-    if (fileList.some(file => file.includes(dayjs(date).format('YYYY')))) {
+    if (fileList.some(file => file.includes('podsumowanie ' + dayjs(date).format('YYYY')))) {
         await summaryWorkbook.xlsx.readFile(`${partSummaryPath}/podsumowanie ${date.getFullYear()}.xlsx`);
     } else {
         summaryWorkbook = await createSummary(date, summaryWorkbook);
@@ -47,15 +46,13 @@ async function saveAssemblyStatistic(summaryWorkbook: excelJs.Workbook, date: Da
 
         //save to template
     const summaryWorksheet = summaryWorkbook.getWorksheet(partSummaryMainSheetName);
-    const rows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount+1);
+    const rows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount);
 
     let lastSummaryRow = summaryWorksheet.rowCount;
 
     partsList.map(partStatisticsData => {
         //check if exist in stat
-        console.log(partStatisticsData.partNr);
         let partRow: number;
-
         lastSummaryRow = summaryWorksheet.rowCount;
 
         // find part number
@@ -68,7 +65,7 @@ async function saveAssemblyStatistic(summaryWorkbook: excelJs.Workbook, date: Da
         // if part not in table
         if (!partRow) {
             addNewPartTable(partStatisticsData, summaryWorkbook, summaryWorksheet, lastSummaryRow);
-            partRow = lastSummaryRow+1;
+            partRow = lastSummaryRow+1; // remove +1? gap after last row was added when new summary is createing
         }
         //insert data
 
@@ -113,15 +110,15 @@ async function saveStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
 
     //save to template
     const summaryWorksheet = summaryWorkbook.getWorksheet(partSummaryMainSheetName);
-    const rows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount+1);
+    const rows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount);
 
-    let lastSummaryRow = summaryWorksheet.rowCount;
+    //let lastSummaryRow = summaryWorksheet.rowCount;
 
     partsList.map(partStatisticsData => {
         //check if exist in stat
         let partRow: number;
 
-        lastSummaryRow = summaryWorksheet.rowCount;
+        const lastSummaryRow = summaryWorksheet.rowCount;
 
         // find part number
         for (const row of rows) { //row -> 1 based
