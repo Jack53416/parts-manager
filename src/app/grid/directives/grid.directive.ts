@@ -8,14 +8,17 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  Output,
   QueryList,
   Renderer2,
+  EventEmitter,
 } from '@angular/core';
 import { pairwise, Subject, takeUntil, tap } from 'rxjs';
 import { AriaGrid, ARIA_GRID } from '../models/aria-grid';
 import { GridKeyManager } from '../utils/grid-key-manager';
 import { Point } from '../utils/point';
 import { GridCellDirective } from './grid-cell.directive';
+import { GridCursorEvent } from '../models/grid-cursor-event';
 
 @Directive({
   selector: 'table[appGrid]',
@@ -24,6 +27,10 @@ import { GridCellDirective } from './grid-cell.directive';
 export class GridDirective
   implements AfterContentInit, OnDestroy, OnInit, AriaGrid
 {
+  @Output() cellSelected = new EventEmitter<
+    GridCursorEvent<GridCellDirective>
+  >();
+
   @Input() selectionClassName = 'selected';
   @ContentChildren(GridCellDirective) cells: QueryList<GridCellDirective>;
 
@@ -46,6 +53,7 @@ export class GridDirective
       .pipe(
         takeUntil(this.destroy$),
         tap((cursorEvent) => {
+          this.cellSelected.emit(cursorEvent);
           this.toggleColumnHeaderHighlight(cursorEvent.item);
           this.toggleRowHeaderHighlight(cursorEvent.position);
         }),

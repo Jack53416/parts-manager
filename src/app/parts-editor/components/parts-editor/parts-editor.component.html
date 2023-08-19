@@ -1,4 +1,4 @@
-<table appGrid #table cdk-table [dataSource]="dataSource">
+<table appGrid #table cdk-table [dataSource]="dataSource" (cellSelected)="saveCursorPos($event)">
 
     <ng-container cdkColumnDef="position" sticky>
         <th role="columnheader" cdk-header-cell *cdkHeaderCellDef></th>
@@ -9,7 +9,9 @@
         [sticky]="stickyHeaders.has(columnDef.name)">
         <th role="columnheader" cdk-header-cell *cdkHeaderCellDef>{{columnDef.title}}</th>
         <td appGridCell cdk-cell *cdkCellDef="let element">
-            <app-grid-cell-value [formula]="element[columnDef.name].formula" [value]="element[columnDef.name].value"
+            <app-grid-cell-value 
+                [formula]="element[columnDef.name].formula" 
+                [value]="element[columnDef.name].value"
                 [comment]="element[columnDef.name].comment"
                 (editConfirmed)="insertValue(element[columnDef.name], $event)">
             </app-grid-cell-value>

@@ -3,14 +3,21 @@
         <mat-icon inline fontSet="material-icons-outlined">save</mat-icon>
         <span i18n>Save</span>
     </button>
-    
+
     <button class="toolbar-button" matRipple (click)="readExcel()">
         <mat-icon inline fontSet="material-icons-outlined">folder_open</mat-icon>
         <span i18n>Open</span>
     </button>
-    
+
     <button *ngIf="reportDate" mat-button (click)="openDialog()">{{ reportDate | date: 'dd.MM.YYYY' }}</button>
     <button *ngIf="!reportDate" mat-button (click)="openDialog()" i18n>Enter Date</button>
+
+
+    <mat-divider vertical></mat-divider>
+    <button class="toolbar-button" matRipple (click)="updateComment()">
+        <mat-icon inline>comment</mat-icon>
+        <span i18n>Comment</span>
+    </button>
 
 </div>
 <div class="progressbar" *ngIf="progressBarVisible">

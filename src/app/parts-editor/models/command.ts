@@ -21,6 +21,9 @@ export abstract class Command<T extends Prototype<T>> {
     this.backup = this.item.copy();
   }
 
+  /**
+   * Executes a command. Returns true if command should be added to a command history.
+   */
   abstract execute(): boolean;
 }
 
@@ -32,6 +35,18 @@ export class InsertCommand extends Command<Cell> {
   execute(): boolean {
     this.saveBackup();
     this.item.value = this.input;
+    return true;
+  }
+}
+
+export class UpdateCommentCommand extends Command<Cell> {
+  constructor(cell: Cell, private comment: string) {
+    super(cell);
+  }
+
+  execute(): boolean {
+    this.saveBackup();
+    this.item.comment = this.comment;
     return true;
   }
 }
