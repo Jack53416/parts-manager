@@ -8,7 +8,7 @@ import { GridCellValueComponent } from './components/grid-cell-value/grid-cell-v
 import { OverlayInputComponent } from './components/overlay-input/overlay-input.component';
 import { GridCellDirective } from './directives/grid-cell.directive';
 import { GridDirective } from './directives/grid.directive';
-
+import { MatTooltipModule } from '@angular/material/tooltip';
 @NgModule({
   declarations: [
     GridCellDirective,
@@ -23,6 +23,7 @@ import { GridDirective } from './directives/grid.directive';
     TextFieldModule,
     FormsModule,
     ReactiveFormsModule,
+    MatTooltipModule,
   ],
   exports: [GridCellValueComponent, GridCellDirective, GridDirective],
 })
