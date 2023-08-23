@@ -5,89 +5,85 @@ import * as utc from 'dayjs/plugin/utc';
 import {
   partSummaryTemplate,
   partSummaryPath,
-  monthSummaryColumns,
+  monthSummaryColumnsLetters,
   statisticsPath,
   partFileRowsRange,
-  partStatisticColumns,
-  partSummaryColumns,
+  partStatisticColumnsLetters,
+  partSummaryColumnsLetters,
   partStatisticScrapCategoriesRow,
   partStatisticNameCell,
   partAssemblyStatisticsPath,
   partSummaryMainSheetName,
-  partSummaryEmptySheetName
+  partSummaryEmptySheetName,
+  partStatisticNrCell
 } from './config';
 
 
 export async function summarizeMonth(date: Date) {
-    //date = new Date(1685996260000); //05.06.2023 - date for testing
-    const fileList = fs.readdirSync(partSummaryPath);
-    console.log(dayjs(date).format('MM.YYYY'));
     let summaryWorkbook = new excelJs.Workbook();
 
-    if (fileList.some(file => file.includes('podsumowanie ' + dayjs(date).format('YYYY')))) {
+    // Check if there is a summary file in folder
+    const fileList = fs.readdirSync(partSummaryPath);
+    if (fileList.some(file => file.includes(dayjs(date).format('YYYY')))) {
         await summaryWorkbook.xlsx.readFile(`${partSummaryPath}/podsumowanie ${date.getFullYear()}.xlsx`);
     } else {
         summaryWorkbook = await createSummary(date, summaryWorkbook);
     }
 
-    await saveStatistic(summaryWorkbook, date);
+    await saveInjectionStatistic(summaryWorkbook, date);
     await saveAssemblyStatistic(summaryWorkbook, date);
 }
 
 async function saveAssemblyStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
-    const partStatisticFiles = fs.readdirSync(partAssemblyStatisticsPath);
+    const asemblyStatisticFiles = fs.readdirSync(partAssemblyStatisticsPath);
     const partWorkbook = new excelJs.Workbook();
     const monthIndex = +dayjs(date).month();
 
-    const partsList = await Promise.all(partStatisticFiles.map(async partFileName =>{
-        await partWorkbook.xlsx.readFile(`${partAssemblyStatisticsPath}/${partFileName}`);
-        return await getAssemblyPartData(partWorkbook, date, partFileName);
-    }));
+    const partsList = await Promise.all(
+        asemblyStatisticFiles.map(async partFileName => {
+            await partWorkbook.xlsx.readFile(
+                `${partAssemblyStatisticsPath}/${partFileName}`
+            );
+            return await getAssemblyPartData(partWorkbook, date, partFileName);
+        })
+    );
 
-        //save to template
     const summaryWorksheet = summaryWorkbook.getWorksheet(partSummaryMainSheetName);
-    const rows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount);
+    const summaryRows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount);
 
-    let lastSummaryRow = summaryWorksheet.rowCount;
+    let lastSummaryRow: number;
+    let partRowNumber: number;  // first row  part table
 
     partsList.map(partStatisticsData => {
-        //check if exist in stat
-        let partRow: number;
         lastSummaryRow = summaryWorksheet.rowCount;
 
-        // find part number
-        for (const row of rows) { //row -> 1 based
-            if (row.getCell(monthSummaryColumns.partNr).value === partStatisticsData.partNr) {
-                partRow = row.number;
+        // find part in statistic
+        for (const row of summaryRows) { //row -> 1 based
+            if (row.getCell(monthSummaryColumnsLetters.partNr).value === partStatisticsData.partNr) {
+                partRowNumber = row.number;
                 break;
             }
         }
-        // if part not in table
-        if (!partRow) {
-            addNewPartTable(partStatisticsData, summaryWorkbook, summaryWorksheet, lastSummaryRow);
-            partRow = lastSummaryRow+1; // remove +1? gap after last row was added when new summary is createing
-        }
-        //insert data
 
+        // if part not in table add it
+        if (!partRowNumber) {
+            addNewPartTable(partStatisticsData, summaryWorkbook, summaryWorksheet, lastSummaryRow);
+            partRowNumber = lastSummaryRow+1;
+        }
+
+        // insert data
         Object.entries(partStatisticsData).forEach(([key, value]) => {
-            summaryWorksheet.getCell(`${monthSummaryColumns[key]}${partRow+monthIndex}`).value = value;
+            summaryWorksheet.getCell(`${monthSummaryColumnsLetters[key]}${partRowNumber+monthIndex}`).value = value;
         });
     });
 
     await summaryWorkbook.xlsx.writeFile(`${partSummaryPath}/podsumowanie ${date.getFullYear()}.xlsx`);
 }
 
-async function getAssemblyPartData(
-    partFile: excelJs.Workbook,
-    date: Date,
-    partHeadline: string
-  ): Promise<{
-    totalProduction: number;
-    totalScrap: number;
-    partNr: string;
-  }> {
+async function getAssemblyPartData(partStatisticsFile: excelJs.Workbook, date: Date, partHeadline: string):
+    Promise<{totalProduction: number; totalScrap: number; partNr: string}> {
 
-    const monthWorksheet = partFile.worksheets[date.getMonth()];
+    const monthWorksheet = partStatisticsFile.worksheets[date.getMonth()];
     const producitonData = await getProductionData(monthWorksheet);
 
     return {
@@ -97,33 +93,34 @@ async function getAssemblyPartData(
     };
   };
 
+
 async function saveStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
-    const partStatisticFiles = fs.readdirSync(statisticsPath);
+    const partStatisticFiles = fs.readdirSync(statisticsPath); //inny path -> docelowo wszystko w tej samej lokalizacji
     const partWorkbook = new excelJs.Workbook();
     const monthIndex = +dayjs(date).month();
 
     //get part data
     const partsList = await Promise.all(partStatisticFiles.map(async partFileName =>{
         await partWorkbook.xlsx.readFile(`${statisticsPath}/${partFileName}`);
-        return await getPartData(partWorkbook, date, partFileName);
+        return await getPartData(partWorkbook, date); //inny get part
     }));
 
     //save to template
     const summaryWorksheet = summaryWorkbook.getWorksheet(partSummaryMainSheetName);
-    const rows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount);
+    const summaryRows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount);
 
-    //let lastSummaryRow = summaryWorksheet.rowCount;
+    let lastSummaryRow = summaryWorksheet.rowCount;
 
     partsList.map(partStatisticsData => {
         //check if exist in stat
         let partRow: number;
 
-        const lastSummaryRow = summaryWorksheet.rowCount;
+        lastSummaryRow = summaryWorksheet.rowCount;
 
         // find part number
-        for (const row of rows) { //row -> 1 based
-            if ((row.getCell(monthSummaryColumns.partNr).value === partStatisticsData.partNr) &&
-            (row.getCell(monthSummaryColumns.tool).value === partStatisticsData.tool)
+        for (const row of summaryRows) { //row -> 1 based
+            if ((row.getCell(monthSummaryColumnsLetters.partNr).value === partStatisticsData.partNr) &&
+            (row.getCell(monthSummaryColumnsLetters.tool).value === partStatisticsData.tool) // tylko nr czesci
             ) {
                 partRow = row.number;
                 break;
@@ -134,10 +131,56 @@ async function saveStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
             addNewPartTable(partStatisticsData, summaryWorkbook, summaryWorksheet, lastSummaryRow);
             partRow = lastSummaryRow+1;
         }
-        //insert data
 
-        Object.entries(partStatisticsData).forEach(([key, v]) => {
-            summaryWorksheet.getCell(`${monthSummaryColumns[key]}${partRow+monthIndex}`).value = v;
+        //insert data
+        Object.entries(partStatisticsData).forEach(([key, value]) => {
+            summaryWorksheet.getCell(`${monthSummaryColumnsLetters[key]}${partRow+monthIndex}`).value = value;
+        });
+    });
+
+    await summaryWorkbook.xlsx.writeFile(`${partSummaryPath}/podsumowanie ${date.getFullYear()}.xlsx`);
+}
+async function saveInjectionStatistic(summaryWorkbook: excelJs.Workbook, date: Date) {
+    const partStatisticFiles = fs.readdirSync(statisticsPath);
+    const partWorkbook = new excelJs.Workbook();
+    const monthIndex = +dayjs(date).month();
+
+    //get part data
+    const partsList = await Promise.all(partStatisticFiles.map(async partFileName =>{
+        await partWorkbook.xlsx.readFile(`${statisticsPath}/${partFileName}`);
+        return await getPartData(partWorkbook, date);
+    }));
+
+    //save to template
+    const summaryWorksheet = summaryWorkbook.getWorksheet(partSummaryMainSheetName);
+    const summaryRows = summaryWorksheet.getRows(1, summaryWorksheet.rowCount);
+
+    let lastSummaryRow = summaryWorksheet.rowCount;
+
+    partsList.map(partStatisticsData => {
+        //check if exist in stat
+        let partRow: number;
+
+        lastSummaryRow = summaryWorksheet.rowCount;
+
+        // find part number
+        for (const row of summaryRows) { //row -> 1 based
+            if ((row.getCell(monthSummaryColumnsLetters.partNr).value === partStatisticsData.partNr) &&
+            (row.getCell(monthSummaryColumnsLetters.tool).value === partStatisticsData.tool)
+            ) {
+                partRow = row.number;
+                break;
+            }
+        }
+        // if part not in table
+        if (!partRow) {
+            addNewPartTable(partStatisticsData, summaryWorkbook, summaryWorksheet, lastSummaryRow);
+            partRow = lastSummaryRow+1;
+        }
+
+        //insert data
+        Object.entries(partStatisticsData).forEach(([key, value]) => {
+            summaryWorksheet.getCell(`${monthSummaryColumnsLetters[key]}${partRow+monthIndex}`).value = value;
         });
     });
 
@@ -155,21 +198,21 @@ function addNewPartTable(
 
     // copy each cell in table
     emptyTable.forEach(row => {
-        row.getCell(monthSummaryColumns.partNr).value = partStatisticsData.partNr;
-        row.getCell(monthSummaryColumns.tool).value = partStatisticsData.tool;
-        row.getCell(monthSummaryColumns.scrapPercent).value = {
-            formula: `${monthSummaryColumns.totalScrap}${row.number+lastSummaryRow}/`
-              + `${monthSummaryColumns.totalProduction}${row.number+lastSummaryRow}`,
+        row.getCell(monthSummaryColumnsLetters.partNr).value = partStatisticsData.partNr;
+        row.getCell(monthSummaryColumnsLetters.tool).value = partStatisticsData.tool;
+        row.getCell(monthSummaryColumnsLetters.scrapPercent).value = {
+            formula: `${monthSummaryColumnsLetters.totalScrap}${row.number+lastSummaryRow}/`
+              + `${monthSummaryColumnsLetters.totalProduction}${row.number+lastSummaryRow}`,
             date1904: false
         };
-        row.getCell(monthSummaryColumns.totalScrapCost).value = {
-            formula: `${monthSummaryColumns.totalScrap}${row.number+lastSummaryRow}*`
-              + `$${monthSummaryColumns.partCost}$${lastSummaryRow+1}`,
+        row.getCell(monthSummaryColumnsLetters.totalScrapCost).value = {
+            formula: `${monthSummaryColumnsLetters.totalScrap}${row.number+lastSummaryRow}*`
+              + `$${monthSummaryColumnsLetters.partCost}$${lastSummaryRow+1}`,
             date1904: false
         };
-        row.getCell(monthSummaryColumns.ppm).value = {
-            formula: `(${monthSummaryColumns.totalScrap}${row.number+lastSummaryRow}/`
-              + `${monthSummaryColumns.totalProduction}${row.number+lastSummaryRow})*1000000`,
+        row.getCell(monthSummaryColumnsLetters.ppm).value = {
+            formula: `(${monthSummaryColumnsLetters.totalScrap}${row.number+lastSummaryRow}/`
+              + `${monthSummaryColumnsLetters.totalProduction}${row.number+lastSummaryRow})*1000000`,
             date1904: false
         };
         row.eachCell({ includeEmpty: true }, cell => {
@@ -179,15 +222,15 @@ function addNewPartTable(
             newCell.value = cell.value;
         });
     });
-    summaryWorksheet.getCell(`${monthSummaryColumns.totalProduction}${lastSummaryRow+13}`).value = {
-        formula: `SUM(${monthSummaryColumns.totalProduction}${lastSummaryRow+1}:`
-            + `${monthSummaryColumns.totalProduction}${lastSummaryRow+12})`,
+    summaryWorksheet.getCell(`${monthSummaryColumnsLetters.totalProduction}${lastSummaryRow+13}`).value = {
+        formula: `SUM(${monthSummaryColumnsLetters.totalProduction}${lastSummaryRow+1}:`
+            + `${monthSummaryColumnsLetters.totalProduction}${lastSummaryRow+12})`,
         result: undefined,
         date1904: false
     };
-    summaryWorksheet.getCell(`${monthSummaryColumns.totalScrap}${lastSummaryRow+13}`).value = {
-        formula: `SUM(${monthSummaryColumns.totalScrap}${lastSummaryRow+1}:`
-            + `${monthSummaryColumns.totalScrap}${lastSummaryRow+12})`,
+    summaryWorksheet.getCell(`${monthSummaryColumnsLetters.totalScrap}${lastSummaryRow+13}`).value = {
+        formula: `SUM(${monthSummaryColumnsLetters.totalScrap}${lastSummaryRow+1}:`
+            + `${monthSummaryColumnsLetters.totalScrap}${lastSummaryRow+12})`,
         date1904: false
     };
 }
@@ -195,39 +238,60 @@ function addNewPartTable(
 async function getPartData(
   partFile: excelJs.Workbook,
   date: Date,
-  partHeadline: string
 ): Promise<{
-  totalProduction: number;
-  totalScrap: number;
-  partNr: string;
-  partName: excelJs.CellValue;
-  tool: string;
-  scrapNames: string;
+  machine?: string;
+  totalProduction: number; //
+  totalScrap: number; //
+  partNr: string; //
+  partName?: excelJs.CellValue;
+  tool?: string;
+  scrapNames?: string;
 }> {
 
-  const monthWorksheet = partFile.worksheets[date.getMonth()];
-  const producitonData = await getProductionData(monthWorksheet);
-  const partHeadlineData = getDataFromPartHeadline(partHeadline);
-  const partName = monthWorksheet.getCell(partStatisticNameCell).value;
+    //SG-XXX_PARTNR_TOOL -YY
+    const partHeadline = partFile.worksheets[1].getCell(partStatisticNrCell).value.toString();
+    const headLineArray = partHeadline.split('_'); // nie ma tego w asembly
+
+    // production data
+    let productionSum = 0;
+    let scrapSum = 0;
+    const scrapCategoriesArray = [];
+    const monthWorksheet = partFile.worksheets[date.getMonth()];
+    const partName = monthWorksheet.getCell(partStatisticNameCell).value;
+
+    for (const rowNr of partFileRowsRange) {
+        const currentCell = monthWorksheet.getCell(`${partStatisticColumnsLetters.totalPartsProduced}${rowNr}`);
+        // dont count trials (yellow rows)
+        if (currentCell.fill.type === 'pattern' && currentCell.fill.bgColor) {
+            continue;
+        }
+
+        if (typeof(currentCell.value) === 'number') {
+            productionSum = productionSum + +currentCell.value;
+        } else if (!(currentCell.value === null)) {
+            productionSum = productionSum + +currentCell.result;
+        }
+
+        const scrapData = await parseScrapRow(monthWorksheet, rowNr);
+
+        scrapSum = scrapSum + scrapData.rowScrapSum;
+        scrapCategoriesArray.push(...scrapData.scrapCategories);
+    }
+
+    const scrapCategories = new Set(scrapCategoriesArray);
 
   return {
-    totalProduction: producitonData.productionSum,
-    totalScrap: producitonData.scrapSum,
-    partNr: partHeadlineData.partNr,
+    machine: headLineArray[0],
+    partNr: headLineArray[1],
+    tool: headLineArray[2].slice(4, -8),
+    totalProduction: productionSum,
+    totalScrap: scrapSum,
     partName,
-    tool: partHeadlineData.tool,
-    scrapNames: Array.from(producitonData.scrapCategories).slice(0, 3).toString()
+    scrapNames: Array.from(scrapCategories).slice(0, 3).toString()
   };
 };
 
-function getDataFromPartHeadline(partHeadline: string): {machine: string; partNr: string; tool: string} {
-    //SG-XXX_PARTNR_TOOL -YY
-    const headLineArray = partHeadline.split('_');
-
-    return {machine: headLineArray[0], partNr: headLineArray[1], tool: headLineArray[2].slice(4, -8)};
-}
-
-async function getProductionData(partSheet: excelJs.Worksheet): Promise<{
+async function getProductionData(partSheet: excelJs.Worksheet): Promise<{ // do wyjebania
     productionSum: number;
     scrapSum: number;
     scrapCategories: Set<string>;
@@ -237,7 +301,7 @@ async function getProductionData(partSheet: excelJs.Worksheet): Promise<{
     const scrapCategoriesArray = [];
 
     for (const rowNr of partFileRowsRange) {
-        const currentCell = partSheet.getCell(`${partStatisticColumns.totalPartsProduced}${rowNr}`);
+        const currentCell = partSheet.getCell(`${partStatisticColumnsLetters.totalPartsProduced}${rowNr}`);
         // dont count trials (yellow rows)
         if (currentCell.fill.type === 'pattern' && currentCell.fill.bgColor) {
             continue;
@@ -263,7 +327,7 @@ async function parseScrapRow(partSheet: excelJs.Worksheet, rowNr: number): Promi
     let rowScrapSum = 0;
     const scrapCategories = [];
 
-    partSummaryColumns.map(column => {
+    partSummaryColumnsLetters.map(column => {
         const scrapCell = partSheet.getCell(`${column}${rowNr}`);
 
         if (typeof(scrapCell.value) === 'number') {
@@ -282,14 +346,15 @@ async function createSummary(date: Date, summaryWorkbook: excelJs.Workbook): Pro
     await summaryWorkbook.xlsx.readFile(`${partSummaryTemplate}`);
 
     const summaryWorksheet = summaryWorkbook.getWorksheet(partSummaryEmptySheetName);
-    const dates = [];
 
+    //generate 12 months
+    const dates = [];
     for (let i = 1; i < 13; i++) {
         dates.push(dayjs(`${i}/01/${dayjs(date).format('YYYY')}`).utcOffset(0, true).toDate());
     }
 
     dates.forEach((month, i) => {
-        summaryWorksheet.getCell(`${monthSummaryColumns.month}${i+1}`).value = month;
+        summaryWorksheet.getCell(`${monthSummaryColumnsLetters.month}${i+1}`).value = month;
     });
 
     await summaryWorkbook.xlsx.writeFile(`${partSummaryPath}/podsumowanie ${date.getFullYear()}.xlsx`);

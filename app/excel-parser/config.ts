@@ -36,7 +36,7 @@ export const shiftSuffixes = {
 
 export const partStatisticScrapCategoriesRow = 5;
 
-export const partStatisticColumns = {
+export const partStatisticColumnsLetters = {
     airBubbles: 'Q',
     burns: 'G',
     contaminated: 'H',
@@ -61,7 +61,7 @@ export const partStatisticColumns = {
     scrap: 'D'
 };
 
-export const partSummaryColumns = [
+export const partSummaryColumnsLetters = [
     'E',
     'F',
     'G',
@@ -84,7 +84,7 @@ export const firstRowPartStatistic = 5;
 export const partStatisticNrCell = 'O2';
 export const partStatisticNameCell = 'O3';
 
-export const monthSummaryColumns = {
+export const monthSummaryColumnsLetters = {
     tool: 'A',
     project: 'B',
     partNr: 'C',
